@@ -12,7 +12,7 @@ import {
 
 import * as actions from '../actions'
 
-import {SunburstModule} from '../components/sunburst'
+import {Sunburst} from '../components/sunburst'
 
 const mapReduxStateToReactProps = (state : appState): appState => {
     return state
@@ -31,15 +31,9 @@ export class App extends React.Component<appState, any> {
 
         return (
             <div id='application'>
-                <h1>Lolz</h1>
-                    <SunburstModule
-                        key={key}
-                        data={data}
-                        dimensions={{
-                            height: window.innerHeight * 3 / 4,
-                        }}
-                        hideComplements={true}
-                    />
+                <Sunburst
+                    data={data}
+                />
             </div>
         )
     }

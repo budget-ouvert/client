@@ -3,9 +3,10 @@ import {
     appState,
 } from './types'
 
+import {sunburstTestData} from './mockdata/mockData'
 
 const initialAppState: appState = {
-    data: null,
+    data: sunburstTestData,
 }
 
 export function reducer(state = initialAppState, action: action): appState {
