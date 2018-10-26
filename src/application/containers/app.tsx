@@ -27,8 +27,6 @@ export class App extends React.Component<appState, any> {
     public render () {
         let {data} = this.props
 
-        const key = 'Abracadabra'
-
         return (
             <div id='application'>
                 <Sunburst
