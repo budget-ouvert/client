@@ -1,5 +1,11 @@
 // Some mock data please
 
+export let selectedPathData : any = {
+    data: {
+        name: 'flare'
+    }
+}
+
 export let sunburstTestData : any = {
     name: 'flare',
     children: [

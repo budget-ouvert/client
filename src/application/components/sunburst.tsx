@@ -1,22 +1,36 @@
 import * as React from 'react'
 import * as d3 from 'd3'
+import * as _ from 'lodash'
 
-interface Props {
+import {clickedSunburstPoint} from '../actions'
+
+interface IProps {
     data: any;
+    dispatch: any;
 }
 
-interface State {
+interface IState {
 
 }
 
-export class Sunburst extends React.Component<Props, State> {
+export class Sunburst extends React.Component<IProps, IState> {
     public componentDidMount() {
         console.log('componentDidMount')
         this.drawSunburst()
     }
 
+    public componentShouldUpdate() {
+        console.log('componentShouldUpdate')
+    }
+
+    public shouldComponentUpdate(nextProps: IProps, nextState: IState) {
+        console.log('shouldComponentUpdate')
+        return false
+    }
+
     public drawSunburst() {
-        console.log('here');
+        console.log('drawSunburst');
+
         let {data} = this.props;
 
         let partition: any = (data: any) => {
@@ -50,8 +64,8 @@ export class Sunburst extends React.Component<Props, State> {
         root.each((d : any) => d.current = d);
 
         const svg : any = d3.select('#container')
-            .style("width", "100%")
-            .style("height", "auto")
+            // .style("width", "100%")
+            // .style("height", "auto")
             .style("font", "10px sans-serif");
 
         const g : any = svg.append("g")
@@ -67,31 +81,33 @@ export class Sunburst extends React.Component<Props, State> {
 
         path.filter((d : any) => d.children)
             .style("cursor", "pointer")
-            .on("click", clicked);
+            .on("click", _.partial(clicked, this));
 
         path.append("title")
             .text((d : any) => `${d.ancestors().map((d : any) => d.data.name).reverse().join("/")}\n${format(d.value)}`);
 
         const label = g.append("g")
-            .attr("pointer-events", "none")
-            .attr("text-anchor", "middle")
-            .style("user-select", "none")
+                .attr("pointer-events", "none")
+                .attr("text-anchor", "middle")
+                .style("user-select", "none")
             .selectAll("text")
             .data(root.descendants().slice(1))
             .enter().append("text")
-            .attr("dy", "0.35em")
-            .attr("fill-opacity", (d : any) => +labelVisible(d.current))
-            .attr("transform", (d : any) => labelTransform(d.current))
-            .text((d : any) => d.data.name);
+                .attr("dy", "0.35em")
+                .attr("fill-opacity", (d : any) => +labelVisible(d.current))
+                .attr("transform", (d : any) => labelTransform(d.current))
+                .text((d : any) => d.data.name);
 
         const parent = g.append("circle")
             .datum(root)
             .attr("r", radius)
             .attr("fill", "none")
             .attr("pointer-events", "all")
-            .on("click", clicked);
+            .on("click", _.partial(clicked, this));
 
-        function clicked(p : any) {
+        function clicked(that: any, p : any) {
+            that.props.dispatch(clickedSunburstPoint(p));
+
             parent.datum(p.parent || root);
 
             root.each((d : any) => d.target = {
@@ -117,7 +133,7 @@ export class Sunburst extends React.Component<Props, State> {
                 .attr("fill-opacity", (d : any) => arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
                 .attrTween("d", (d : any) => () => arc(d.current));
 
-            label.filter(function(d:any) : any {
+            label.filter((d:any) : any => {
                     return +this.getAttribute("fill-opacity") || labelVisible(d.target);
                 }).transition(t)
                 .attr("fill-opacity", (d : any) => +labelVisible(d.target))
@@ -140,7 +156,7 @@ export class Sunburst extends React.Component<Props, State> {
     }
 
     public render() {
-        console.log('render')
+        console.log('render');
 
         return (
             <div>

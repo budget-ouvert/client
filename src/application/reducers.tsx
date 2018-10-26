@@ -3,19 +3,20 @@ import {
     appState,
 } from './types'
 
-import {sunburstTestData} from './mockdata/mockData'
+import {sunburstTestData, selectedPathData} from './mockdata/mockData'
 
 const initialAppState: appState = {
     data: sunburstTestData,
+    selectedPath: selectedPathData,
 }
 
 export function reducer(state = initialAppState, action: action): appState {
     switch (action.type) {
-        // case 'CHANGE_CURRENT_TREE_NODE':
-        //     return {
-        //         ...state,
-        //         currentTreeNodePath: action.value,
-        //     }
+        case 'CHANGED_SUNBURST_POINT':
+            return {
+                ...state,
+                selectedPath: action.value,
+            }
 
         default:
             return state

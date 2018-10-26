@@ -13,6 +13,7 @@ import {
 import * as actions from '../actions'
 
 import {Sunburst} from '../components/sunburst'
+import {DummyComponent} from '../components/dummyComponent'
 
 const mapReduxStateToReactProps = (state : appState): appState => {
     return state
@@ -25,13 +26,15 @@ function reduxify(mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 @reduxify(mapReduxStateToReactProps)
 export class App extends React.Component<appState, any> {
     public render () {
-        let {data} = this.props
+        let {selectedPath, data, dispatch} = this.props
 
         return (
             <div id='application'>
                 <Sunburst
                     data={data}
+                    dispatch={dispatch}
                 />
+                <DummyComponent child={selectedPath} />
             </div>
         )
     }
