@@ -14,15 +14,27 @@ interface IState {
 }
 
 export class Sunburst extends React.Component<IProps, IState> {
+    data: any;
+    width: number;
+
+    constructor(props: IProps) {
+        super(props)
+        this.data = this.props.data
+        this.width = 932
+    }
+
     public componentDidMount() {
         console.log('componentDidMount')
         this.drawSunburst()
     }
 
-    public componentShouldUpdate() {
-        console.log('componentShouldUpdate')
-    }
-
+    // This function is called when props of the current component
+    // are changed (typically, when redux dispatches information,
+    // the app's state is updated and it 'changes' the props of this component).
+    // This object's lifecycle is handled using D3, therefore we prevent
+    // re-rendering when new props arrive.
+    // More precise conditions should be applied (one should typically check
+    // if `nextProps` are equal to current `props` or not).
     public shouldComponentUpdate(nextProps: IProps, nextState: IState) {
         console.log('shouldComponentUpdate')
         return false
@@ -31,15 +43,13 @@ export class Sunburst extends React.Component<IProps, IState> {
     public drawSunburst() {
         console.log('drawSunburst');
 
-        let {data} = this.props;
+        let data = this.data;
 
         let partition: any = (data: any) => {
             const root : any = d3.hierarchy(data)
                 .sum((d : any) => d.size)
                 .sort((a: any, b: any) => b.value - a.value);
-            return d3.partition()
-                .size([2 * Math.PI, root.height + 1])
-              (root);
+            return d3.partition().size([2 * Math.PI, root.height + 1])(root);
         }
 
         let color : any = d3.scaleOrdinal()
@@ -47,7 +57,7 @@ export class Sunburst extends React.Component<IProps, IState> {
 
         let format : any = d3.format(",d")
 
-        let width : any = 600
+        let width : any = this.width
 
         let radius : any = width / 6
 
@@ -59,7 +69,7 @@ export class Sunburst extends React.Component<IProps, IState> {
             .innerRadius((d : any) => d.y0 * radius)
             .outerRadius((d : any) => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
-        const root : any = partition(data);
+        const root = partition(data);
 
         root.each((d : any) => d.current = d);
 
@@ -74,17 +84,18 @@ export class Sunburst extends React.Component<IProps, IState> {
         const path : any = g.append("g")
             .selectAll("path")
             .data(root.descendants().slice(1))
-            .enter().append("path")
-            .attr("fill", (d : any) => { while (d.depth > 1) d = d.parent; return color(d.data.name); })
-            .attr("fill-opacity", (d : any) => arcVisible(d.current) ? (d.children ? 0.6 : 0.4) : 0)
-            .attr("d", (d : any) => arc(d.current));
+                .enter().append("path")
+                .attr("fill", (d : any) => { while (d.depth > 1) d = d.parent; return color(d.data.name); })
+                .attr("fill-opacity", (d : any) => arcVisible(d.current) ? (d.children ? 0.6 : 0.4) : 0)
+                .attr("d", (d : any) => arc(d.current));
 
         path.filter((d : any) => d.children)
             .style("cursor", "pointer")
             .on("click", _.partial(clicked, this));
 
+        // Handles tooltip text (when hovering sunburst nodes)
         path.append("title")
-            .text((d : any) => `${d.ancestors().map((d : any) => d.data.name).reverse().join("/")}\n${format(d.value)}`);
+            .text((d : any) => `${d.ancestors().reverse().slice(1).map((d : any) => d.data.name).join("/")}\n${format(d.value)}`);
 
         const label = g.append("g")
                 .attr("pointer-events", "none")
@@ -106,8 +117,6 @@ export class Sunburst extends React.Component<IProps, IState> {
             .on("click", _.partial(clicked, this));
 
         function clicked(that: any, p : any) {
-            that.props.dispatch(clickedSunburstPoint(p));
-
             parent.datum(p.parent || root);
 
             root.each((d : any) => d.target = {
@@ -128,20 +137,26 @@ export class Sunburst extends React.Component<IProps, IState> {
                     return (t : any) => d.current = i(t);
                 })
                 .filter((d: any) : any => {
-                    return +this.getAttribute("fill-opacity") || arcVisible(d.target);
+                    // return +this.getAttribute("fill-opacity") || arcVisible(d.target);
+                    // return +this.getAttribute("fill-opacity");
+                    // return arcVisible(d.target);
+                    return true;
                 })
                 .attr("fill-opacity", (d : any) => arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
                 .attrTween("d", (d : any) => () => arc(d.current));
 
             label.filter((d:any) : any => {
-                    return +this.getAttribute("fill-opacity") || labelVisible(d.target);
+                    // return +this.getAttribute("fill-opacity") || labelVisible(d.target);
+                    return true;
                 }).transition(t)
                 .attr("fill-opacity", (d : any) => +labelVisible(d.target))
                 .attrTween("transform", (d : any) => () => labelTransform(d.current));
+
+            that.props.dispatch(clickedSunburstPoint(p));
         }
 
         function arcVisible(d : any) : any {
-            return d.y1 <= 3 && d.y0 >= 1 && d.x1 > d.x0;
+            return d.y1 <= 3 && d.y0 >= 0 && d.x1 > d.x0;
         }
 
         function labelVisible(d : any) : any {
@@ -162,8 +177,8 @@ export class Sunburst extends React.Component<IProps, IState> {
             <div>
                 <svg
                     ref='container'
-                    width={600}
-                    height={600}
+                    width={this.width}
+                    height={this.width}
                     className={'sunburst'}
                     id={'container'}
                 >

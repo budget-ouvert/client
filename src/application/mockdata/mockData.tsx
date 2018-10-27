@@ -1,13 +1,7 @@
 // Some mock data please
 
-export let selectedPathData : any = {
-    data: {
-        name: 'flare'
-    }
-}
-
 export let sunburstTestData : any = {
-    name: 'flare',
+    name: 'root',
     children: [
         {
             name: 'analytics',
@@ -15,13 +9,16 @@ export let sunburstTestData : any = {
                 {
                     name: 'cluster',
                     children: [
-                        {name: 'Toute chose appartient à qui sait en jouir.', size: 1000},
-                        {name: 'Mais si tu crois un jour que tu m\'aimes', size: 700}
+                        {name: 'singleWord', size: 1000},
+                        {name: 'singleWord2', size: 700}
                     ]
                 },
                 {
                     name: 'graph',
-                    size: 500,
+                    children: [
+                        {name: 'dammitIsItPossible', size: 500},
+                        {name: 'elementary', size: 300}
+                    ]
                 },
                 {
                     name: 'optimization',
@@ -34,7 +31,10 @@ export let sunburstTestData : any = {
             children: [
                 {
                     name: 'converters',
-                    size: 800,
+                    children: [
+                        {name: 'dammitIsItPossible', size: 500},
+                        {name: 'elementary', size: 300}
+                    ]
                 },
                 {
                     name: 'dataSet',

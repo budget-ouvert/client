@@ -14,7 +14,7 @@ export class DummyComponent extends React.Component<Props, State> {
 
         return (
             <div>
-                Currently selected node name: {child.data.name}
+                Currently selected node name: {child ? child.data.name : 'None'}
             </div>
         )
     }
