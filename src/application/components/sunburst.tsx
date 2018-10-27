@@ -75,7 +75,7 @@ export class Sunburst extends React.Component<IProps, IState> {
             .startAngle((d : any) => d.x0)
             .endAngle((d : any) => d.x1)
             .padAngle((d : any) => Math.min((d.x1 - d.x0) / 2, 0.005))
-            .padRadius(radius * 1.5)
+            .padRadius(radius * 1)
             .innerRadius((d : any) => d.y0 * radius)
             .outerRadius((d : any) => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
@@ -140,18 +140,18 @@ export class Sunburst extends React.Component<IProps, IState> {
             // so that if this transition is interrupted, entering arcs will start
             // the next transition from the desired position.
             path.transition(t)
+                .filter((d: any) : any => {
+                    return +this.getAttribute("fill-opacity") || arcVisible(d.current) || arcVisible(d.target);
+                })
                 .tween("data", (d: any) => {
                     const i = d3.interpolate(d.current, d.target);
                     return (t : any) => d.current = i(t);
-                })
-                .filter((d: any) : any => {
-                    return +this.getAttribute("fill-opacity") || arcVisible(d.target);
                 })
                 .attr("fill-opacity", (d : any) => arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
                 .attrTween("d", (d : any) => () => arc(d.current));
 
             label.filter((d:any) : any => {
-                    return +this.getAttribute("fill-opacity") || labelVisible(d.target);
+                    return +this.getAttribute("fill-opacity") || labelVisible(d.current) || labelVisible(d.target);
                 }).transition(t)
                 .attr("fill-opacity", (d : any) => +labelVisible(d.target))
                 .attrTween("transform", (d : any) => () => labelTransform(d.current));
