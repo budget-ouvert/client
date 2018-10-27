@@ -25,13 +25,18 @@ function reduxify(mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 
 @reduxify(mapReduxStateToReactProps)
 export class App extends React.Component<appState, any> {
+    public componentDidMount() {
+        this.props.dispatch(actions.fetchPlfFile('http://api.live.rollin.ovh/plf2017CP.csv'))
+    }
+
     public render () {
-        let {selectedPath, data, dispatch} = this.props
+        let {selectedPath, data, dataLoadedTime, dispatch} = this.props
 
         return (
             <div id='application'>
                 <Sunburst
                     data={data}
+                    dataLoadedTime={dataLoadedTime}
                     dispatch={dispatch}
                 />
                 <DummyComponent child={selectedPath} />

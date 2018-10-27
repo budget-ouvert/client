@@ -6,6 +6,7 @@ import {clickedSunburstPoint} from '../actions'
 
 interface IProps {
     data: any;
+    dataLoadedTime: number;
     dispatch: any;
 }
 
@@ -14,12 +15,10 @@ interface IState {
 }
 
 export class Sunburst extends React.Component<IProps, IState> {
-    data: any;
     width: number;
 
     constructor(props: IProps) {
         super(props)
-        this.data = this.props.data
         this.width = 932
     }
 
@@ -28,22 +27,33 @@ export class Sunburst extends React.Component<IProps, IState> {
         this.drawSunburst()
     }
 
-    // This function is called when props of the current component
-    // are changed (typically, when redux dispatches information,
-    // the app's state is updated and it 'changes' the props of this component).
-    // This object's lifecycle is handled using D3, therefore we prevent
-    // re-rendering when new props arrive.
-    // More precise conditions should be applied (one should typically check
-    // if `nextProps` are equal to current `props` or not).
     public shouldComponentUpdate(nextProps: IProps, nextState: IState) {
         console.log('shouldComponentUpdate')
+
+        // If loaded time for input data is different,
+        // then one should update this component.
+        if (nextProps.dataLoadedTime != this.props.dataLoadedTime) {
+            return true
+        }
+
         return false
+    }
+
+    public componentDidUpdate() {
+        this.clearSunburst()
+        this.drawSunburst()
+    }
+
+    public clearSunburst() {
+        const svg : any = d3.select('#container')
+            .select('g')
+            .remove();
     }
 
     public drawSunburst() {
         console.log('drawSunburst');
 
-        let data = this.data;
+        let data = this.props.data;
 
         let partition: any = (data: any) => {
             const root : any = d3.hierarchy(data)
@@ -65,7 +75,7 @@ export class Sunburst extends React.Component<IProps, IState> {
             .startAngle((d : any) => d.x0)
             .endAngle((d : any) => d.x1)
             .padAngle((d : any) => Math.min((d.x1 - d.x0) / 2, 0.005))
-            .padRadius(radius * 1.5)
+            .padRadius(radius * 1)
             .innerRadius((d : any) => d.y0 * radius)
             .outerRadius((d : any) => Math.max(d.y0 * radius, d.y1 * radius - 1));
 
@@ -74,8 +84,6 @@ export class Sunburst extends React.Component<IProps, IState> {
         root.each((d : any) => d.current = d);
 
         const svg : any = d3.select('#container')
-            // .style("width", "100%")
-            // .style("height", "auto")
             .style("font", "10px sans-serif");
 
         const g : any = svg.append("g")
@@ -132,22 +140,18 @@ export class Sunburst extends React.Component<IProps, IState> {
             // so that if this transition is interrupted, entering arcs will start
             // the next transition from the desired position.
             path.transition(t)
+                .filter((d: any) : any => {
+                    return +this.getAttribute("fill-opacity") || arcVisible(d.current) || arcVisible(d.target);
+                })
                 .tween("data", (d: any) => {
                     const i = d3.interpolate(d.current, d.target);
                     return (t : any) => d.current = i(t);
-                })
-                .filter((d: any) : any => {
-                    // return +this.getAttribute("fill-opacity") || arcVisible(d.target);
-                    // return +this.getAttribute("fill-opacity");
-                    // return arcVisible(d.target);
-                    return true;
                 })
                 .attr("fill-opacity", (d : any) => arcVisible(d.target) ? (d.children ? 0.6 : 0.4) : 0)
                 .attrTween("d", (d : any) => () => arc(d.current));
 
             label.filter((d:any) : any => {
-                    // return +this.getAttribute("fill-opacity") || labelVisible(d.target);
-                    return true;
+                    return +this.getAttribute("fill-opacity") || labelVisible(d.current) || labelVisible(d.target);
                 }).transition(t)
                 .attr("fill-opacity", (d : any) => +labelVisible(d.target))
                 .attrTween("transform", (d : any) => () => labelTransform(d.current));
