@@ -1,6 +1,8 @@
 @import "~@blueprintjs/core/lib/css/blueprint.css";
 @import "~@blueprintjs/core/lib/less/variables";
 
+@window-padding: 20px;
+
 body {
     background-color: @light-gray5;
     color: @black;
@@ -12,4 +14,44 @@ body {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
+}
+
+#main-verification-container {
+    text-align: center;
+    padding: @window-padding;
+
+    & > *:not(:last-child) {
+        margin-bottom: @window-padding;
+    }
+
+    #choice-buttons {
+        justify-content: center;
+    }
+
+    .bp3-breadcrumbs {
+        justify-content: center;
+        height: auto;
+    }
+
+    .input-columns {
+        background-color: @light-gray4;
+        padding: @window-padding;
+        position: relative;
+
+        .year {
+            position: absolute;
+            color: @gray1;
+            top: 3;
+            left: 3;
+        }
+
+        .nodes {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            & > * {
+                padding: @window-padding;
+            }
+        }
+    }
 }
