@@ -21,6 +21,7 @@ body {
     padding: @window-padding;
     max-width: 1200px;
     margin: 0 auto;
+    height: 100vh;
 
     & > *:not(:last-child) {
         margin-bottom: @window-padding;
@@ -28,6 +29,10 @@ body {
 
     #choice-buttons {
         justify-content: center;
+    }
+
+    .linking-arrow {
+        color: @gray2;
     }
 
     .input-columns {
@@ -77,6 +82,7 @@ body {
                     .bp3-icon {
                         display: flex;
                         justify-content: center;
+                        color: @gray3;
                     }
                 }
             }

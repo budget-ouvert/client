@@ -9,6 +9,7 @@ import {connect} from 'react-redux'
 
 // Import custom actions
 import {
+    nextSuggestion,
     updateSelectedYear,
 } from '../actions/verification'
 
@@ -45,6 +46,10 @@ export default class VerificationView extends React.Component<IVerificationView,
         this.props.dispatch(updateSelectedYear('2012'))
     }
 
+    private clickOk = () => {
+        this.props.dispatch(nextSuggestion())
+    }
+
     public render () {
         let {
             dispatch,
@@ -52,34 +57,45 @@ export default class VerificationView extends React.Component<IVerificationView,
         } = this.props
 
         let {
+            availableYears,
+            currentSuggestion,
             selectedYear,
+            suggestionList,
+            sourcePlf,
+            targetPlf,
         } = verification
+
+        let sourceNodePath = sourcePlf[suggestionList[currentSuggestion].source_id]
+        let targetNodePath = targetPlf[suggestionList[currentSuggestion].target_id]
 
         return (
             <div id='main-verification-container'>
                 <StringSelect
                     inputItem={selectedYear}
-                    items={['2012', '2013']}
+                    items={availableYears}
                     icon={'calendar'}
                     onChange={updateSelectedYear}
                     dispatch={dispatch}
                 />
                 <ControlGroup id='choice-buttons'>
                     <Button icon={'cross'} intent={'danger'} />
-                    <Button icon={'tick'} intent={'success'} />
+                    <Button
+                        icon={'tick'}
+                        intent={'success'}
+                        onClick={this.clickOk}
+                    />
                 </ControlGroup>
                 <div className='input-columns'>
                     <div className='year'>{selectedYear}</div>
                     <div className='plf-paths'>
-                        <PlfPath path={saleNode} />
+                        <PlfPath path={sourceNodePath} />
                     </div>
                 </div>
-                <Icon icon='arrow-down' />
+                <Icon className='linking-arrow' icon='arrow-down' />
                 <div className='input-columns'>
                     <div className='year'>{Number(selectedYear) + 1}</div>
                     <div className='plf-paths'>
-                        <PlfPath path={saleNode} />
-                        <PlfPath path={saleNode} />
+                        <PlfPath path={targetNodePath} />
                     </div>
                 </div>
             </div>
