@@ -1,19 +1,4 @@
-import {
-    Navbar,
-    Button,
-    Alignment,
-    ControlGroup,
-    FormGroup,
-    MenuItem,
-} from '@blueprintjs/core'
-import {
-    Select,
-    ItemPredicate,
-    ItemRenderer,
-} from '@blueprintjs/select'
 import * as React from 'react'
-import {Route} from 'react-router'
-import {BrowserRouter} from 'react-router-dom'
 import {connect} from 'react-redux'
 
 // Import custom actions
@@ -27,7 +12,7 @@ import {DummyComponent} from '../components/dummyComponent'
 
 // Import custom types
 import {
-    IAppState,
+    IMainViewState,
 } from '../types'
 
 // Link redux state to current component's react props
@@ -37,12 +22,12 @@ const reduxify = (mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 // Describe how redux state should be mapped to props
-const mapReduxStateToReactProps = (state : IAppState): IAppState => {
+const mapReduxStateToReactProps = (state : IMainViewState): IMainViewState => {
     return state
 }
 
 @reduxify(mapReduxStateToReactProps)
-export class Main extends React.Component<IAppState, any> {
+export class Main extends React.Component<IMainViewState, any> {
     public componentDidMount() {
         this.props.dispatch(fetchPlfFile('http://api.live.rollin.ovh/plf2017CP.csv'))
     }
