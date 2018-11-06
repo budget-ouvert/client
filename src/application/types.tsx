@@ -24,7 +24,7 @@ export interface ISunburstState {
     selectedPath: any,
 }
 
-export interface action {
-    type: string,
-    payload?: any,
+// Verification view
+export interface IVerificationViewState {
+    dispatch?: any,
 }

@@ -58,4 +58,8 @@ module.exports = {
             chunks: 'all',
         }
     },
+    devServer: {
+        // Allows to handle routes with React instead of webpack
+        historyApiFallback: true,
+    },
 };
