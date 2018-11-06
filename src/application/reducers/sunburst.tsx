@@ -1,30 +1,34 @@
 import * as d3 from 'd3'
 
+// Import mock data
+import {
+    sunburstTestData,
+} from '../mockdata/sunburst'
+
+// Import custom types
 import {
     action,
-    appState,
-} from './types'
+    ISunburstState,
+} from '../types'
 
-import {sunburstTestData} from './mockdata/mockData'
-
-const initialAppState: appState = {
+const initialState: ISunburstState = {
     data: sunburstTestData,
     dataLoadedTime: Date.now(),
     selectedPath: null,
 }
 
-export function reducer(state = initialAppState, action: action): appState {
+export function sunburst(state = initialState, action: action): ISunburstState {
     switch (action.type) {
         case 'CHANGED_SUNBURST_POINT':
             return {
                 ...state,
-                selectedPath: action.value,
+                selectedPath: action.payload,
             }
 
         case 'SUCCESS_FETCH_PLF_FILE':
             // Turn incoming CSV file into a javascript object
             // that will later on be used by our sunburst component.
-            let csv = d3.dsvFormat(';').parseRows(action.value.content)
+            let csv = d3.dsvFormat(';').parseRows(action.payload.content)
 
             let root : any = {
                 'name': 'PLF',

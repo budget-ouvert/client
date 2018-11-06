@@ -2,7 +2,9 @@ import * as React from 'react'
 import * as d3 from 'd3'
 import * as _ from 'lodash'
 
-import {clickedSunburstPoint} from '../actions'
+import {
+    clickedSunburstPoint,
+} from '../actions/sunburst'
 
 interface IProps {
     data: any;
