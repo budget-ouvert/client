@@ -14,6 +14,7 @@ import {
 
 // Import custom components
 import StringSelect from '../components/selects/stringSelect'
+import PlfPath from '../components/plfPath'
 
 // Import mock data
 import {
@@ -55,50 +56,30 @@ export default class VerificationView extends React.Component<IVerificationView,
         } = verification
 
         return (
-            <div id='application'>
-                <div id='main-verification-container'>
-                    <StringSelect
-                        inputItem={selectedYear}
-                        items={['2012', '2013']}
-                        icon={'column-layout'}
-                        onChange={updateSelectedYear}
-                        dispatch={dispatch}
-                    />
-                    <ControlGroup id='choice-buttons'>
-                        <Button icon={'cross'} intent={'danger'} />
-                        <Button icon={'tick'} intent={'success'} />
-                    </ControlGroup>
-                    <div className='input-columns'>
-                        <div className='year'>{selectedYear}</div>
-                        <div className='nodes'>
-                            <div>
-                                <ul className='bp3-breadcrumbs'>
-                                    {saleNode.map((s: string, index: number) =>
-                                        <li key={index}><Breadcrumb text={s} /></li>
-                                    )}
-                                </ul>
-                            </div>
-                        </div>
+            <div id='main-verification-container'>
+                <StringSelect
+                    inputItem={selectedYear}
+                    items={['2012', '2013']}
+                    icon={'calendar'}
+                    onChange={updateSelectedYear}
+                    dispatch={dispatch}
+                />
+                <ControlGroup id='choice-buttons'>
+                    <Button icon={'cross'} intent={'danger'} />
+                    <Button icon={'tick'} intent={'success'} />
+                </ControlGroup>
+                <div className='input-columns'>
+                    <div className='year'>{selectedYear}</div>
+                    <div className='plf-paths'>
+                        <PlfPath path={saleNode} />
                     </div>
-                    <Icon icon='arrow-down' />
-                    <div className='input-columns'>
-                        <div className='year'>{Number(selectedYear) + 1}</div>
-                        <div className='nodes'>
-                            <div>
-                                <ul className='bp3-breadcrumbs'>
-                                    {saleNode.map((s: string, index: number) =>
-                                        <li key={index}><Breadcrumb text={s} /></li>
-                                    )}
-                                </ul>
-                            </div>
-                            <div>
-                                <ul className='bp3-breadcrumbs'>
-                                    {saleNode.map((s: string, index: number) =>
-                                        <li key={index}><Breadcrumb text={s} /></li>
-                                    )}
-                                </ul>
-                            </div>
-                        </div>
+                </div>
+                <Icon icon='arrow-down' />
+                <div className='input-columns'>
+                    <div className='year'>{Number(selectedYear) + 1}</div>
+                    <div className='plf-paths'>
+                        <PlfPath path={saleNode} />
+                        <PlfPath path={saleNode} />
                     </div>
                 </div>
             </div>
