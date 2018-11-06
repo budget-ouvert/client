@@ -33,5 +33,10 @@ export interface IVerificationView extends IView {
 }
 
 export interface IVerificationState {
+    currentSuggestion: number,
     selectedYear: string,
+    suggestionList: any,
+    sourcePlf: any,
+    targetPlf: any,
+    votes: any,
 }

@@ -74,7 +74,7 @@ export default class VerificationView extends React.Component<IVerificationView,
                             <div>
                                 <ul className='bp3-breadcrumbs'>
                                     {saleNode.map((s: string, index: number) =>
-                                        <li><Breadcrumb key={index} text={s} /></li>
+                                        <li key={index}><Breadcrumb text={s} /></li>
                                     )}
                                 </ul>
                             </div>
@@ -87,14 +87,14 @@ export default class VerificationView extends React.Component<IVerificationView,
                             <div>
                                 <ul className='bp3-breadcrumbs'>
                                     {saleNode.map((s: string, index: number) =>
-                                        <li><Breadcrumb key={index} text={s} /></li>
+                                        <li key={index}><Breadcrumb text={s} /></li>
                                     )}
                                 </ul>
                             </div>
                             <div>
                                 <ul className='bp3-breadcrumbs'>
                                     {saleNode.map((s: string, index: number) =>
-                                        <li><Breadcrumb key={index} text={s} /></li>
+                                        <li key={index}><Breadcrumb text={s} /></li>
                                     )}
                                 </ul>
                             </div>

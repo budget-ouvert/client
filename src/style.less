@@ -1,7 +1,7 @@
 @import "~@blueprintjs/core/lib/css/blueprint.css";
 @import "~@blueprintjs/core/lib/less/variables";
 
-@window-padding: 20px;
+@window-padding: 10px;
 
 body {
     background-color: @light-gray5;
@@ -31,6 +31,7 @@ body {
     .bp3-breadcrumbs {
         justify-content: center;
         height: auto;
+        flex-direction: column;
     }
 
     .input-columns {
@@ -41,8 +42,6 @@ body {
         .year {
             position: absolute;
             color: @gray1;
-            top: 3;
-            left: 3;
         }
 
         .nodes {
