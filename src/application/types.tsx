@@ -12,10 +12,13 @@ export type action = simpleAction | thunkAction
 
 // VIEWS
 
-// Main view
-export interface IMainViewState {
+interface IView {
     dispatch?: any,
-    sunburst: ISunburstState
+}
+
+// Main view
+export interface ISunburstView extends IView {
+    sunburst: ISunburstState,
 }
 
 export interface ISunburstState {
@@ -25,6 +28,10 @@ export interface ISunburstState {
 }
 
 // Verification view
-export interface IVerificationViewState {
-    dispatch?: any,
+export interface IVerificationView extends IView {
+    verification: IVerificationState,
+}
+
+export interface IVerificationState {
+    selectedYear: string,
 }

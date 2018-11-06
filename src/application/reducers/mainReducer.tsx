@@ -1,7 +1,11 @@
 import {combineReducers} from 'redux'
 
-import {sunburst} from './sunburst'
+import sunburst from './sunburst'
+import verification from './verification'
 
-export const mainReducer = combineReducers({
+const mainReducer = combineReducers({
     sunburst,
+    verification,
 })
+
+export default mainReducer

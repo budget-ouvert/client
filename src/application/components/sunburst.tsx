@@ -16,7 +16,7 @@ interface IState {
 
 }
 
-export class Sunburst extends React.Component<IProps, IState> {
+export default class Sunburst extends React.Component<IProps, IState> {
     width: number;
 
     constructor(props: IProps) {

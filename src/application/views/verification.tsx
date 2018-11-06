@@ -3,14 +3,15 @@ import {connect} from 'react-redux'
 
 // Import custom actions
 import {
-    fetchPlfFile,
-} from '../actions/sunburst'
+    updateSelectedYear,
+} from '../actions/verification'
 
 // Import custom components
+import StringSelect from '../components/selects/stringSelect'
 
 // Import custom types
 import {
-    IVerificationViewState,
+    IVerificationView,
 } from '../types'
 
 // Link redux state to current component's react props
@@ -20,12 +21,12 @@ const reduxify = (mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 // Describe how redux state should be mapped to props
-const mapReduxStateToReactProps = (state : IVerificationViewState): IVerificationViewState => {
+const mapReduxStateToReactProps = (state : IVerificationView): IVerificationView => {
     return state
 }
 
 @reduxify(mapReduxStateToReactProps)
-export class Verification extends React.Component<IVerificationViewState, any> {
+export default class VerificationView extends React.Component<IVerificationView, any> {
     public componentDidMount() {
         // TODO: should fetch data
     }
@@ -33,11 +34,22 @@ export class Verification extends React.Component<IVerificationViewState, any> {
     public render () {
         let {
             dispatch,
+            verification,
         } = this.props
+
+        let {
+            selectedYear,
+        } = verification
 
         return (
             <div id='application'>
-
+                <StringSelect
+                    inputItem={selectedYear}
+                    items={['2012-2013', '2013-2014']}
+                    icon={'column-layout'}
+                    onChange={updateSelectedYear}
+                    dispatch={dispatch}
+                />
             </div>
         )
     }

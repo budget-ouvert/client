@@ -17,7 +17,7 @@ const initialState: ISunburstState = {
     selectedPath: null,
 }
 
-export function sunburst(state = initialState, action: simpleAction): ISunburstState {
+const sunburst = (state = initialState, action: simpleAction): ISunburstState => {
     switch (action.type) {
         case 'CHANGED_SUNBURST_POINT':
             return {
@@ -91,3 +91,5 @@ export function sunburst(state = initialState, action: simpleAction): ISunburstS
             return state
     }
 }
+
+export default sunburst

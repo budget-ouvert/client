@@ -5,14 +5,14 @@ import {
     Switch,
 } from 'react-router-dom'
 
-import {Main} from './views/main'
-import {Verification} from './views/verification'
+import SunburstView from './views/sunburst'
+import VerificationView from './views/verification'
 
 const Routes = () => (
     <BrowserRouter>
         <Switch>
-            <Route exact path='/' component={Main}/>
-            <Route path='/verification' component={Verification}/>
+            <Route exact path='/' component={SunburstView}/>
+            <Route path='/verification' component={VerificationView}/>
         </Switch>
     </BrowserRouter>
 )
