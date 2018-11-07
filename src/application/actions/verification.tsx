@@ -8,6 +8,12 @@ export const nextSuggestion = () => {
     }
 }
 
+export const previousSuggestion = () => {
+    return {
+        type: 'PREVIOUS_SUGGESTION',
+    }
+}
+
 export const updateSelectedYear = (selectedYear: string) => {
     return {
         type: 'UPDATE_SELECTED_YEAR',

@@ -129,6 +129,12 @@ const verification = (state = initialState, action: simpleAction): IVerification
                 currentSuggestion: (state.currentSuggestion + 1) % state.suggestionList.length,
             }
 
+        case 'PREVIOUS_SUGGESTION':
+            return {
+                ...state,
+                currentSuggestion: (state.currentSuggestion - 1 + state.suggestionList.length) % state.suggestionList.length,
+            }
+
         default:
             return state
     }

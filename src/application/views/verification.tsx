@@ -10,6 +10,7 @@ import {connect} from 'react-redux'
 // Import custom actions
 import {
     nextSuggestion,
+    previousSuggestion,
     updateSelectedYear,
 } from '../actions/verification'
 
@@ -46,8 +47,12 @@ export default class VerificationView extends React.Component<IVerificationView,
         this.props.dispatch(updateSelectedYear('2012'))
     }
 
-    private clickOk = () => {
+    private clickNextSuggestion = () => {
         this.props.dispatch(nextSuggestion())
+    }
+
+    private clickPreviousSuggestion = () => {
+        this.props.dispatch(previousSuggestion())
     }
 
     public render () {
@@ -78,11 +83,18 @@ export default class VerificationView extends React.Component<IVerificationView,
                     dispatch={dispatch}
                 />
                 <ControlGroup id='choice-buttons'>
+                    <Button
+                        icon={'chevron-left'}
+                        onClick={this.clickPreviousSuggestion}
+                    />
                     <Button icon={'cross'} intent={'danger'} />
                     <Button
                         icon={'tick'}
                         intent={'success'}
-                        onClick={this.clickOk}
+                    />
+                    <Button
+                        icon={'chevron-right'}
+                        onClick={this.clickNextSuggestion}
                     />
                 </ControlGroup>
                 <div className='input-columns'>
