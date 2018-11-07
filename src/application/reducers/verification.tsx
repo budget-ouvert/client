@@ -105,7 +105,9 @@ let suggestionList = neighborsCSVToSuggestionList(neighborsCsv).sort((a: any, b:
         (votes[b.source_id][b.target_id] ?
             votes[b.source_id][b.target_id].downvotes : 0) : 0
 
-    return  (downvotes_b - upvotes_b) - (downvotes_a - upvotes_a)
+    // Items with high distance and/or high downvotes and/or low upvotes
+    // should come first
+    return (b.distance + downvotes_b - upvotes_b) - (a.distance + downvotes_a - upvotes_a)
 })
 
 const initialState: IVerificationState = {
