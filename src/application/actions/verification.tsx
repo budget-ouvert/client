@@ -44,6 +44,29 @@ export const downvoteSuggestion = (source_id: number, target_id: number, distanc
     }
 }
 
+export const upvoteCurrentSuggestion = () : action => {
+    return (dispatch: any, getState: any) => {
+        const state = getState()
+        const suggestion = state.verification.suggestionList[state.verification.currentSuggestion]
+
+        // Update votes in state
+        dispatch(upvoteSuggestion(suggestion.source_id, suggestion.target_id, suggestion.distance))
+
+        dispatch(nextSuggestion())
+    }
+}
+
+export const upvoteSuggestion = (source_id: number, target_id: number, distance: number) : action => {
+    return {
+        type: 'UPVOTE_SUGGESTION',
+        payload: {
+            source_id,
+            target_id,
+            distance,
+        }
+    }
+}
+
 export const nextNeighbor = () : action => {
     return {
         type: 'NEXT_NEIGHBOR',

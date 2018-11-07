@@ -13,6 +13,7 @@ import {
     nextSuggestion,
     previousSuggestion,
     updateSelectedYear,
+    upvoteCurrentSuggestion,
 } from '../actions/verification'
 
 // Import custom components
@@ -54,6 +55,10 @@ export default class VerificationView extends React.Component<IVerificationView,
 
     private clickDownvoteSuggestion = () => {
         this.props.dispatch(downvoteCurrentSuggestion())
+    }
+
+    private clickUpvoteSuggestion = () => {
+        this.props.dispatch(upvoteCurrentSuggestion())
     }
 
     private clickNextSuggestion = () => {
@@ -100,6 +105,7 @@ export default class VerificationView extends React.Component<IVerificationView,
                     <Button
                         icon={'tick'}
                         intent={'success'}
+                        onClick={this.clickUpvoteSuggestion}
                     />
                     <Button
                         icon={'chevron-right'}

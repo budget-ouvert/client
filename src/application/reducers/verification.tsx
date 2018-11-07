@@ -140,7 +140,7 @@ const verification = (state = initialState, action: simpleAction): IVerification
                 currentSuggestion: (state.currentSuggestion + 1) % state.suggestionList.length,
             }
 
-        case 'DOWNVOTE_SUGGESTION':
+        case 'DOWNVOTE_SUGGESTION': {
             const {
                 source_id,
                 target_id,
@@ -171,6 +171,40 @@ const verification = (state = initialState, action: simpleAction): IVerification
                 ...state,
                 votes,
             }
+        }
+
+        case 'UPVOTE_SUGGESTION': {
+            const {
+                source_id,
+                target_id,
+                distance,
+            } = action.payload
+            let votes = state.votes
+
+            if (votes[source_id]) {
+                if (votes[source_id][target_id]) {
+                    votes[source_id][target_id].upvotes += 1
+                } else {
+                    votes[source_id][target_id] = {
+                        distance,
+                        upvotes: 1,
+                        downvotes: 0,
+                    }
+                }
+            } else {
+                votes[source_id] = {}
+                votes[source_id][target_id] = {
+                    distance,
+                    upvotes: 1,
+                    downvotes: 0,
+                }
+            }
+
+            return {
+                ...state,
+                votes,
+            }
+        }
 
         case 'NEXT_NEIGHBOR':
             let {
