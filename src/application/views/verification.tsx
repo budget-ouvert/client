@@ -9,6 +9,7 @@ import {connect} from 'react-redux'
 
 // Import custom actions
 import {
+    downvoteCurrentSuggestion,
     nextSuggestion,
     previousSuggestion,
     updateSelectedYear,
@@ -47,12 +48,16 @@ export default class VerificationView extends React.Component<IVerificationView,
         this.props.dispatch(updateSelectedYear('2012'))
     }
 
-    private clickNextSuggestion = () => {
-        this.props.dispatch(nextSuggestion())
-    }
-
     private clickPreviousSuggestion = () => {
         this.props.dispatch(previousSuggestion())
+    }
+
+    private clickDownvoteSuggestion = () => {
+        this.props.dispatch(downvoteCurrentSuggestion())
+    }
+
+    private clickNextSuggestion = () => {
+        this.props.dispatch(nextSuggestion())
     }
 
     public render () {
@@ -87,7 +92,11 @@ export default class VerificationView extends React.Component<IVerificationView,
                         icon={'chevron-left'}
                         onClick={this.clickPreviousSuggestion}
                     />
-                    <Button icon={'cross'} intent={'danger'} />
+                    <Button
+                        icon={'cross'}
+                        intent={'danger'}
+                        onClick={this.clickDownvoteSuggestion}
+                    />
                     <Button
                         icon={'tick'}
                         intent={'success'}

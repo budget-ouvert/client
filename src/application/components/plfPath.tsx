@@ -17,16 +17,20 @@ export default class PlfPath extends React.Component<Props, State> {
 
         return (
             <div className='plf-path'>
-                {path.map((node: string, index: number) =>
-                    <div className='plf-path-node' key={index}>
-                        <div className='node-name'>{node}</div>
-                        {
-                            (index != path.length - 1) ?
-                                <Icon icon='chevron-down' iconSize={10}/> :
-                                null
-                        }
-                    </div>
-                )}
+                {
+                    path ?
+                        path.map((node: string, index: number) =>
+                            <div className='plf-path-node' key={index}>
+                                <div className='node-name'>{node}</div>
+                                {
+                                    (index != path.length - 1) ?
+                                        <Icon icon='chevron-down' iconSize={10}/> :
+                                        null
+                                }
+                            </div>
+                        ) :
+                        <span>Can't find key</span>
+                }
             </div>
         )
     }

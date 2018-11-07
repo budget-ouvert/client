@@ -11,7 +11,10 @@ import {
 // Import custom types
 import {
     simpleAction,
+    IPlf,
+    ISuggestion,
     IVerificationState,
+    IVotes,
 } from '../types'
 
 const loadNumberCsv = (csv: string) : any => {
@@ -28,8 +31,8 @@ const loadNumberCsv = (csv: string) : any => {
     return rows
 }
 
-const plfCSVToPlfDict = (csv: string) : any => {
-    let plfDict: any = {}
+const plfCSVToPlfDict = (csv: string) : IPlf => {
+    let plfDict: IPlf = {}
 
     let rows = d3.dsvFormat(';').parseRows(csv)
 
@@ -50,8 +53,8 @@ const plfCSVToPlfDict = (csv: string) : any => {
     return plfDict
 }
 
-const neighborsCSVToSuggestionList = (csv: string) : any => {
-    let suggestionList = []
+const neighborsCSVToSuggestionList = (csv: string) : ISuggestion[] => {
+    let suggestionList : ISuggestion[] = []
 
     let rows = loadNumberCsv(csv)
 
@@ -67,8 +70,8 @@ const neighborsCSVToSuggestionList = (csv: string) : any => {
     return suggestionList
 }
 
-const votesCSVToVotesDict = (csv: string) : any => {
-    let votesDict : any = {}
+const votesCSVToVotesDict = (csv: string) : IVotes => {
+    let votesDict : IVotes = {}
 
     let rows = loadNumberCsv(csv)
 
@@ -123,16 +126,66 @@ const verification = (state = initialState, action: simpleAction): IVerification
                 selectedYear: action.payload,
             }
 
+        case 'PREVIOUS_SUGGESTION':
+            return {
+                ...state,
+                currentSuggestion: (state.currentSuggestion - 1 + state.suggestionList.length) % state.suggestionList.length,
+            }
+
         case 'NEXT_SUGGESTION':
             return {
                 ...state,
                 currentSuggestion: (state.currentSuggestion + 1) % state.suggestionList.length,
             }
 
-        case 'PREVIOUS_SUGGESTION':
+        case 'DOWNVOTE_SUGGESTION':
+            const {
+                source_id,
+                target_id,
+                distance,
+            } = action.payload
+            let votes = state.votes
+
+            if (votes[source_id]) {
+                if (votes[source_id][target_id]) {
+                    votes[source_id][target_id].downvotes += 1
+                } else {
+                    votes[source_id][target_id] = {
+                        distance,
+                        upvotes: 0,
+                        downvotes: 1,
+                    }
+                }
+            } else {
+                votes[source_id] = {}
+                votes[source_id][target_id] = {
+                    distance,
+                    upvotes: 0,
+                    downvotes: 1,
+                }
+            }
+
             return {
                 ...state,
-                currentSuggestion: (state.currentSuggestion - 1 + state.suggestionList.length) % state.suggestionList.length,
+                votes,
+            }
+
+        case 'NEXT_NEIGHBOR':
+            let {
+                currentSuggestion,
+                suggestionList,
+            } = state
+
+            let suggestion = suggestionList[currentSuggestion]
+
+            let [nextTarget, nextDistance] = suggestion.nearestNeighbors.splice(0, 2)
+            suggestion.target_id = nextTarget
+            suggestion.distance = nextDistance
+            suggestionList[currentSuggestion] = suggestion
+
+            return {
+                ...state,
+                suggestionList,
             }
 
         default:

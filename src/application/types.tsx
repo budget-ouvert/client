@@ -36,8 +36,29 @@ export interface IVerificationState {
     availableYears: string[],
     currentSuggestion: number,
     selectedYear: string,
-    suggestionList: any,
-    sourcePlf: any,
-    targetPlf: any,
-    votes: any,
+    suggestionList: ISuggestion[],
+    sourcePlf: IPlf,
+    targetPlf: IPlf,
+    votes: IVotes,
+}
+
+export interface ISuggestion {
+    source_id: number,
+    target_id: number,
+    distance: number,
+    nearestNeighbors: any,
+}
+
+export interface IPlf {
+    [id: number]: string[],
+}
+
+export interface IVotes {
+    [source_id: number]: {
+        [target_id: number]: {
+            distance: number,
+            upvotes: number,
+            downvotes: number,
+        }
+    }
 }
