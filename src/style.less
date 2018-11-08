@@ -10,6 +10,64 @@ body {
     margin: 0;
 }
 
+.toto-enter {
+    opacity: 0.01;
+    transform: scale(0.5);
+}
+.toto-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 300ms ease-out;
+}
+
+.next-exit {
+    position: absolute;
+    top: @window-padding;
+    opacity: 1;
+    transform: scale(1) translateX(0%);
+}
+.next-exit-active {
+    opacity: 0.01;
+    transform: scale(0.9) translateX(50%);
+    transition: all 300ms ease-out;
+}
+
+.previous-exit {
+    position: absolute;
+    top: @window-padding;
+    opacity: 1;
+    transform: scale(1) translateX(0%);
+}
+.previous-exit-active {
+    opacity: 0.01;
+    transform: scale(0.9) translateX(-50%);
+    transition: all 300ms ease-out;
+}
+
+.downvote-exit {
+    position: absolute;
+    top: @window-padding;
+    opacity: 1;
+    transform: scale(1) translateY(0%);
+}
+.downvote-exit-active {
+    opacity: 0.01;
+    transform: scale(0.9) translateY(50%);
+    transition: all 300ms ease-out;
+}
+
+.upvote-exit {
+    position: absolute;
+    top: @window-padding;
+    opacity: 1;
+    transform: scale(1) translateY(0%);
+}
+.upvote-exit-active {
+    opacity: 0.01;
+    transform: scale(0.9) translateY(-50%);
+    transition: all 300ms ease-out;
+}
+
 #application-wrapper {
     height: 100%;
     width: 100%;

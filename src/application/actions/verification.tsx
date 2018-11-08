@@ -2,9 +2,12 @@ import {
     action,
 } from '../types'
 
-export const nextSuggestion = () : action => {
+export const nextSuggestion = (exitClass: string) : action => {
     return {
         type: 'NEXT_SUGGESTION',
+        payload: {
+            exitClass,
+        },
     }
 }
 
@@ -28,7 +31,7 @@ export const downvoteCurrentSuggestion = () : action => {
             dispatch(nextNeighbor())
         } else {
             // Otherwise, simply return the next suggestion
-            dispatch(nextSuggestion())
+            dispatch(nextSuggestion('next'))
         }
     }
 }
@@ -52,7 +55,7 @@ export const upvoteCurrentSuggestion = () : action => {
         // Update votes in state
         dispatch(upvoteSuggestion(suggestion.source_id, suggestion.target_id, suggestion.distance))
 
-        dispatch(nextSuggestion())
+        dispatch(nextSuggestion('upvote'))
     }
 }
 

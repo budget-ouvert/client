@@ -111,6 +111,8 @@ let suggestionList = neighborsCSVToSuggestionList(neighborsCsv).sort((a: any, b:
 })
 
 const initialState: IVerificationState = {
+    sourceExit: 'next',
+    targetExit: 'next',
     availableYears: ['2012', '2013'],
     currentSuggestion: 0,
     selectedYear: null,
@@ -132,12 +134,16 @@ const verification = (state = initialState, action: simpleAction): IVerification
             return {
                 ...state,
                 currentSuggestion: (state.currentSuggestion - 1 + state.suggestionList.length) % state.suggestionList.length,
+                sourceExit: 'previous',
+                targetExit: 'previous',
             }
 
         case 'NEXT_SUGGESTION':
             return {
                 ...state,
                 currentSuggestion: (state.currentSuggestion + 1) % state.suggestionList.length,
+                sourceExit: action.payload.exitClass,
+                targetExit: action.payload.exitClass,
             }
 
         case 'DOWNVOTE_SUGGESTION': {
@@ -170,6 +176,7 @@ const verification = (state = initialState, action: simpleAction): IVerification
             return {
                 ...state,
                 votes,
+                targetExit: 'downvote',
             }
         }
 

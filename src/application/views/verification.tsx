@@ -6,6 +6,10 @@ import {
 } from '@blueprintjs/core'
 import * as React from 'react'
 import {connect} from 'react-redux'
+import {
+    TransitionGroup,
+    CSSTransition,
+} from 'react-transition-group'
 
 // Import custom actions
 import {
@@ -62,7 +66,7 @@ export default class VerificationView extends React.Component<IVerificationView,
     }
 
     private clickNextSuggestion = () => {
-        this.props.dispatch(nextSuggestion())
+        this.props.dispatch(nextSuggestion('next'))
     }
 
     public render () {
@@ -72,6 +76,8 @@ export default class VerificationView extends React.Component<IVerificationView,
         } = this.props
 
         let {
+            sourceExit,
+            targetExit,
             availableYears,
             currentSuggestion,
             selectedYear,
@@ -115,14 +121,52 @@ export default class VerificationView extends React.Component<IVerificationView,
                 <div className='input-columns'>
                     <div className='year'>{selectedYear}</div>
                     <div className='plf-paths'>
-                        <PlfPath path={sourceNodePath} />
+                        <TransitionGroup
+                            // Allows to change classNames before
+                            // component is unmounted
+                            childFactory={(child: any): any => {
+                                return React.cloneElement(child, {
+                                    classNames: `toto ${sourceExit}`,
+                                })
+                            }}
+                        >
+                            {[sourceNodePath].map((item: any) => {
+                                return <CSSTransition
+                                    key={item}
+                                    timeout={300}
+                                    classNames={`toto ${sourceExit}`}
+                                >
+                                    <PlfPath
+                                        path={item}
+                                    />
+                                </CSSTransition>
+                            })}
+                        </TransitionGroup>
                     </div>
                 </div>
                 <Icon className='linking-arrow' icon='arrow-down' />
                 <div className='input-columns'>
                     <div className='year'>{Number(selectedYear) + 1}</div>
                     <div className='plf-paths'>
-                        <PlfPath path={targetNodePath} />
+                        <TransitionGroup
+                            childFactory={(child: any): any => {
+                                return React.cloneElement(child, {
+                                    classNames: `toto ${targetExit}`,
+                                })
+                            }}
+                        >
+                            {[targetNodePath].map((item: any) => {
+                                return <CSSTransition
+                                    key={item}
+                                    timeout={300}
+                                    classNames={`toto ${targetExit}`}
+                                >
+                                    <PlfPath
+                                        path={item}
+                                    />
+                                </CSSTransition>
+                            })}
+                        </TransitionGroup>
                     </div>
                 </div>
             </div>

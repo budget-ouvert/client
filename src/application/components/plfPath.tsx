@@ -8,12 +8,13 @@ interface Props {
 }
 
 interface State {
-
 }
 
 export default class PlfPath extends React.Component<Props, State> {
-    public render() {
-        let {path} = this.props;
+    public render = () => {
+        const {
+            path,
+        } = this.props
 
         return (
             <div className='plf-path'>

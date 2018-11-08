@@ -33,6 +33,8 @@ export interface IVerificationView extends IView {
 }
 
 export interface IVerificationState {
+    sourceExit: string,
+    targetExit: string,
     availableYears: string[],
     currentSuggestion: number,
     selectedYear: string,
