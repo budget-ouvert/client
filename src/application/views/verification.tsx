@@ -126,7 +126,12 @@ export default class VerificationView extends React.Component<IVerificationView,
                             // component is unmounted
                             childFactory={(child: any): any => {
                                 return React.cloneElement(child, {
-                                    classNames: `toto ${sourceExit}`,
+                                    classNames: {
+                                        enter: 'plf-path-enter',
+                                        enterActive: 'plf-path-enter-active',
+                                        exit: `${sourceExit}-exit`,
+                                        exitActive: `${sourceExit}-exit-active`,
+                                    }
                                 })
                             }}
                         >
@@ -134,7 +139,12 @@ export default class VerificationView extends React.Component<IVerificationView,
                                 return <CSSTransition
                                     key={item}
                                     timeout={300}
-                                    classNames={`toto ${sourceExit}`}
+                                    classNames={{
+                                        enter: 'plf-path-enter',
+                                        enterActive: 'plf-path-enter-active',
+                                        exit: `${sourceExit}-exit`,
+                                        exitActive: `${sourceExit}-exit-active`,
+                                    }}
                                 >
                                     <PlfPath
                                         path={item}
@@ -151,7 +161,12 @@ export default class VerificationView extends React.Component<IVerificationView,
                         <TransitionGroup
                             childFactory={(child: any): any => {
                                 return React.cloneElement(child, {
-                                    classNames: `toto ${targetExit}`,
+                                    classNames: {
+                                        enter: 'plf-path-enter',
+                                        enterActive: 'plf-path-enter-active',
+                                        exit: `${targetExit}-exit`,
+                                        exitActive: `${targetExit}-exit-active`,
+                                    }
                                 })
                             }}
                         >
@@ -159,7 +174,12 @@ export default class VerificationView extends React.Component<IVerificationView,
                                 return <CSSTransition
                                     key={item}
                                     timeout={300}
-                                    classNames={`toto ${targetExit}`}
+                                    classNames={{
+                                        enter: 'plf-path-enter',
+                                        enterActive: 'plf-path-enter-active',
+                                        exit: `${targetExit}-exit`,
+                                        exitActive: `${targetExit}-exit-active`,
+                                    }}
                                 >
                                     <PlfPath
                                         path={item}

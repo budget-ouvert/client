@@ -10,14 +10,14 @@ body {
     margin: 0;
 }
 
-.toto-enter {
+.plf-path-enter {
     opacity: 0.01;
-    transform: scale(0.5);
+    // transform: scale(0.1);
 }
-.toto-enter-active {
+.plf-path-enter-active {
     opacity: 1;
     transform: scale(1);
-    transition: all 300ms ease-out;
+    transition: all 200ms ease-out;
 }
 
 .next-exit {
@@ -29,7 +29,7 @@ body {
 .next-exit-active {
     opacity: 0.01;
     transform: scale(0.9) translateX(50%);
-    transition: all 300ms ease-out;
+    transition: all 200ms ease-out;
 }
 
 .previous-exit {
@@ -41,7 +41,7 @@ body {
 .previous-exit-active {
     opacity: 0.01;
     transform: scale(0.9) translateX(-50%);
-    transition: all 300ms ease-out;
+    transition: all 200ms ease-out;
 }
 
 .downvote-exit {
@@ -53,19 +53,20 @@ body {
 .downvote-exit-active {
     opacity: 0.01;
     transform: scale(0.9) translateY(50%);
-    transition: all 300ms ease-out;
+    transition: all 200ms ease-out;
 }
 
 .upvote-exit {
     position: absolute;
     top: @window-padding;
+    left: 50%;
     opacity: 1;
-    transform: scale(1) translateY(0%);
+    transform: translateX(-50%) translateY(0%);
 }
 .upvote-exit-active {
     opacity: 0.01;
-    transform: scale(0.9) translateY(-50%);
-    transition: all 300ms ease-out;
+    transform: translateX(-50%) translateY(-50%);
+    transition: all 200ms ease-out;
 }
 
 #application-wrapper {
@@ -115,13 +116,13 @@ body {
             justify-content: center;
 
             .plf-path {
-                &:not(:last-child) {
-                    margin-right: calc(@window-padding/2);
-                }
-
-                &:not(:first-child) {
-                    margin-left: calc(@window-padding/2);
-                }
+                // &:not(:last-child) {
+                //     margin-right: calc(@window-padding/2);
+                // }
+                //
+                // &:not(:first-child) {
+                //     margin-left: calc(@window-padding/2);
+                // }
 
                 .plf-path-node {
                     max-width: 800px;
