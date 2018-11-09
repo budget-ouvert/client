@@ -44,7 +44,7 @@ const mapReduxStateToReactProps = (state : IAppState): IAppState => {
 @reduxify(mapReduxStateToReactProps)
 export class Main extends React.Component<IAppState, any> {
     public componentDidMount() {
-        this.props.dispatch(fetchPlfFile('http://api.live.rollin.ovh/plf2017CP.csv'))
+        this.props.dispatch(fetchPlfFile('http://api.live.rollin.ovh/cp/plf2017.csv'))
     }
 
     public render () {
