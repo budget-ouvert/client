@@ -3,6 +3,7 @@ import {
     Button,
     ControlGroup,
     Icon,
+    Spinner,
 } from '@blueprintjs/core'
 import * as React from 'react'
 import {connect} from 'react-redux'
@@ -13,10 +14,10 @@ import {
 
 // Import custom actions
 import {
+    changeSelectedYear,
     downvoteCurrentSuggestion,
     nextSuggestion,
     previousSuggestion,
-    updateSelectedYear,
     upvoteCurrentSuggestion,
 } from '../actions/verification'
 
@@ -33,6 +34,7 @@ import {
 // Import custom types
 import {
     IVerificationView,
+    ISuggestionTarget,
 } from '../types'
 
 // Link redux state to current component's react props
@@ -50,7 +52,7 @@ const mapReduxStateToReactProps = (state : IVerificationView): IVerificationView
 export default class VerificationView extends React.Component<IVerificationView, any> {
     public componentDidMount() {
         // TODO: should fetch data
-        this.props.dispatch(updateSelectedYear('2012'))
+        this.props.dispatch(changeSelectedYear('2012'))
 
         document.addEventListener("keydown", this.handleKeyPress, false)
     }
@@ -100,12 +102,13 @@ export default class VerificationView extends React.Component<IVerificationView,
     }
 
     public render () {
-        let {
+        const {
             dispatch,
             verification,
         } = this.props
 
-        let {
+        const {
+            loading,
             sourceExit,
             targetExit,
             availableYears,
@@ -116,16 +119,24 @@ export default class VerificationView extends React.Component<IVerificationView,
             targetPlf,
         } = verification
 
-        let sourceNodePath = sourcePlf[suggestionList[currentSuggestion].source_id]
-        let targetNodePath = targetPlf[suggestionList[currentSuggestion].target_id]
+        const sourceNodePath = sourcePlf && suggestionList.length > 0 ? sourcePlf[suggestionList[currentSuggestion].source_id] : null
 
-        return (
+        // const targetNodePaths = targetPlf && suggestionList.length > 0 && suggestionList[currentSuggestion].targets.length > 0 ? suggestionList[currentSuggestion].targets.map((target: ISuggestionTarget) => {
+        //     return targetPlf[target.target_id]
+        // }) : []
+
+        const targetNodePath = targetPlf && suggestionList.length > 0 && suggestionList[currentSuggestion].targets.length > 0 ? targetPlf[suggestionList[currentSuggestion].targets[0].target_id] : null
+
+        console.log(suggestionList.length > 0 ? suggestionList[currentSuggestion].targets : null)
+
+        return loading ?
+            <Spinner /> :
             <div id='main-verification-container'>
                 <StringSelect
                     inputItem={selectedYear}
                     items={availableYears}
                     icon={'calendar'}
-                    onChange={updateSelectedYear}
+                    onChange={changeSelectedYear}
                     dispatch={dispatch}
                 />
                 <ControlGroup id='choice-buttons'>
@@ -220,6 +231,5 @@ export default class VerificationView extends React.Component<IVerificationView,
                     </div>
                 </div>
             </div>
-        )
     }
 }

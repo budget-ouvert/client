@@ -33,34 +33,40 @@ export interface IVerificationView extends IView {
 }
 
 export interface IVerificationState {
+    loading: boolean,
     sourceExit: string,
     targetExit: string,
     availableYears: string[],
     currentSuggestion: number,
     selectedYear: string,
-    suggestionList: ISuggestion[],
+    suggestionList: ISuggestionSource[],
     sourcePlf: IPlf,
     targetPlf: IPlf,
     votes: IVotes,
 }
 
-export interface ISuggestion {
-    source_id: number,
-    target_id: number,
-    distance: number,
-    nearestNeighbors: any,
-}
-
 export interface IPlf {
-    [id: number]: string[],
+    [id: string]: string[],
 }
 
 export interface IVotes {
-    [source_id: number]: {
-        [target_id: number]: {
-            distance: number,
-            upvotes: number,
-            downvotes: number,
-        }
+    [source_id: string]: {
+        [target_id: string]: ISuggestion,
     }
+}
+
+export interface ISuggestion {
+    distance: number,
+    upvotes: number,
+    downvotes: number,
+    commentaires: string[],
+}
+
+export interface ISuggestionSource {
+    source_id: string,
+    targets: ISuggestionTarget[],
+}
+
+export interface ISuggestionTarget extends ISuggestion {
+    target_id: string,
 }

@@ -29,7 +29,7 @@ const mapReduxStateToReactProps = (state : ISunburstView): ISunburstView => {
 @reduxify(mapReduxStateToReactProps)
 export default class SunburstView extends React.Component<ISunburstView, any> {
     public componentDidMount() {
-        this.props.dispatch(fetchPlfFile('http://api.live.rollin.ovh/plf2017CP.csv'))
+        this.props.dispatch(fetchPlfFile('http://api.live.rollin.ovh/cp/plf2017.csv'))
     }
 
     public render () {

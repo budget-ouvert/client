@@ -13,121 +13,94 @@ import {
     simpleAction,
     IPlf,
     ISuggestion,
+    ISuggestionSource,
     IVerificationState,
     IVotes,
 } from '../types'
-
-const loadNumberCsv = (csv: string) : any => {
-    let rows = d3.dsvFormat(';').parseRows(csv).map((row: any) => {
-        let parsedRow : number[] = []
-
-        for (let i = 0; i < row.length; i++) {
-            parsedRow.push(+row[i])
-        }
-
-        return parsedRow
-    })
-
-    return rows
-}
 
 const plfCSVToPlfDict = (csv: string) : IPlf => {
     let plfDict: IPlf = {}
 
     let rows = d3.dsvFormat(';').parseRows(csv)
 
-    for (let i = 0; i < rows.length; i++) {
+    // Start from 1 to skip file header
+    for (let i = 1; i < rows.length; i++) {
         let nameList = []
 
-        for (let j = 0; j < Math.floor(rows[i].length / 2); j++) {
-            if (rows[i][2*j] == '') {
+        for (let j = 0; j < Math.floor((rows[i].length - 1) / 2); j++) {
+            if (rows[i][1 + 2*j] == '') {
                 break
             } else {
-                nameList.push(rows[i][2*j])
+                nameList.push(rows[i][1 + 2*j])
             }
         }
 
-        plfDict[i] = nameList
+        plfDict[`${i-1}`] = nameList
     }
 
     return plfDict
 }
 
-const neighborsCSVToSuggestionList = (csv: string) : ISuggestion[] => {
-    let suggestionList : ISuggestion[] = []
+const suggestionListFromVotes = (votes: IVotes) : ISuggestionSource[] => {
+    let suggestionList: any = []
 
-    let rows = loadNumberCsv(csv)
+    for (let source_id in votes) {
+        const targets = Object.keys(votes[source_id])
+            .sort((a: string, b: string) : number => {
+                return votes[source_id][a].distance - votes[source_id][b].distance
+            })
+            .map((target_id: string) => {
+                return {
+                    target_id,
+                    ...votes[source_id][target_id],
+                }
+            })
 
-    for (let i = 0; i < rows.length; i++) {
-        suggestionList.push({
-            source_id: i,
-            target_id: rows[i][0],
-            distance: rows[i][1],
-            nearestNeighbors: rows[i].splice(2, rows[i].length - 2),
-        })
-    }
-
-    return suggestionList
-}
-
-const votesCSVToVotesDict = (csv: string) : IVotes => {
-    let votesDict : IVotes = {}
-
-    let rows = loadNumberCsv(csv)
-
-    for (let i = 0; i < rows.length; i++) {
-        if (!votesDict[rows[i][0]]) {
-            votesDict[rows[i][0]] = {}
+        if (votes[source_id][targets[0].target_id].distance > votes[source_id][targets[1].target_id].distance) {
+            console.log('WTF bro')
         }
 
-        votesDict[rows[i][0]][rows[i][1]] = {
-            distance: rows[i][2],
-            upvotes: rows[i][3],
-            downvotes: rows[i][4],
+        const currentSuggestion : any = {
+            source_id,
+            targets,
         }
+
+        suggestionList.push(currentSuggestion)
     }
 
-    return votesDict
+    return suggestionList.sort((a: ISuggestionSource, b: ISuggestionSource) : number => {
+        const a_suggestion = a.targets[0]
+        const b_suggestion = b.targets[0]
+        return (b_suggestion.distance + b_suggestion.downvotes - b_suggestion.upvotes) - (a_suggestion.distance + a_suggestion.downvotes - a_suggestion.upvotes)
+    })
 }
-
-const votes = votesCSVToVotesDict(votesCsv)
-let suggestionList = neighborsCSVToSuggestionList(neighborsCsv).sort((a: any, b: any) => {
-    const upvotes_a = votes[a.source_id] ?
-        (votes[a.source_id][a.target_id] ?
-            votes[a.source_id][a.target_id].upvotes : 0) : 0
-    const downvotes_a = votes[a.source_id] ?
-        (votes[a.source_id][a.target_id] ?
-            votes[a.source_id][a.target_id].downvotes : 0) : 0
-    const upvotes_b = votes[b.source_id] ?
-        (votes[b.source_id][b.target_id] ?
-            votes[b.source_id][b.target_id].upvotes : 0) : 0
-    const downvotes_b = votes[b.source_id] ?
-        (votes[b.source_id][b.target_id] ?
-            votes[b.source_id][b.target_id].downvotes : 0) : 0
-
-    // Items with high distance and/or high downvotes and/or low upvotes
-    // should come first
-    return (b.distance + downvotes_b - upvotes_b) - (a.distance + downvotes_a - upvotes_a)
-})
 
 const initialState: IVerificationState = {
+    loading: false,
     sourceExit: 'next',
     targetExit: 'next',
-    availableYears: ['2012', '2013'],
+    availableYears: ['2012', '2013', '2014', '2015', '2016', '2017'],
     currentSuggestion: 0,
     selectedYear: null,
-    suggestionList,
-    sourcePlf: plfCSVToPlfDict(sourcePlfCsv),
-    targetPlf: plfCSVToPlfDict(targetPlfCsv),
-    votes,
+    suggestionList: [],
+    sourcePlf: null,
+    targetPlf: null,
+    votes: null,
 }
 
 const verification = (state = initialState, action: simpleAction): IVerificationState => {
     switch (action.type) {
+        case 'LOADING':
+            return {
+                ...state,
+                loading: true,
+            }
+
         case 'UPDATE_SELECTED_YEAR':
             return {
                 ...state,
                 selectedYear: action.payload,
+                loading: false,
             }
 
         case 'PREVIOUS_SUGGESTION':
@@ -146,6 +119,7 @@ const verification = (state = initialState, action: simpleAction): IVerification
                 targetExit: action.payload.exitClass,
             }
 
+        // Deprecated: no need to update the state?
         case 'DOWNVOTE_SUGGESTION': {
             const {
                 source_id,
@@ -162,6 +136,7 @@ const verification = (state = initialState, action: simpleAction): IVerification
                         distance,
                         upvotes: 0,
                         downvotes: 1,
+                        commentaires: [],
                     }
                 }
             } else {
@@ -170,6 +145,7 @@ const verification = (state = initialState, action: simpleAction): IVerification
                     distance,
                     upvotes: 0,
                     downvotes: 1,
+                    commentaires: [],
                 }
             }
 
@@ -180,6 +156,7 @@ const verification = (state = initialState, action: simpleAction): IVerification
             }
         }
 
+        // Deprecated: no need to update the state?
         case 'UPVOTE_SUGGESTION': {
             const {
                 source_id,
@@ -196,6 +173,7 @@ const verification = (state = initialState, action: simpleAction): IVerification
                         distance,
                         upvotes: 1,
                         downvotes: 0,
+                        commentaires: [],
                     }
                 }
             } else {
@@ -204,6 +182,7 @@ const verification = (state = initialState, action: simpleAction): IVerification
                     distance,
                     upvotes: 1,
                     downvotes: 0,
+                    commentaires: [],
                 }
             }
 
@@ -213,23 +192,46 @@ const verification = (state = initialState, action: simpleAction): IVerification
             }
         }
 
-        case 'NEXT_NEIGHBOR':
+        case 'NEXT_NEIGHBOR': {
             let {
                 currentSuggestion,
                 suggestionList,
             } = state
 
-            let suggestion = suggestionList[currentSuggestion]
-
-            let [nextTarget, nextDistance] = suggestion.nearestNeighbors.splice(0, 2)
-            suggestion.target_id = nextTarget
-            suggestion.distance = nextDistance
-            suggestionList[currentSuggestion] = suggestion
+            suggestionList[currentSuggestion].targets.shift()
 
             return {
                 ...state,
                 suggestionList,
+                targetExit: 'downvote',
             }
+        }
+
+        case 'RECEIVED_VOTES':
+            return {
+                ...state,
+                votes: action.payload,
+                suggestionList: suggestionListFromVotes(action.payload),
+            }
+
+        case 'RECEIVED_PLF': {
+            switch (action.payload.destination) {
+                case 'source':
+                    return {
+                        ...state,
+                        sourcePlf: plfCSVToPlfDict(action.payload.content),
+                    }
+
+                case 'target':
+                    return {
+                        ...state,
+                        targetPlf: plfCSVToPlfDict(action.payload.content),
+                    }
+
+                default:
+                    return state
+            }
+        }
 
         default:
             return state
