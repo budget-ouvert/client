@@ -1,15 +1,150 @@
 @import "~@blueprintjs/core/lib/css/blueprint.css";
 @import "~@blueprintjs/core/lib/less/variables";
 
+@window-padding: 20px;
+
 body {
-    background-color: @light-gray5;
+    background-color: @white;
     color: @black;
     padding: 0;
     margin: 0;
+}
+
+.plf-path-enter {
+    opacity: 0.01;
+    // transform: scale(0.1);
+}
+.plf-path-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 200ms ease-out;
+}
+
+.next-exit {
+    position: absolute;
+    top: @window-padding;
+    opacity: 1;
+    transform: scale(1) translateX(0%);
+}
+.next-exit-active {
+    opacity: 0.01;
+    transform: scale(0.9) translateX(50%);
+    transition: all 200ms ease-out;
+}
+
+.previous-exit {
+    position: absolute;
+    top: @window-padding;
+    opacity: 1;
+    transform: scale(1) translateX(0%);
+}
+.previous-exit-active {
+    opacity: 0.01;
+    transform: scale(0.9) translateX(-50%);
+    transition: all 200ms ease-out;
+}
+
+.downvote-exit {
+    position: absolute;
+    top: @window-padding;
+    opacity: 1;
+    transform: scale(1) translateY(0%);
+}
+.downvote-exit-active {
+    opacity: 0.01;
+    transform: scale(0.9) translateY(50%);
+    transition: all 200ms ease-out;
+}
+
+.upvote-exit {
+    position: absolute;
+    top: @window-padding;
+    left: 50%;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0%);
+}
+.upvote-exit-active {
+    opacity: 0.01;
+    transform: translateX(-50%) translateY(-50%);
+    transition: all 200ms ease-out;
 }
 
 #application-wrapper {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
+}
+
+#main-verification-container {
+    text-align: center;
+    padding: @window-padding;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100vh;
+
+    & > *:not(:last-child) {
+        margin-bottom: @window-padding;
+    }
+
+    #choice-buttons {
+        justify-content: center;
+    }
+
+    .linking-arrow {
+        color: @gray2;
+    }
+
+    .input-columns {
+        background-color: @light-gray4;
+        padding: @window-padding;
+        position: relative;
+
+        .year {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            color: @light-gray5;
+            background-color: @gray3;
+            padding: 3px;
+            font-size: 11px;
+            border-radius: 2px;
+        }
+
+        .plf-paths {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+
+            .plf-path {
+                // &:not(:last-child) {
+                //     margin-right: calc(@window-padding/2);
+                // }
+                //
+                // &:not(:first-child) {
+                //     margin-left: calc(@window-padding/2);
+                // }
+
+                .plf-path-node {
+                    max-width: 800px;
+                    &:last-child {
+                        .node-name {
+                            background-color: @blue3;
+                            color: @white;
+                        }
+                    }
+
+                    .node-name {
+                        padding: 5px;
+                        background-color: @gray5;
+                    }
+
+                    .bp3-icon {
+                        display: flex;
+                        justify-content: center;
+                        color: @gray3;
+                    }
+                }
+            }
+        }
+    }
 }

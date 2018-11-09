@@ -7,7 +7,7 @@ import {
 
 // Import custom types
 import {
-    action,
+    simpleAction,
     ISunburstState,
 } from '../types'
 
@@ -17,7 +17,7 @@ const initialState: ISunburstState = {
     selectedPath: null,
 }
 
-export function sunburst(state = initialState, action: action): ISunburstState {
+const sunburst = (state = initialState, action: simpleAction): ISunburstState => {
     switch (action.type) {
         case 'CHANGED_SUNBURST_POINT':
             return {
@@ -91,3 +91,5 @@ export function sunburst(state = initialState, action: action): ISunburstState {
             return state
     }
 }
+
+export default sunburst

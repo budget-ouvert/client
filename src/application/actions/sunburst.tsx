@@ -9,7 +9,7 @@ export const clickedSunburstPoint = (p: any): action => {
     }
 }
 
-export const fetchPlfFile = (url: string): any => {
+export const fetchPlfFile = (url: string): action => {
     return (dispatch: any, getState: any) => {
         fetch(url).then((res: any) => {
             return res.text()

@@ -16,7 +16,7 @@ interface IState {
 
 }
 
-export class Sunburst extends React.Component<IProps, IState> {
+export default class Sunburst extends React.Component<IProps, IState> {
     width: number;
 
     constructor(props: IProps) {
@@ -47,7 +47,7 @@ export class Sunburst extends React.Component<IProps, IState> {
     }
 
     public clearSunburst() {
-        const svg : any = d3.select('#container')
+        const svg : any = d3.select('#sunburst-container')
             .select('g')
             .remove();
     }
@@ -85,7 +85,7 @@ export class Sunburst extends React.Component<IProps, IState> {
 
         root.each((d : any) => d.current = d);
 
-        const svg : any = d3.select('#container')
+        const svg : any = d3.select('#sunburst-container')
             .style("font", "10px sans-serif");
 
         const g : any = svg.append("g")
@@ -186,7 +186,7 @@ export class Sunburst extends React.Component<IProps, IState> {
                     width={this.width}
                     height={this.width}
                     className={'sunburst'}
-                    id={'container'}
+                    id={'sunburst-container'}
                 >
 
                 </svg>

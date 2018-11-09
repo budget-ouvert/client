@@ -1,19 +1,4 @@
-import {
-    Navbar,
-    Button,
-    Alignment,
-    ControlGroup,
-    FormGroup,
-    MenuItem,
-} from '@blueprintjs/core'
-import {
-    Select,
-    ItemPredicate,
-    ItemRenderer,
-} from '@blueprintjs/select'
 import * as React from 'react'
-import {Route} from 'react-router'
-import {BrowserRouter} from 'react-router-dom'
 import {connect} from 'react-redux'
 
 // Import custom actions
@@ -22,12 +7,12 @@ import {
 } from '../actions/sunburst'
 
 // Import custom components
-import {Sunburst} from '../components/sunburst'
-import {DummyComponent} from '../components/dummyComponent'
+import Sunburst from '../components/sunburst'
+import DummyComponent from '../components/dummyComponent'
 
 // Import custom types
 import {
-    IAppState,
+    ISunburstView,
 } from '../types'
 
 // Link redux state to current component's react props
@@ -37,12 +22,12 @@ const reduxify = (mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 // Describe how redux state should be mapped to props
-const mapReduxStateToReactProps = (state : IAppState): IAppState => {
+const mapReduxStateToReactProps = (state : ISunburstView): ISunburstView => {
     return state
 }
 
 @reduxify(mapReduxStateToReactProps)
-export class Main extends React.Component<IAppState, any> {
+export default class SunburstView extends React.Component<ISunburstView, any> {
     public componentDidMount() {
         this.props.dispatch(fetchPlfFile('http://api.live.rollin.ovh/cp/plf2017.csv'))
     }
