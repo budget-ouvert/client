@@ -51,6 +51,36 @@ export default class VerificationView extends React.Component<IVerificationView,
     public componentDidMount() {
         // TODO: should fetch data
         this.props.dispatch(updateSelectedYear('2012'))
+
+        document.addEventListener("keydown", this.handleKeyPress, false)
+    }
+
+    public componentWillUnmount(){
+        document.removeEventListener("keydown", this.handleKeyPress, false)
+    }
+
+    public handleKeyPress = (event: any) => {
+        console.log(event.key)
+        switch (event.key) {
+            case 'ArrowRight':
+                this.props.dispatch(nextSuggestion('next'))
+                break
+
+            case 'ArrowLeft':
+                this.props.dispatch(previousSuggestion())
+                break
+
+            case 'ArrowDown':
+                this.props.dispatch(downvoteCurrentSuggestion())
+                break
+
+            case 'ArrowUp':
+                this.props.dispatch(upvoteCurrentSuggestion())
+                break
+
+            default:
+                return
+        }
     }
 
     private clickPreviousSuggestion = () => {
