@@ -4,6 +4,7 @@ import {
     ControlGroup,
     Icon,
     Spinner,
+    Tag,
 } from '@blueprintjs/core'
 import * as React from 'react'
 import {connect} from 'react-redux'
@@ -127,6 +128,8 @@ export default class VerificationView extends React.Component<IVerificationView,
 
         const targetNodePath = targetPlf && suggestionList.length > 0 && suggestionList[currentSuggestion].targets.length > 0 ? targetPlf[suggestionList[currentSuggestion].targets[0].target_id] : null
 
+        const targetDistance = targetPlf && suggestionList.length > 0 && suggestionList[currentSuggestion].targets.length > 0 ? suggestionList[currentSuggestion].targets[0].distance : null
+
         console.log(suggestionList.length > 0 ? suggestionList[currentSuggestion].targets : null)
 
         return loading ?
@@ -194,6 +197,26 @@ export default class VerificationView extends React.Component<IVerificationView,
                             })}
                         </TransitionGroup>
                     </div>
+                </div>
+                <div>
+                    {
+                        targetDistance ?
+                            <Tag
+                                large={true}
+                                intent={
+                                    targetDistance > 3 ?
+                                        'danger' :
+                                        (
+                                            targetDistance > 2 ?
+                                                'warning' :
+                                                'none'
+                                        )
+                                }
+                            >
+                                Distance : {Math.round(100 * targetDistance) / 100}
+                            </Tag> :
+                            null
+                    }
                 </div>
                 <Icon className='linking-arrow' icon='arrow-down' />
                 <div className='input-columns'>
