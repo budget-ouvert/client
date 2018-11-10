@@ -90,7 +90,7 @@ export const changeSelectedYear = (selectedYear: string) : action => {
         dispatch(loading())
 
         Promise.all([
-            dispatch(fetchVotes(`http://api.live.rollin.ovh/plf_mappings/plf${selectedYear}_to_plf${Number(selectedYear) + 1}.json`)),
+            dispatch(fetchVotes(`http://api.live.rollin.ovh/plf_votes/plf${selectedYear}_to_plf${Number(selectedYear) + 1}.json`)),
             dispatch(fetchPlf(`http://api.live.rollin.ovh/plf_all_nodes/plf${selectedYear}.csv`, 'source')),
             dispatch(fetchPlf(`http://api.live.rollin.ovh/plf_all_nodes/plf${Number(selectedYear) + 1}.csv`, 'target'))
         ]).then(() => {
