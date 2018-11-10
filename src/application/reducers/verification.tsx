@@ -2,7 +2,7 @@ import * as d3 from 'd3'
 
 // Import mock data
 import {
-    neighborsCsv,
+    neighboursCsv,
     sourcePlfCsv,
     targetPlfCsv,
     votesCsv,
@@ -192,7 +192,7 @@ const verification = (state = initialState, action: simpleAction): IVerification
             }
         }
 
-        case 'NEXT_NEIGHBOR': {
+        case 'NEXT_NEIGHBOUR': {
             let {
                 currentSuggestion,
                 suggestionList,
@@ -203,7 +203,7 @@ const verification = (state = initialState, action: simpleAction): IVerification
             return {
                 ...state,
                 suggestionList,
-                targetExit: 'downvote',
+                targetExit: action.payload.exitClass,
             }
         }
 

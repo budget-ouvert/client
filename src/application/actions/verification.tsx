@@ -25,10 +25,10 @@ export const downvoteCurrentSuggestion = () : action => {
 
         // TODO : send downvote to server
 
-        // Update current suggestion with nearestNeighbors
+        // Update current suggestion with nearestNeighbours
         if (suggestion.targets.length > 0) {
-            // Call nextNeighbor only if there actually are neighbors to be tested
-            dispatch(nextNeighbor())
+            // Call nextNeighbour only if there actually are neighbours to be tested
+            dispatch(nextNeighbour('downvote'))
         } else {
             // Otherwise, simply return the next suggestion
             dispatch(nextSuggestion('next'))
@@ -50,9 +50,6 @@ export const downvoteSuggestion = (source_id: number, target_id: number, distanc
 
 export const upvoteCurrentSuggestion = () : action => {
     return (dispatch: any, getState: any) => {
-        const state = getState()
-        const suggestion = state.verification.suggestionList[state.verification.currentSuggestion]
-
         // TODO: send upvote to server
 
         dispatch(nextSuggestion('upvote'))
@@ -71,9 +68,20 @@ export const upvoteSuggestion = (source_id: number, target_id: number, distance:
     }
 }
 
-export const nextNeighbor = () : action => {
+export const upvoteSuggestionNextNeighbour = () : action => {
+    return (dispatch: any, getState: any) => {
+        // TODO: send upvote to server
+
+        dispatch(nextNeighbour('upvote'))
+    }
+}
+
+export const nextNeighbour = (exitClass: string) : action => {
     return {
-        type: 'NEXT_NEIGHBOR',
+        type: 'NEXT_NEIGHBOUR',
+        payload: {
+            exitClass,
+        }
     }
 }
 

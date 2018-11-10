@@ -20,6 +20,7 @@ import {
     nextSuggestion,
     previousSuggestion,
     upvoteCurrentSuggestion,
+    upvoteSuggestionNextNeighbour,
 } from '../actions/verification'
 
 // Import custom components
@@ -53,7 +54,7 @@ const mapReduxStateToReactProps = (state : IVerificationView): IVerificationView
 export default class VerificationView extends React.Component<IVerificationView, any> {
     public componentDidMount() {
         // TODO: should fetch data
-        this.props.dispatch(changeSelectedYear('2012'))
+        this.props.dispatch(changeSelectedYear('2017'))
 
         document.addEventListener("keydown", this.handleKeyPress, false)
     }
@@ -94,6 +95,10 @@ export default class VerificationView extends React.Component<IVerificationView,
         this.props.dispatch(downvoteCurrentSuggestion())
     }
 
+    private clickUpvoteSuggestionNextNeighbour = () => {
+        this.props.dispatch(upvoteSuggestionNextNeighbour())
+    }
+
     private clickUpvoteSuggestion = () => {
         this.props.dispatch(upvoteCurrentSuggestion())
     }
@@ -122,6 +127,9 @@ export default class VerificationView extends React.Component<IVerificationView,
 
         const sourceNodePath = sourcePlf && suggestionList.length > 0 ? sourcePlf[suggestionList[currentSuggestion].source_id] : null
 
+        // The following lines could be usefull in case one wishes
+        // to display several suggestions at the same time.
+
         // const targetNodePaths = targetPlf && suggestionList.length > 0 && suggestionList[currentSuggestion].targets.length > 0 ? suggestionList[currentSuggestion].targets.map((target: ISuggestionTarget) => {
         //     return targetPlf[target.target_id]
         // }) : []
@@ -133,7 +141,9 @@ export default class VerificationView extends React.Component<IVerificationView,
         console.log(suggestionList.length > 0 ? suggestionList[currentSuggestion].targets : null)
 
         return loading ?
-            <Spinner /> :
+            <div id='centered-spinner'>
+                <Spinner />
+            </div> :
             <div id='main-verification-container'>
                 <StringSelect
                     inputItem={selectedYear}
@@ -154,6 +164,11 @@ export default class VerificationView extends React.Component<IVerificationView,
                     />
                     <Button
                         icon={'tick'}
+                        intent={'primary'}
+                        onClick={this.clickUpvoteSuggestionNextNeighbour}
+                    />
+                    <Button
+                        icon={'endorsed'}
                         intent={'success'}
                         onClick={this.clickUpvoteSuggestion}
                     />
