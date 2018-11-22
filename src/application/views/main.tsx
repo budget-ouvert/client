@@ -8,6 +8,7 @@ import {
 
 // Import custom components
 import Sunburst from '../components/sunburst'
+import Partition from '../components/partition'
 import DummyComponent from '../components/dummyComponent'
 
 // Import custom types
@@ -27,7 +28,7 @@ const mapReduxStateToReactProps = (state : ISunburstView): ISunburstView => {
 }
 
 @reduxify(mapReduxStateToReactProps)
-export default class SunburstView extends React.Component<ISunburstView, any> {
+export default class MainView extends React.Component<ISunburstView, any> {
     public componentDidMount() {
         this.props.dispatch(fetchPlfFile('http://api.live.rollin.ovh/cp/plf2017.csv'))
     }
@@ -39,13 +40,15 @@ export default class SunburstView extends React.Component<ISunburstView, any> {
         } = this.props
 
         return (
-            <div id='application'>
-                <Sunburst
-                    data={sunburst.data}
-                    dataLoadedTime={sunburst.dataLoadedTime}
-                    dispatch={dispatch}
-                />
-                <DummyComponent child={sunburst.selectedPath} />
+            <div id='partition-view'>
+                <div className='flex'>
+                    <Partition
+                        data={sunburst.data}
+                        dataLoadedTime={sunburst.dataLoadedTime}
+                        dispatch={dispatch}
+                    />
+                    {/* <DummyComponent child={sunburst.selectedPath} /> */}
+                </div>
             </div>
         )
     }
