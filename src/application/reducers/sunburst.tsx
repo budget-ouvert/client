@@ -1,10 +1,5 @@
 import * as d3 from 'd3'
 
-// Import mock data
-import {
-    sunburstTestData,
-} from '../mockdata/sunburst'
-
 // Import custom types
 import {
     simpleAction,
@@ -12,7 +7,7 @@ import {
 } from '../types'
 
 const initialState: ISunburstState = {
-    data: sunburstTestData,
+    data: null,
     dataLoadedTime: Date.now(),
     selectedPath: null,
 }

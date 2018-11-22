@@ -28,7 +28,9 @@ export default class Partition extends React.Component<IProps, IState> {
         console.log('componentDidMount')
         this.width = document.getElementById('partition-view').clientWidth
         this.height = document.getElementById('partition-view').clientHeight - 20
-        this.drawPartition()
+        if (this.props.data) {
+            this.drawPartition()
+        }
     }
 
     public shouldComponentUpdate(nextProps: IProps, nextState: IState) {
