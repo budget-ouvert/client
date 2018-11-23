@@ -35,19 +35,30 @@ import {
 
 // Import custom types
 import {
+    IReduxStore,
     IVerificationView,
-    ISuggestionTarget,
 } from '../../types'
 
 // Link redux state to current component's react props
 // which will now be notified when changes occur in redux state
 const reduxify = (mapReduxStateToReactProps: any, mapDispatchToProps?: any, mergeProps?: any, options?: any) => {
-    return (target: any) => (connect(mapReduxStateToReactProps, mapDispatchToProps, mergeProps, options)(target) as any)
+    return (target: any) => (
+        connect(
+            mapReduxStateToReactProps,
+            mapDispatchToProps,
+            mergeProps,
+            options
+        )(target) as any
+    )
 }
 
 // Describe how redux state should be mapped to props
-const mapReduxStateToReactProps = (state : IVerificationView): IVerificationView => {
-    return state
+const mapReduxStateToReactProps = (state : IReduxStore): IVerificationView => {
+    return {
+        ...state.views.verificationView,
+        data: state.data,
+        dispatch: state.dispatch,
+    }
 }
 
 @reduxify(mapReduxStateToReactProps)
@@ -110,10 +121,6 @@ export default class VerificationView extends React.Component<IVerificationView,
     public render () {
         const {
             dispatch,
-            verification,
-        } = this.props
-
-        const {
             loading,
             sourceExit,
             targetExit,
@@ -123,7 +130,7 @@ export default class VerificationView extends React.Component<IVerificationView,
             suggestionList,
             sourcePlf,
             targetPlf,
-        } = verification
+        } = this.props
 
         const sourceNodePath = sourcePlf && suggestionList.length > 0 ? sourcePlf[suggestionList[currentSuggestion].source_id] : null
 
@@ -137,8 +144,6 @@ export default class VerificationView extends React.Component<IVerificationView,
         const targetNodePath = targetPlf && suggestionList.length > 0 && suggestionList[currentSuggestion].targets.length > 0 ? targetPlf[suggestionList[currentSuggestion].targets[0].target_id] : null
 
         const targetDistance = targetPlf && suggestionList.length > 0 && suggestionList[currentSuggestion].targets.length > 0 ? suggestionList[currentSuggestion].targets[0].distance : null
-
-        console.log(suggestionList.length > 0 ? suggestionList[currentSuggestion].targets : null)
 
         return loading ?
             <div id='centered-spinner'>

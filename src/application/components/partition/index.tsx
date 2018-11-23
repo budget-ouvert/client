@@ -5,7 +5,7 @@ import * as _ from 'lodash'
 interface IProps {
     data: any,
     loadedTime: number,
-    onMouseOver: any,
+    onMouseOverCallback: any,
 }
 
 interface IState {
@@ -18,11 +18,9 @@ export default class Partition extends React.Component<IProps, IState> {
 
     constructor(props: IProps) {
         super(props)
-        // this.width = 900
     }
 
     public componentDidMount() {
-        console.log('componentDidMount')
         this.width = document.getElementById('partition-view').clientWidth
         this.height = document.getElementById('partition-view').clientHeight - 40
         if (this.props.data) {
@@ -31,8 +29,6 @@ export default class Partition extends React.Component<IProps, IState> {
     }
 
     public shouldComponentUpdate(nextProps: IProps, nextState: IState) {
-        console.log('shouldComponentUpdate')
-
         // If loaded time for input data is different,
         // then one should update this component.
         if (nextProps.loadedTime != this.props.loadedTime) {
@@ -48,17 +44,13 @@ export default class Partition extends React.Component<IProps, IState> {
     }
 
     public clearPartition() {
-        console.log('clearPartition')
         const svg : any = d3.select('#partition-container')
             .select('g')
             .remove();
     }
 
     public drawPartition() {
-        console.log('drawPartition');
-
-        const clicked = (that: any, p : any) => {
-            // focus = focus === p ? p = p.parent : p;
+        function clicked(that: any, p : any) {
             focus = p;
 
             root.each((d : any) => d.target = {
@@ -77,6 +69,20 @@ export default class Partition extends React.Component<IProps, IState> {
                 .attr("fill-opacity", (d : any) => +labelVisible(d.target));
             tspan.transition(t)
                 .attr("fill-opacity", (d : any) => +labelVisible(d.target) * 0.7);
+        }
+
+        function onMouseOver(that: any, p: any) {
+            d3.select(this)
+                .select('rect')
+                .attr("fill-opacity", 0.7)
+
+            that.props.onMouseOverCallback(p)
+        }
+
+        function onMouseLeave(p: any) {
+            d3.select(this)
+                .select('rect')
+                .attr("fill-opacity", 0.6)
         }
 
         const rectHeight = (d : any) => {
@@ -123,7 +129,8 @@ export default class Partition extends React.Component<IProps, IState> {
             .data(root.descendants())
             .enter().append("g")
                 .attr("transform", (d: any) => `translate(${d.y0},${d.x0})`)
-                .on("mouseover", this.props.onMouseOver);
+                .on("mouseover", _.partial(onMouseOver, this))
+                .on("mouseleave", _.partial(onMouseLeave, this))
 
         const rect = cell.append("rect")
             .attr("width", (d : any) => d.y1 - d.y0 - 1)
@@ -132,11 +139,9 @@ export default class Partition extends React.Component<IProps, IState> {
             .attr("fill", (d : any) => {
                 if (!d.depth) return "#ccc";
                 return color(d.depth / 10);
-                // while (d.depth > 1) d = d.parent;
-                // return color(d.data.name);
             })
             .style("cursor", "pointer")
-            .on("click", _.partial(clicked, this));
+            .on("click", _.partial(clicked, this))
 
         const text = cell.append("text")
             .style("user-select", "none")
@@ -148,15 +153,13 @@ export default class Partition extends React.Component<IProps, IState> {
 
         const tspan = text.append("tspan")
             .attr("fill-opacity", (d : any) => +labelVisible(d) * 0.7)
-            .text((d : any) => ` ${format(d.value)}`);
+            .text((d : any) => ` ${format(d.value)}`)
 
         cell.append("title")
             .text((d : any) => `${d.ancestors().map((d : any) => d.data.name).reverse().join("/")}\n${format(d.value)}`)
     }
 
     public render() {
-        console.log('render');
-
         return (
             <div>
                 <svg

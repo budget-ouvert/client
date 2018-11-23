@@ -21,7 +21,7 @@ export const previousSuggestion = () : IAction => {
 export const downvoteCurrentSuggestion = () : IAction => {
     return (dispatch: any, getState: any) => {
         const state : IVerificationView = getState()
-        const suggestion = state.verification.suggestionList[state.verification.currentSuggestion]
+        const suggestion = state.suggestionList[state.currentSuggestion]
 
         // TODO : send downvote to server
 

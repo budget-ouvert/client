@@ -14,7 +14,7 @@ import {
     IPlf,
     ISuggestion,
     ISuggestionSource,
-    IVerificationState,
+    IVerificationViewState,
     IVotes,
 } from '../../types'
 
@@ -75,7 +75,7 @@ const suggestionListFromVotes = (votes: IVotes) : ISuggestionSource[] => {
     })
 }
 
-const initialState: IVerificationState = {
+const initialState: IVerificationViewState = {
     loading: false,
     sourceExit: 'next',
     targetExit: 'next',
@@ -88,7 +88,7 @@ const initialState: IVerificationState = {
     votes: null,
 }
 
-const verification = (state = initialState, action: ISimpleAction): IVerificationState => {
+const verification = (state = initialState, action: ISimpleAction): IVerificationViewState => {
     switch (action.type) {
         case 'LOADING':
             return {

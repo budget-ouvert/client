@@ -63,7 +63,7 @@ export default class MainView extends React.Component<IMainView, any> {
                     <Partition
                         data={data.partition.data}
                         loadedTime={data.partition.loadedTime}
-                        onMouseOver={(p: any) => {
+                        onMouseOverCallback={(p: any) => {
                             let path : string[] = [p.data.name]
                             let currentNode = p
                             while (currentNode.parent) {

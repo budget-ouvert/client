@@ -10,6 +10,9 @@ export type IThunkAction = (dispatch: redux.Dispatch<any>, getState: any) => voi
 
 export type IAction = ISimpleAction | IThunkAction
 
+// This is the structure of the only store of this application.
+// The canonical state (data fetched from APIs) is stored under `data`
+// whereas the view state is stored under `view.[name_of_the_view]`
 export interface IReduxStore {
     dispatch?: any,
     data: any,
@@ -29,22 +32,8 @@ export interface IMainViewState {
 
 export interface IMainView extends IView, IMainViewState {}
 
-export interface ISunburstView extends IView {
-    sunburst: ISunburstState,
-}
-
-export interface ISunburstState {
-    data: any,
-    dataLoadedTime: number,
-    selectedPath: any,
-}
-
 // Verification view
-export interface IVerificationView extends IView {
-    verification: IVerificationState,
-}
-
-export interface IVerificationState {
+export interface IVerificationViewState {
     loading: boolean,
     sourceExit: string,
     targetExit: string,
@@ -56,6 +45,8 @@ export interface IVerificationState {
     targetPlf: IPlf,
     votes: IVotes,
 }
+
+export interface IVerificationView extends IView, IVerificationViewState {}
 
 export interface IPlf {
     [id: string]: string[],
