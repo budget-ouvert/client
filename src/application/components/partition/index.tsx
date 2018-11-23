@@ -2,13 +2,10 @@ import * as React from 'react'
 import * as d3 from 'd3'
 import * as _ from 'lodash'
 
-import {clickedSunburstPoint} from '../actions/sunburst'
-
-
 interface IProps {
-    data: any;
-    dataLoadedTime: number;
-    dispatch: any;
+    data: any,
+    loadedTime: number,
+    onMouseOver: any,
 }
 
 interface IState {
@@ -38,7 +35,7 @@ export default class Partition extends React.Component<IProps, IState> {
 
         // If loaded time for input data is different,
         // then one should update this component.
-        if (nextProps.dataLoadedTime != this.props.dataLoadedTime) {
+        if (nextProps.loadedTime != this.props.loadedTime) {
             return true
         }
 
@@ -80,19 +77,6 @@ export default class Partition extends React.Component<IProps, IState> {
                 .attr("fill-opacity", (d : any) => +labelVisible(d.target));
             tspan.transition(t)
                 .attr("fill-opacity", (d : any) => +labelVisible(d.target) * 0.7);
-
-            that.props.dispatch(clickedSunburstPoint(p))
-        }
-
-        const mouseover = (that: any, p: any) => {
-            console.log(p)
-            let path : string[] = [p.data.name]
-            let currentNode = p
-            while (currentNode.parent) {
-                path.push(currentNode.parent.data.name)
-                currentNode = currentNode.parent
-            }
-            that.props.dispatch(clickedSunburstPoint(path.reverse()))
         }
 
         const rectHeight = (d : any) => {
@@ -114,7 +98,7 @@ export default class Partition extends React.Component<IProps, IState> {
             // Ici, on multiplie la largeur par
             // 2 = maxdepth / 3
             // car je veux voir 2 colonnes s'afficher.
-            return d3.partition().size([this.height, 5 / 3 * this.width])(root)
+            return d3.partition().size([this.height, 6 / 3 * this.width])(root)
         }
 
         let color : any = d3.scaleOrdinal()
@@ -139,7 +123,7 @@ export default class Partition extends React.Component<IProps, IState> {
             .data(root.descendants())
             .enter().append("g")
                 .attr("transform", (d: any) => `translate(${d.y0},${d.x0})`)
-                .on("mouseover", _.partial(mouseover, this));
+                .on("mouseover", this.props.onMouseOver);
 
         const rect = cell.append("rect")
             .attr("width", (d : any) => d.y1 - d.y0 - 1)

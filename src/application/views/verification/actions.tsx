@@ -1,9 +1,9 @@
 import {
-    action,
+    IAction,
     IVerificationView,
-} from '../types'
+} from '../../types'
 
-export const nextSuggestion = (exitClass: string) : action => {
+export const nextSuggestion = (exitClass: string) : IAction => {
     return {
         type: 'NEXT_SUGGESTION',
         payload: {
@@ -12,13 +12,13 @@ export const nextSuggestion = (exitClass: string) : action => {
     }
 }
 
-export const previousSuggestion = () : action => {
+export const previousSuggestion = () : IAction => {
     return {
         type: 'PREVIOUS_SUGGESTION',
     }
 }
 
-export const downvoteCurrentSuggestion = () : action => {
+export const downvoteCurrentSuggestion = () : IAction => {
     return (dispatch: any, getState: any) => {
         const state : IVerificationView = getState()
         const suggestion = state.verification.suggestionList[state.verification.currentSuggestion]
@@ -37,7 +37,7 @@ export const downvoteCurrentSuggestion = () : action => {
 }
 
 // Deprecated: no need to update the state?
-export const downvoteSuggestion = (source_id: number, target_id: number, distance: number) : action => {
+export const downvoteSuggestion = (source_id: number, target_id: number, distance: number) : IAction => {
     return {
         type: 'DOWNVOTE_SUGGESTION',
         payload: {
@@ -48,7 +48,7 @@ export const downvoteSuggestion = (source_id: number, target_id: number, distanc
     }
 }
 
-export const upvoteCurrentSuggestion = () : action => {
+export const upvoteCurrentSuggestion = () : IAction => {
     return (dispatch: any, getState: any) => {
         // TODO: send upvote to server
 
@@ -57,7 +57,7 @@ export const upvoteCurrentSuggestion = () : action => {
 }
 
 // Deprecated: no need to update the state?
-export const upvoteSuggestion = (source_id: number, target_id: number, distance: number) : action => {
+export const upvoteSuggestion = (source_id: number, target_id: number, distance: number) : IAction => {
     return {
         type: 'UPVOTE_SUGGESTION',
         payload: {
@@ -68,7 +68,7 @@ export const upvoteSuggestion = (source_id: number, target_id: number, distance:
     }
 }
 
-export const upvoteSuggestionNextNeighbour = () : action => {
+export const upvoteSuggestionNextNeighbour = () : IAction => {
     return (dispatch: any, getState: any) => {
         // TODO: send upvote to server
 
@@ -76,7 +76,7 @@ export const upvoteSuggestionNextNeighbour = () : action => {
     }
 }
 
-export const nextNeighbour = (exitClass: string) : action => {
+export const nextNeighbour = (exitClass: string) : IAction => {
     return {
         type: 'NEXT_NEIGHBOUR',
         payload: {
@@ -85,7 +85,7 @@ export const nextNeighbour = (exitClass: string) : action => {
     }
 }
 
-export const changeSelectedYear = (selectedYear: string) : action => {
+export const changeSelectedYear = (selectedYear: string) : IAction => {
     return (dispatch: any, getState: any) => {
         dispatch(loading())
 
@@ -105,14 +105,14 @@ export const loading = () => {
     }
 }
 
-export const updateSelectedYear = (selectedYear: string) : action => {
+export const updateSelectedYear = (selectedYear: string) : IAction => {
     return {
         type: 'UPDATE_SELECTED_YEAR',
         payload: selectedYear,
     }
 }
 
-export const fetchVotes = (url: string) : action => {
+export const fetchVotes = (url: string) : IAction => {
     return (dispatch: any, getState: any) => {
         return fetch(url).then((response: any) => {
             return response.json()
@@ -125,21 +125,21 @@ export const fetchVotes = (url: string) : action => {
     }
 }
 
-export const receivedVotes = (response: any) : action => {
+export const receivedVotes = (response: any) : IAction => {
     return {
         type: 'RECEIVED_VOTES',
         payload: response,
     }
 }
 
-export const faildedVotes = (err: any) : action => {
+export const faildedVotes = (err: any) : IAction => {
     return {
         type: 'FAILED_VOTES',
         payload: err,
     }
 }
 
-export const fetchPlf = (url: string, destination: string) : action => {
+export const fetchPlf = (url: string, destination: string) : IAction => {
     return (dispatch: any, getState: any) => {
         return fetch(url).then((response: any) => {
             return response.text()
@@ -152,7 +152,7 @@ export const fetchPlf = (url: string, destination: string) : action => {
     }
 }
 
-export const receivedPlf = (response: any, destination: string) : action => {
+export const receivedPlf = (response: any, destination: string) : IAction => {
     return {
         type: 'RECEIVED_PLF',
         payload: {
@@ -162,7 +162,7 @@ export const receivedPlf = (response: any, destination: string) : action => {
     }
 }
 
-export const faildedPlf = (err: any) : action => {
+export const faildedPlf = (err: any) : IAction => {
     return {
         type: 'FAILED_PLF',
         payload: err,

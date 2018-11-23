@@ -21,23 +21,23 @@ import {
     previousSuggestion,
     upvoteCurrentSuggestion,
     upvoteSuggestionNextNeighbour,
-} from '../actions/verification'
+} from './actions'
 
 // Import custom components
-import StringSelect from '../components/selects/stringSelect'
-import PlfPath from '../components/plfPath'
+import StringSelect from '../../components/selects/stringSelect'
+import PlfPath from '../../components/plfPath'
 
 // Import mock data
 import {
     inputNode,
     saleNode,
-} from '../mockdata/verification'
+} from '../../mockdata/verification'
 
 // Import custom types
 import {
     IVerificationView,
     ISuggestionTarget,
-} from '../types'
+} from '../../types'
 
 // Link redux state to current component's react props
 // which will now be notified when changes occur in redux state

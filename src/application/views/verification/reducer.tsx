@@ -6,17 +6,17 @@ import {
     sourcePlfCsv,
     targetPlfCsv,
     votesCsv,
-} from '../mockdata/verification'
+} from '../../mockdata/verification'
 
 // Import custom types
 import {
-    simpleAction,
+    ISimpleAction,
     IPlf,
     ISuggestion,
     ISuggestionSource,
     IVerificationState,
     IVotes,
-} from '../types'
+} from '../../types'
 
 const plfCSVToPlfDict = (csv: string) : IPlf => {
     let plfDict: IPlf = {}
@@ -88,7 +88,7 @@ const initialState: IVerificationState = {
     votes: null,
 }
 
-const verification = (state = initialState, action: simpleAction): IVerificationState => {
+const verification = (state = initialState, action: ISimpleAction): IVerificationState => {
     switch (action.type) {
         case 'LOADING':
             return {

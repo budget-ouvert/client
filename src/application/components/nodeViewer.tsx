@@ -16,8 +16,8 @@ export default class NodeViewer extends React.Component<Props, State> {
             <div>
                 <ul className="bp3-breadcrumbs">
                   {path ?
-                      path.map((item: string) => {
-                          return <li><a className="bp3-breadcrumb">{item}</a></li>
+                      path.map((item: string, index: number) => {
+                          return <li key={index}><a className="bp3-breadcrumb">{item}</a></li>
                       }) :
                       null
                   }

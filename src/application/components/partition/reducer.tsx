@@ -2,25 +2,22 @@ import * as d3 from 'd3'
 
 // Import custom types
 import {
-    simpleAction,
-    ISunburstState,
-} from '../types'
+    ISimpleAction,
+} from '../../types'
 
-const initialState: ISunburstState = {
-    data: null,
-    dataLoadedTime: Date.now(),
-    selectedPath: null,
+interface IPartitionState {
+    data: any,
+    loadedTime: any,
 }
 
-const sunburst = (state = initialState, action: simpleAction): ISunburstState => {
-    switch (action.type) {
-        case 'CHANGED_SUNBURST_POINT':
-            return {
-                ...state,
-                selectedPath: action.payload,
-            }
+const initialState: IPartitionState = {
+    data: null,
+    loadedTime: Date.now(),
+}
 
-        case 'SUCCESS_FETCH_PLF_FILE':
+const reducer = (state = initialState, action: ISimpleAction): IPartitionState => {
+    switch (action.type) {
+        case 'FETCH_PARTITION_SUCCESS':
             // Turn incoming CSV file into a javascript object
             // that will later on be used by our partition component.
             // This function expects a CSV file with a header, and 10 columns
@@ -37,7 +34,7 @@ const sunburst = (state = initialState, action: simpleAction): ISunburstState =>
                 // Get numeric information
                 // (dans le cas du PLF, ce qui nous intéresse ce sont
                 // les crédits de paiement)
-                const size = +rows[i][9]
+                const size = +rows[i][11]
                 if (isNaN(size)) {
                     continue
                 }
@@ -49,6 +46,11 @@ const sunburst = (state = initialState, action: simpleAction): ISunburstState =>
                     rows[i][4],
                     rows[i][6]
                 ]
+
+                // If sous-action exists, add it
+                if (rows[i][8] != '') {
+                    path.push(rows[i][8])
+                }
 
                 // One starts from the root node, and for each
                 // element of the current node's path,
@@ -96,15 +98,17 @@ const sunburst = (state = initialState, action: simpleAction): ISunburstState =>
             return {
                 ...state,
                 data: root,
-                dataLoadedTime: Date.now(),
+                loadedTime: Date.now(),
             }
 
-        case 'FAILED_FETCH':
-            return state
+        case 'FETCH_PARTITION_FAILURE':
+            return {
+                ...state,
+            }
 
         default:
             return state
     }
 }
 
-export default sunburst
+export default reducer

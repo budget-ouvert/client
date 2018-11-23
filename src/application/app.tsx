@@ -4,9 +4,9 @@ import {
     Provider,
 } from 'react-redux'
 import {
-    createStore,
     applyMiddleware,
     combineReducers,
+    createStore,
 } from 'redux'
 import {
     createLogger,
@@ -14,20 +14,20 @@ import {
 
 import './../style.less'
 import Routes from './routes'
-import middlewares from './middlewares/middlewares'
-import mainReducer from './reducers/mainReducer'
+import middlewares from './middlewares'
+// import mainReducer from './reducers/mainReducer'
+import mainReducer from './reducer'
 
 // Redux initialisation
 if (process.env.NODE_ENV === 'development') {
     // Log redux dispatch only in development
     middlewares.push(createLogger({}))
 }
-const finalCreateStore = applyMiddleware(...middlewares)(createStore)
-const store = finalCreateStore(mainReducer)
+const store = applyMiddleware(...middlewares)(createStore)(mainReducer)
 
 ReactDOM.render(
     <Provider store={store}>
         <Routes />
     </Provider>,
     document.getElementById('application-wrapper')
-);
+)
