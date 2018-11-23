@@ -27,7 +27,10 @@ interface IView {
 
 // Main view
 export interface IMainViewState {
-    selectedPath: string[],
+    selectedNode: {
+        path: string[],
+        size: number,
+    },
 }
 
 export interface IMainView extends IView, IMainViewState {}

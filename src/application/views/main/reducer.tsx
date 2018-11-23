@@ -9,7 +9,10 @@ import {
 } from '../../types'
 
 const initialState: IMainViewState = {
-    selectedPath: null,
+    selectedNode: {
+        path: [],
+        size: null,
+    },
 }
 
 const reducer = (state = initialState, action: ISimpleAction): IMainViewState => {
@@ -17,7 +20,10 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
         case 'CHANGED_SELECTED_POINT':
             return {
                 ...state,
-                selectedPath: action.payload,
+                selectedNode: {
+                    path: action.payload.path,
+                    size: action.payload.size,
+                },
             }
 
         default:

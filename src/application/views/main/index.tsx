@@ -51,14 +51,17 @@ export default class MainView extends React.Component<IMainView, any> {
         let {
             data,
             dispatch,
-            selectedPath,
+            selectedNode,
         } = this.props
 
         return (
             <div id='partition-view'>
                 <div>
                     <div id='node-viewer'>
-                        <NodeViewer path={selectedPath} />
+                        <NodeViewer
+                            path={selectedNode.path}
+                            size={selectedNode.size}
+                        />
                     </div>
                     <Partition
                         data={data.partition.data}
@@ -71,7 +74,7 @@ export default class MainView extends React.Component<IMainView, any> {
                                 currentNode = currentNode.parent
                             }
 
-                            this.props.dispatch(changeSelectedPoint(path.reverse()))
+                            this.props.dispatch(changeSelectedPoint(path.reverse(), p.value))
                         }}
                     />
                 </div>

@@ -22,7 +22,7 @@ export default class Partition extends React.Component<IProps, IState> {
 
     public componentDidMount() {
         this.width = document.getElementById('partition-view').clientWidth
-        this.height = document.getElementById('partition-view').clientHeight - 40
+        this.height = document.getElementById('partition-view').clientHeight - 100
         if (this.props.data) {
             this.drawPartition()
         }
@@ -115,7 +115,7 @@ export default class Partition extends React.Component<IProps, IState> {
         let width : any = this.width
         let height : any = this.height
 
-        const root = partition(data);
+        const root = partition(data)
         let focus = root;
 
         const svg = d3.select('#partition-container')
