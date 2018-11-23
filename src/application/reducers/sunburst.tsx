@@ -22,28 +22,47 @@ const sunburst = (state = initialState, action: simpleAction): ISunburstState =>
 
         case 'SUCCESS_FETCH_PLF_FILE':
             // Turn incoming CSV file into a javascript object
-            // that will later on be used by our sunburst component.
-            let csv = d3.dsvFormat(';').parseRows(action.payload.content)
+            // that will later on be used by our partition component.
+            // This function expects a CSV file with a header, and 10 columns
+            let rows = d3.dsvFormat(';').parseRows(action.payload.content)
 
+            // Create root node
             let root : any = {
                 'name': 'PLF',
                 'children': [] as any,
             }
 
-            for (let i = 0; i < csv.length; i++) {
-                let sequence = csv[i][0]
-                let size = (csv[i].length > 1) ? (+csv[i][1]) : 1
+            // Iterate through lines (skip the first one as it's a header)
+            for (let i = 1; i < rows.length; i++) {
+                // Get numeric information
+                // (dans le cas du PLF, ce qui nous intéresse ce sont
+                // les crédits de paiement)
+                const size = +rows[i][9]
                 if (isNaN(size)) {
                     continue
                 }
 
-                let parts = sequence.split('|')
+                // Get node path
+                const path = [
+                    rows[i][0],
+                    rows[i][2],
+                    rows[i][4],
+                    rows[i][6]
+                ]
+
+                // One starts from the root node, and for each
+                // element of the current node's path,
+                // one makes sure that this node exists.
                 let currentNode = root
-                for (let j = 0; j < parts.length; j++) {
+
+                for (let j = 0; j < path.length; j++) {
                     let children = currentNode['children']
-                    let nodeName = parts[j]
+                    let nodeName = path[j]
                     let childNode
-                    if (j + 1 < parts.length) {
+
+                    // If j is not at "action"-level, then
+                    // continue checking of nodes do exist...
+                    if (j + 1 < path.length) {
                         let foundChild = false
 
                         for (let k = 0; k < children.length; k++) {
@@ -63,6 +82,7 @@ const sunburst = (state = initialState, action: simpleAction): ISunburstState =>
                         }
 
                         currentNode = childNode
+                    // ... otherwise create it as one is sure it doesn't exist.
                     } else {
                         childNode = {
                             'name': nodeName,

@@ -68,8 +68,10 @@ export default class Partition extends React.Component<IProps, IState> {
                 .sort((a: any, b: any) => b.value - a.value);
 
             // La size donne les dimensions de l'espace de projection.
-            // Ici, 2 = maxdepth / 3, car je veux voir 3 colonnes s'afficher.
-            return d3.partition().size([this.height, 2 * this.width])(root)
+            // Ici, on multiplie la largeur par
+            // 2 = maxdepth / 3
+            // car je veux voir 2 colonnes s'afficher.
+            return d3.partition().size([this.height, 5 / 3 * this.width])(root)
         }
 
         let color : any = d3.scaleOrdinal()
@@ -101,9 +103,10 @@ export default class Partition extends React.Component<IProps, IState> {
             .attr("fill-opacity", 0.6)
             .attr("fill", (d : any) => {
                 if (!d.depth) return "#ccc";
-                while (d.depth > 1) d = d.parent;
-                    return color(d.data.name);
-                })
+                return color(d.depth / 10);
+                // while (d.depth > 1) d = d.parent;
+                // return color(d.data.name);
+            })
             .style("cursor", "pointer")
             .on("click", _.partial(clicked, this));
 
@@ -142,7 +145,7 @@ export default class Partition extends React.Component<IProps, IState> {
 
             const t = cell.transition().duration(750)
                 .filter((d: any) : any => rectVisible(d))
-                .attr("transform", (d : any) => `translate(${d.target.y0 + (focus.depth == 0 ? 0 : 20)},${d.target.x0})`);
+                .attr("transform", (d : any) => `translate(${d.target.y0 + (focus.depth == 0 ? 0 : 50)},${d.target.x0})`);
 
             rect.transition(t)
                 .attr("height", (d : any) => rectHeight(d.target));
