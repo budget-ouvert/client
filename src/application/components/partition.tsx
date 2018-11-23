@@ -27,7 +27,7 @@ export default class Partition extends React.Component<IProps, IState> {
     public componentDidMount() {
         console.log('componentDidMount')
         this.width = document.getElementById('partition-view').clientWidth
-        this.height = document.getElementById('partition-view').clientHeight - 20
+        this.height = document.getElementById('partition-view').clientHeight - 40
         if (this.props.data) {
             this.drawPartition()
         }
@@ -59,6 +59,49 @@ export default class Partition extends React.Component<IProps, IState> {
 
     public drawPartition() {
         console.log('drawPartition');
+
+        const clicked = (that: any, p : any) => {
+            // focus = focus === p ? p = p.parent : p;
+            focus = p;
+
+            root.each((d : any) => d.target = {
+                x0: (d.x0 - p.x0) / (p.x1 - p.x0) * height,
+                x1: (d.x1 - p.x0) / (p.x1 - p.x0) * height,
+                y0: d.y0 - p.y0,
+                y1: d.y1 - p.y0
+            })
+
+            const t = cell.transition().duration(750)
+                .attr("transform", (d : any) => `translate(${d.target.y0 + (focus.depth == 0 ? 0 : 50)},${d.target.x0})`);
+
+            rect.transition(t)
+                .attr("height", (d : any) => rectHeight(d.target));
+            text.transition(t)
+                .attr("fill-opacity", (d : any) => +labelVisible(d.target));
+            tspan.transition(t)
+                .attr("fill-opacity", (d : any) => +labelVisible(d.target) * 0.7);
+
+            that.props.dispatch(clickedSunburstPoint(p))
+        }
+
+        const mouseover = (that: any, p: any) => {
+            console.log(p)
+            let path : string[] = [p.data.name]
+            let currentNode = p
+            while (currentNode.parent) {
+                path.push(currentNode.parent.data.name)
+                currentNode = currentNode.parent
+            }
+            that.props.dispatch(clickedSunburstPoint(path.reverse()))
+        }
+
+        const rectHeight = (d : any) => {
+            return d.x1 - d.x0 - Math.min(1, (d.x1 - d.x0) / 2);
+        }
+
+        const labelVisible = (d : any) => {
+            return d.y1 <= width && d.y0 >= 0 && d.x1 - d.x0 > 16;
+        }
 
         let data = this.props.data;
 
@@ -95,7 +138,8 @@ export default class Partition extends React.Component<IProps, IState> {
             .selectAll("g")
             .data(root.descendants())
             .enter().append("g")
-                .attr("transform", (d: any) => `translate(${d.y0},${d.x0})`);
+                .attr("transform", (d: any) => `translate(${d.y0},${d.x0})`)
+                .on("mouseover", _.partial(mouseover, this));
 
         const rect = cell.append("rect")
             .attr("width", (d : any) => d.y1 - d.y0 - 1)
@@ -124,87 +168,6 @@ export default class Partition extends React.Component<IProps, IState> {
 
         cell.append("title")
             .text((d : any) => `${d.ancestors().map((d : any) => d.data.name).reverse().join("/")}\n${format(d.value)}`)
-
-        function clicked(that: any, p : any) {
-            // focus = focus === p ? p = p.parent : p;
-            focus = p;
-
-            root.each((d : any) => d.target = {
-                x0: (d.x0 - p.x0) / (p.x1 - p.x0) * height,
-                x1: (d.x1 - p.x0) / (p.x1 - p.x0) * height,
-                y0: d.y0 - p.y0,
-                y1: d.y1 - p.y0
-            })
-
-            root.each((d: any) => {
-                if (rectVisible(d)) {
-                    console.log(true)
-                }
-            })
-            console.log('next')
-
-            const t = cell.transition().duration(750)
-                .filter((d: any) : any => rectVisible(d))
-                .attr("transform", (d : any) => `translate(${d.target.y0 + (focus.depth == 0 ? 0 : 50)},${d.target.x0})`);
-
-            rect.transition(t)
-                .attr("height", (d : any) => rectHeight(d.target));
-            text.transition(t)
-                .attr("fill-opacity", (d : any) => +labelVisible(d.target));
-            tspan.transition(t)
-                .attr("fill-opacity", (d : any) => +labelVisible(d.target) * 0.7);
-
-            that.props.dispatch(clickedSunburstPoint(p))
-        }
-
-        function rectVisible(d : any) : any {
-            // Returns true if rectangle y coordinate makes it potentially visible
-            return d.target.y0 <= width && d.target.y1 >= (- width / 3)
-        }
-
-        function rectHeight(d : any) {
-            return d.x1 - d.x0 - Math.min(1, (d.x1 - d.x0) / 2);
-        }
-
-        function labelVisible(d : any) {
-            return d.y1 <= width && d.y0 >= 0 && d.x1 - d.x0 > 16;
-        }
-
-        function wrap(textNodes: any, width: number) {
-            console.log(textNodes)
-            textNodes.each((textNode: any) => {
-                console.log(textNode)
-                let words = textNode.text().split(/\s+/).reverse(),
-                    word,
-                    line : any = [],
-                    lineNumber = 0,
-                    lineHeight = 1.1, // ems
-                    x = text.attr("x"),
-                    y = text.attr("y"),
-                    dy = 0, //parseFloat(text.attr("dy")),
-                    tspan = text.text(null)
-                                .append("tspan")
-                                .attr("x", x)
-                                .attr("y", y)
-                                .attr("dy", dy + "em");
-
-                while (word = words.pop()) {
-                    line.push(word);
-                    tspan.text(line.join(" "));
-                    let node = tspan.node() as any
-                    if (node.getComputedTextLength() > width) {
-                        line.pop();
-                        tspan.text(line.join(" "));
-                        line = [word];
-                        tspan = text.append("tspan")
-                                    .attr("x", x)
-                                    .attr("y", y)
-                                    .attr("dy", ++lineNumber * lineHeight + dy + "em")
-                                    .text(word);
-                    }
-                }
-            });
-        }
     }
 
     public render() {

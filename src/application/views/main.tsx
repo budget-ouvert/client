@@ -9,7 +9,7 @@ import {
 // Import custom components
 import Sunburst from '../components/sunburst'
 import Partition from '../components/partition'
-import DummyComponent from '../components/dummyComponent'
+import NodeViewer from '../components/nodeViewer'
 
 // Import custom types
 import {
@@ -41,13 +41,15 @@ export default class MainView extends React.Component<ISunburstView, any> {
 
         return (
             <div id='partition-view'>
-                <div className='flex'>
+                <div>
                     <Partition
                         data={sunburst.data}
                         dataLoadedTime={sunburst.dataLoadedTime}
                         dispatch={dispatch}
                     />
-                    {/* <DummyComponent child={sunburst.selectedPath} /> */}
+                    <div id='node-viewer'>
+                        <NodeViewer path={sunburst.selectedPath} />
+                    </div>
                 </div>
             </div>
         )
