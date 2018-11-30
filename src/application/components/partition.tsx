@@ -6,6 +6,7 @@ interface IProps {
     data: any,
     loadedTime: number,
     onMouseOverCallback: any,
+    targetDivId: string,
 }
 
 interface IState {
@@ -114,8 +115,8 @@ export default class Partition extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        this.width = document.getElementById('partition').clientWidth
-        this.height = document.getElementById('partition').clientHeight
+        this.width = document.getElementById(this.props.targetDivId).clientWidth
+        this.height = document.getElementById(this.props.targetDivId).clientHeight
         if (this.state.data) {
             this.drawPartition()
         }
@@ -137,7 +138,8 @@ export default class Partition extends React.Component<IProps, IState> {
     }
 
     public clearPartition() {
-        const svg : any = d3.select('#partition-container')
+        const svg : any = d3.select(`#${this.props.targetDivId}`)
+            .select(`#local-container`)
             .select('g')
             .remove();
     }
@@ -253,7 +255,8 @@ export default class Partition extends React.Component<IProps, IState> {
         const root = partition(data)
         let focus = root;
 
-        const svg = d3.select('#partition-container')
+        const svg = d3.select(`#${this.props.targetDivId}`)
+            .select(`#local-container`)
             .style("width", `${this.width}px`)
             .style("height", `${this.height}px`)
             .style("overflow", "hidden")
@@ -301,7 +304,7 @@ export default class Partition extends React.Component<IProps, IState> {
             <div>
                 <svg
                     ref='container'
-                    id={'partition-container'}
+                    id={'local-container'}
                 >
 
                 </svg>

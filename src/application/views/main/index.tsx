@@ -21,6 +21,7 @@ import {
 // Import custom components
 import NodeViewer from '../../components/nodeViewer'
 import Partition from '../../components/partition'
+import BarChart from '../../components/barChart'
 import StringSelect from '../../components/selects/stringSelect'
 
 // Import custom types
@@ -117,6 +118,13 @@ export default class MainView extends React.Component<IMainView, any> {
                         path={selectedNode.path}
                         size={selectedNode.size}
                     />
+                    <div id='barchart'>
+                        <BarChart
+                            data={[{name: 'Salam', value: 90}, {name: 'Yo', value: 50}]}
+                            loadedTime={Date.now()}
+                            targetDivId={'barchart'}
+                        />
+                    </div>
                 </div>
                 <div id='partition-viewer'>
                     <div id='partition'>
@@ -137,6 +145,7 @@ export default class MainView extends React.Component<IMainView, any> {
 
                                     this.props.dispatch(updateSelectedNode(path.reverse(), p.value))
                                 }}
+                                targetDivId={'partition'}
                             />
                         }
                     </div>
