@@ -12,8 +12,8 @@ import VerificationView from './views/verification'
 const Routes = () => (
     <BrowserRouter>
         <Switch>
-            <Route exact path='/' component={MainView} />
-            <Route path='/introduction' component={IntroductionView} />
+            <Route exact path='/' component={IntroductionView} />
+            <Route path='/visualisation' component={MainView} />
             <Route path='/verification' component={VerificationView} />
         </Switch>
     </BrowserRouter>
