@@ -1,9 +1,11 @@
 import {
+    Button,
     ControlGroup,
     Spinner,
 } from '@blueprintjs/core'
 import * as React from 'react'
-import {connect} from 'react-redux'
+import { Redirect } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 import './style.less'
 
@@ -49,6 +51,10 @@ export interface IMainViewState {
 
 export interface IMainView extends IView, IMainViewState {}
 
+export interface IState {
+    shouldRedirect: boolean,
+}
+
 // Link redux state to current component's react props
 // which will now be notified when changes occur in redux state
 const reduxify = (mapReduxStateToReactProps: any, mapDispatchToProps?: any, mergeProps?: any, options?: any) => {
@@ -72,7 +78,13 @@ const mapReduxStateToReactProps = (state : IReduxStore): IMainView => {
 }
 
 @reduxify(mapReduxStateToReactProps)
-export default class MainView extends React.Component<IMainView, any> {
+export default class MainView extends React.Component<IMainView, IState> {
+    constructor(props: IMainView) {
+        super(props)
+        this.state = {
+            shouldRedirect: false,
+        }
+    }
     public componentDidMount() {
         this.props.dispatch(fetchPartition('http://api.live.rollin.ovh/information_by_action/plf_2019.csv'))
     }
@@ -89,7 +101,9 @@ export default class MainView extends React.Component<IMainView, any> {
 
         return (
             <div id='main-view-container'>
+                {this.state.shouldRedirect ? <Redirect to='/' /> : null}
                 <div id='header' className={'bp3-dark'}>
+                    <div></div>
                     <ControlGroup>
                         <StringSelect
                             disabled={true}
@@ -112,6 +126,11 @@ export default class MainView extends React.Component<IMainView, any> {
                             }}
                         />
                     </ControlGroup>
+                    <Button
+                        icon={'help'}
+                        minimal={true}
+                        onClick={() => this.setState({shouldRedirect: true,})}
+                    />
                 </div>
                 <div id='node-viewer'>
                     <div id='path-breadcrumbs'>
