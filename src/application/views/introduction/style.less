@@ -1,11 +1,29 @@
+@import "~@blueprintjs/core/lib/css/blueprint.css";
+@import "~@blueprintjs/core/lib/less/variables";
+
 @view-padding: 20px;
+
+body {
+    background-color: @light-gray5;
+}
 
 #main-container {
     margin: 0 auto;
     max-width: 800px;
+    justify-content: center;
+
+    .centered-content {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
 
     & > * {
-        margin-bottom: @view-padding;
+        margin-bottom: calc(2 * @view-padding);
+    }
+
+    .bp3-callout {
+        padding: @view-padding;
     }
 
     p {
