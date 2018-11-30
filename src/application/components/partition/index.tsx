@@ -21,8 +21,8 @@ export default class Partition extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        this.width = document.getElementById('partition-view').clientWidth
-        this.height = document.getElementById('partition-view').clientHeight - 100
+        this.width = document.getElementById('partition').clientWidth
+        this.height = document.getElementById('partition').clientHeight
         if (this.props.data) {
             this.drawPartition()
         }
@@ -179,7 +179,8 @@ export default class Partition extends React.Component<IProps, IState> {
             .attr("height", (d : any) => rectHeight(d))
             .attr("fill-opacity", 0.6)
             .attr("fill", (d : any) => {
-                if (!d.depth) return "#ccc";
+                // Root node's background color
+                if (!d.depth) return "#A7B6C2";
                 return color(d.depth / 10);
             })
             .style("cursor", "pointer")
