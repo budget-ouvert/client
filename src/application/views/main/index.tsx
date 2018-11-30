@@ -98,14 +98,14 @@ export default class MainView extends React.Component<IMainView, any> {
                             onChange={null}
                         />
                         <StringSelect
-                            items={['PLF', 'LFI', 'LR']}
+                            items={['PLF']}
                             inputItem={sourceType}
                             onChange={(target: string) => {
                                 dispatch(updateSourceType(target))
                             }}
                         />
                         <StringSelect
-                            items={['2018', '2019']}
+                            items={['2019']}
                             inputItem={year}
                             onChange={(target: string) => {
                                 dispatch(updateYear(target))
