@@ -4,15 +4,15 @@ import {Select, ItemPredicate, ItemRenderer} from "@blueprintjs/select";
 import {IconName} from '@blueprintjs/icons';
 
 interface ISelectProps<T> {
-    items: T[];
-    inputItem: T;
-    renderItem: ItemRenderer<T>;
-    filterItems: ItemPredicate<T>;
-    displayItem: (item: any) => string;
-    icon: IconName;
-    intent?: Intent;
-    onChange: any;
-    dispatch?: any;
+    disabled?: boolean,
+    displayItem: (item: any) => string,
+    filterItems: ItemPredicate<T>,
+    icon?: IconName,
+    inputItem: T,
+    intent?: Intent,
+    items: T[],
+    onChange?: any,
+    renderItem: ItemRenderer<T>,
 };
 
 export default class TSelect<T> extends React.Component<ISelectProps<T>, any> {
@@ -23,15 +23,16 @@ export default class TSelect<T> extends React.Component<ISelectProps<T>, any> {
     private CustomSelect = Select.ofType<T>();
 
     private handleValueChange = (item: T) => {
-        if (this.props.dispatch) {
-            this.props.dispatch(this.props.onChange(item))
-        } else {
-            this.props.onChange(item)
-        }
+        this.props.onChange(item)
     }
 
     public render () {
-        const {items, inputItem, intent} = this.props;
+        const {
+            disabled,
+            items,
+            inputItem,
+            intent,
+        } = this.props
 
         return (
             <div>
@@ -43,6 +44,7 @@ export default class TSelect<T> extends React.Component<ISelectProps<T>, any> {
                     onItemSelect={this.handleValueChange}
                 >
                     <Button
+                        disabled={disabled}
                         icon={this.props.icon}
                         rightIcon="caret-down"
                         text={this.props.displayItem(inputItem)}
