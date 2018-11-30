@@ -155,7 +155,6 @@ export default class VerificationView extends React.Component<IVerificationView,
                     items={availableYears}
                     icon={'calendar'}
                     onChange={changeSelectedYear}
-                    dispatch={dispatch}
                 />
                 <ControlGroup id='choice-buttons'>
                     <Button

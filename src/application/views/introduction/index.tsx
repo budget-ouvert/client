@@ -1,4 +1,5 @@
 import {
+    Button,
     Callout,
     Code,
 } from '@blueprintjs/core'
@@ -9,23 +10,38 @@ import './style.less'
 export default class IntroductionView extends React.Component<any, any> {
     public render () {
         return <div id='main-container'>
-            <h2>Visualisation du Projet de Loi de Finance</h2>
+            <h1>Visualisation de la dépense de l'État</h1>
             <p>
-                Ce site donne à voir la répartition des dépenses du Projet de Loi de Finance par année. Il est destiné aux personnes souhaitant avoir une meilleure vision de la répartition des dépenses de l'état.<br/>
-                On peut y consulter les <Code>Crédits de paiement</Code> hiérarchisés par <Code>Type de mission</Code>, <Code>Mission</Code>, <Code>Programme</Code>, <Code>Action</Code> et <Code>Sous-action</Code> lorsque cette dernière est précisée.
+                Ce site à pour but de donner à voir de manière intelligible la dépense annuelle de l'État français. Il s'adresse aux personnes novices comme aux experts. Nous permettons de consulter les dépenses hierarchisées par Type de Mission, Mission, Programme et Action.<br/>
+                Nous donnons sur cette page plusieurs informations utiles à la compréhension des résultats présentés après.
             </p>
-            <h3>Définitions utiles</h3>
-            <Callout
-                icon={'layout-hierarchy'}
-                title={'Projet de Loi de Finance'}
+            <Button
+                icon='chevron-right'
+                intent={'primary'}
             >
-                Présenté chaque année en octobre par le Ministère de l'Économie et des Finances, le PLF est ensuite approuvé par l'Assemblée et le Sénat.
+                Continuer vers les dépenses
+            </Button>
+
+            <h2>Concepts utiles</h2>
+            <Callout
+                title={'Hiérarchie de l\'information'}
+            >
+                Type de Mission, Mission, Programme, etc
             </Callout>
             <Callout
-                icon={'euro'}
-                title={'Crédits de paiement'}
+                title={'Chronologie'}
             >
-                Présenté chaque année en octobre par le Ministère de l'Économie et des Finances, le PLF est ensuite approuvé par l'Assemblée et le Sénat. Il ne faut pas les confondre avec les Autorisations d'Engagement, qu'il faut comprendre comme une prévision à une année donnée de Crédits de Paiement étalés sur plusieurs années.
+                PLF - LFI - LR
+            </Callout>
+            <Callout
+                title={'Nature des montants'}
+            >
+                CP - AE
+            </Callout>
+            <Callout
+                title={'Types de comptabilité'}
+            >
+                Comptabilité budgétaire (Mission - Nature) - Comptabilité générale (Mission - Destination)
             </Callout>
         </div>
     }
