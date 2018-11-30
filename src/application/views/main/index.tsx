@@ -10,7 +10,7 @@ import './style.less'
 // Import custom actions
 import {
     fetchPartition,
-} from '../../components/partition/actions'
+} from '../../actions/plf'
 import {
     updateHierarchyType,
     updateSelectedNode,
@@ -120,13 +120,13 @@ export default class MainView extends React.Component<IMainView, any> {
                 </div>
                 <div id='partition-viewer'>
                     <div id='partition'>
-                        {data.partition.loading ?
+                        {data.plf.loading ?
                             <div className='centered-spinner'>
                                 <Spinner/>
                             </div> :
                             <Partition
-                                data={data.partition.data}
-                                loadedTime={data.partition.loadedTime}
+                                data={data.plf.data}
+                                loadedTime={data.plf.loadedTime}
                                 onMouseOverCallback={(p: any) => {
                                     let path : string[] = [p.data.name]
                                     let currentNode = p

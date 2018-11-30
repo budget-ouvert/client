@@ -16,14 +16,14 @@ import './../style.less'
 import Routes from './routes'
 import middlewares from './middlewares'
 // import mainReducer from './reducers/mainReducer'
-import mainReducer from './reducer'
+import reducer from './reducers'
 
 // Redux initialisation
 if (process.env.NODE_ENV === 'development') {
     // Log redux dispatch only in development
     middlewares.push(createLogger({}))
 }
-const store = applyMiddleware(...middlewares)(createStore)(mainReducer)
+const store = applyMiddleware(...middlewares)(createStore)(reducer)
 
 ReactDOM.render(
     <Provider store={store}>

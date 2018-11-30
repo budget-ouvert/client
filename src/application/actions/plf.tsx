@@ -1,6 +1,6 @@
 import {
     IAction,
-} from '../../types'
+} from '../types'
 
 export const fetchPartition = (url: string): IAction => {
     return (dispatch: any, getState: any) => {

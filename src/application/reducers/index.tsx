@@ -3,14 +3,14 @@
 
 import {combineReducers} from 'redux'
 
-import partition from './components/partition/reducer'
+import plf from './plf'
 
 const dataReducer = combineReducers({
-    partition,
+    plf,
 })
 
-import mainView from './views/main/reducer'
-import verificationView from './views/main/reducer'
+import mainView from '../views/main/reducer'
+import verificationView from '../views/main/reducer'
 
 const viewsReducer = combineReducers({
     mainView,
