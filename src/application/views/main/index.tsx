@@ -114,14 +114,17 @@ export default class MainView extends React.Component<IMainView, any> {
                     </ControlGroup>
                 </div>
                 <div id='node-viewer'>
-                    <NodeViewer
-                        path={selectedNode.path}
-                        size={selectedNode.size}
-                    />
+                    <div id='path-breadcrumbs'>
+                        <NodeViewer
+                            path={selectedNode.path}
+                            size={selectedNode.size}
+                        />
+                    </div>
                     <div id='barchart'>
                         <BarChart
-                            data={[{name: 'Salam', value: 90}, {name: 'Yo', value: 50}]}
-                            loadedTime={Date.now()}
+                            data={data.plf.data}
+                            loadedTime={data.plf.loadedTime}
+                            selectedNodePath={selectedNode.path}
                             targetDivId={'barchart'}
                         />
                     </div>

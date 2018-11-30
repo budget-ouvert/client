@@ -25,6 +25,26 @@
 
         flex-basis: 33%;
         flex-grow: 1;
+
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+
+        #path-breadcrumbs {
+            flex-basis: 50%;
+        }
+
+        #barchart {
+            flex-basis: 50%;
+
+            line, path {
+                stroke: @dark-gray5;
+            }
+
+            text {
+                fill: @dark-gray5;
+            }
+        }
     }
 
     #partition-viewer {
