@@ -1,3 +1,6 @@
+import {
+    Spinner,
+} from '@blueprintjs/core'
 import * as React from 'react'
 import {connect} from 'react-redux'
 
@@ -15,9 +18,18 @@ import NodeViewer from '../../components/nodeViewer'
 
 // Import custom types
 import {
-    IMainView,
     IReduxStore,
+    IView,
 } from '../../types'
+
+export interface IMainViewState {
+    selectedNode: {
+        path: string[],
+        size: number,
+    },
+}
+
+export interface IMainView extends IView, IMainViewState {}
 
 // Link redux state to current component's react props
 // which will now be notified when changes occur in redux state
@@ -57,20 +69,23 @@ export default class MainView extends React.Component<IMainView, any> {
         return (
             <div id='partition-view'>
                 <div>
-                    <Partition
-                        data={data.partition.data}
-                        loadedTime={data.partition.loadedTime}
-                        onMouseOverCallback={(p: any) => {
-                            let path : string[] = [p.data.name]
-                            let currentNode = p
-                            while (currentNode.parent) {
-                                path.push(currentNode.parent.data.name)
-                                currentNode = currentNode.parent
-                            }
+                    {data.partition.loading ?
+                        <Spinner/> :
+                        <Partition
+                            data={data.partition.data}
+                            loadedTime={data.partition.loadedTime}
+                            onMouseOverCallback={(p: any) => {
+                                let path : string[] = [p.data.name]
+                                let currentNode = p
+                                while (currentNode.parent) {
+                                    path.push(currentNode.parent.data.name)
+                                    currentNode = currentNode.parent
+                                }
 
-                            this.props.dispatch(changeSelectedPoint(path.reverse(), p.value))
-                        }}
-                    />
+                                this.props.dispatch(changeSelectedPoint(path.reverse(), p.value))
+                            }}
+                        />
+                    }
                     <div id='node-viewer'>
                         <NodeViewer
                             path={selectedNode.path}

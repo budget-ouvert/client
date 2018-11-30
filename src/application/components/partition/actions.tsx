@@ -4,6 +4,8 @@ import {
 
 export const fetchPartition = (url: string): IAction => {
     return (dispatch: any, getState: any) => {
+        dispatch(loadingPartition())
+
         fetch(url).then((response: any) => {
             return response.text()
         }).then((response: any) => {
@@ -12,6 +14,12 @@ export const fetchPartition = (url: string): IAction => {
             console.log(err)
             dispatch(fetchPartitionFailure(err))
         })
+    }
+}
+
+export const loadingPartition = (): IAction => {
+    return {
+        type: 'LOADING_PARTITION',
     }
 }
 

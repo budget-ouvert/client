@@ -20,20 +20,10 @@ export interface IReduxStore {
 }
 
 // VIEWS
-interface IView {
+export interface IView {
     dispatch?: any,
     data: any,
 }
-
-// Main view
-export interface IMainViewState {
-    selectedNode: {
-        path: string[],
-        size: number,
-    },
-}
-
-export interface IMainView extends IView, IMainViewState {}
 
 // Verification view
 export interface IVerificationViewState {

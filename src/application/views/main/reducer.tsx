@@ -4,9 +4,12 @@ import * as d3 from 'd3'
 
 // Import custom types
 import {
-    IMainViewState,
     ISimpleAction,
 } from '../../types'
+
+import {
+    IMainViewState,
+} from './index'
 
 const initialState: IMainViewState = {
     selectedNode: {

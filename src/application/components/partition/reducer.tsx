@@ -7,16 +7,24 @@ import {
 
 interface IPartitionState {
     data: any,
-    loadedTime: any,
+    loadedTime: number,
+    loading: boolean,
 }
 
 const initialState: IPartitionState = {
     data: null,
     loadedTime: Date.now(),
+    loading: false,
 }
 
 const reducer = (state = initialState, action: ISimpleAction): IPartitionState => {
     switch (action.type) {
+        case 'LOADING_PARTITION':
+            return {
+                ...state,
+                loading: true,
+            }
+
         case 'FETCH_PARTITION_SUCCESS':
             // Turn incoming CSV file into a javascript object
             // that will later on be used by our partition component.
@@ -99,11 +107,13 @@ const reducer = (state = initialState, action: ISimpleAction): IPartitionState =
                 ...state,
                 data: root,
                 loadedTime: Date.now(),
+                loading: false,
             }
 
         case 'FETCH_PARTITION_FAILURE':
             return {
                 ...state,
+                loading: false,
             }
 
         default:
