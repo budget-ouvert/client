@@ -1,0 +1,41 @@
+@import "~@blueprintjs/core/lib/css/blueprint.css";
+@import "~@blueprintjs/core/lib/less/variables";
+
+@window-padding: 20px;
+
+#main-view-container {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    #header {
+        min-height: 50px;
+        background-color: @dark-gray1;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #node-viewer {
+        background-color: @light-gray4;
+        padding: @window-padding;
+
+        flex-basis: 33%;
+        flex-grow: 1;
+    }
+
+    #partition-viewer {
+        background-color: @light-gray3;
+        padding: @window-padding;
+
+        flex-basis: 66%;
+        flex-grow: 1;
+
+        #partition {
+            height: 100%;
+        }
+    }
+}
