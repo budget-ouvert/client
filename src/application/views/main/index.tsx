@@ -1,20 +1,27 @@
 import {
+    ControlGroup,
     Spinner,
 } from '@blueprintjs/core'
 import * as React from 'react'
 import {connect} from 'react-redux'
+
+import './style.less'
 
 // Import custom actions
 import {
     fetchPartition,
 } from '../../components/partition/actions'
 import {
-    changeSelectedPoint,
+    updateHierarchyType,
+    updateSelectedNode,
+    updateSourceType,
+    updateYear,
 } from './actions'
 
 // Import custom components
-import Partition from '../../components/partition'
 import NodeViewer from '../../components/nodeViewer'
+import Partition from '../../components/partition'
+import StringSelect from '../../components/selects/stringSelect'
 
 // Import custom types
 import {
@@ -23,10 +30,20 @@ import {
 } from '../../types'
 
 export interface IMainViewState {
+    // Hierarchy type
+    // (ex: comptabilité générale, compatabilité budgétaire)
+    hierarchyType: string,
+    // Clicked node in the visible partition
     selectedNode: {
         path: string[],
         size: number,
     },
+    // Source document type
+    // (ex: PLF, LFI, LR)
+    sourceType: string,
+    // Selected year
+    // (ex: 2018)
+    year: string,
 }
 
 export interface IMainView extends IView, IMainViewState {}
@@ -63,34 +80,65 @@ export default class MainView extends React.Component<IMainView, any> {
         let {
             data,
             dispatch,
+            hierarchyType,
             selectedNode,
+            sourceType,
+            year,
         } = this.props
 
         return (
-            <div id='partition-view'>
-                <div>
-                    {data.partition.loading ?
-                        <Spinner/> :
-                        <Partition
-                            data={data.partition.data}
-                            loadedTime={data.partition.loadedTime}
-                            onMouseOverCallback={(p: any) => {
-                                let path : string[] = [p.data.name]
-                                let currentNode = p
-                                while (currentNode.parent) {
-                                    path.push(currentNode.parent.data.name)
-                                    currentNode = currentNode.parent
-                                }
-
-                                this.props.dispatch(changeSelectedPoint(path.reverse(), p.value))
+            <div id='main-view-container'>
+                <div id='header' className={'bp3-dark'}>
+                    <ControlGroup>
+                        <StringSelect
+                            disabled={true}
+                            items={['Comptabilité générale', 'Comptabilité budgétaire']}
+                            inputItem={hierarchyType}
+                            onChange={null}
+                        />
+                        <StringSelect
+                            items={['PLF', 'LFI', 'LR']}
+                            inputItem={sourceType}
+                            onChange={(target: string) => {
+                                dispatch(updateSourceType(target))
                             }}
                         />
-                    }
-                    <div id='node-viewer'>
-                        <NodeViewer
-                            path={selectedNode.path}
-                            size={selectedNode.size}
+                        <StringSelect
+                            items={['2018', '2019']}
+                            inputItem={year}
+                            onChange={(target: string) => {
+                                dispatch(updateYear(target))
+                            }}
                         />
+                    </ControlGroup>
+                </div>
+                <div id='node-viewer'>
+                    <NodeViewer
+                        path={selectedNode.path}
+                        size={selectedNode.size}
+                    />
+                </div>
+                <div id='partition-viewer'>
+                    <div id='partition'>
+                        {data.partition.loading ?
+                            <div className='centered-spinner'>
+                                <Spinner/>
+                            </div> :
+                            <Partition
+                                data={data.partition.data}
+                                loadedTime={data.partition.loadedTime}
+                                onMouseOverCallback={(p: any) => {
+                                    let path : string[] = [p.data.name]
+                                    let currentNode = p
+                                    while (currentNode.parent) {
+                                        path.push(currentNode.parent.data.name)
+                                        currentNode = currentNode.parent
+                                    }
+
+                                    this.props.dispatch(updateSelectedNode(path.reverse(), p.value))
+                                }}
+                            />
+                        }
                     </div>
                 </div>
             </div>
