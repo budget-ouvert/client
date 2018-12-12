@@ -28,85 +28,85 @@ export default class Partition extends React.Component<IProps, IState> {
 
     public static getDerivedStateFromProps(props: IProps, state: IState) {
         if (state.loadedTime != props.loadedTime) {
-            // Turn incoming CSV file into a javascript object
-            // that will later on be used by our partition component.
-            // This function expects a CSV file with a header, and 10 columns
-            let rows = d3.dsvFormat(';').parseRows(props.data)
-
-            // Create root node
-            let root : any = {
-                'name': 'PLF',
-                'children': [] as any,
-            }
-
-            // Iterate through lines (skip the first one as it's a header)
-            for (let i = 1; i < rows.length; i++) {
-                // Get numeric information
-                // (dans le cas du PLF, ce qui nous intéresse ce sont
-                // les crédits de paiement)
-                const size = +rows[i][11]
-                if (isNaN(size)) {
-                    continue
-                }
-
-                // Get node path
-                const path = [
-                    rows[i][0],
-                    rows[i][2],
-                    rows[i][4],
-                    rows[i][6]
-                ]
-
-                // If sous-action exists, add it
-                if (rows[i][8] != '') {
-                    path.push(rows[i][8])
-                }
-
-                // One starts from the root node, and for each
-                // element of the current node's path,
-                // one makes sure that this node exists.
-                let currentNode = root
-
-                for (let j = 0; j < path.length; j++) {
-                    let children = currentNode['children']
-                    let nodeName = path[j]
-                    let childNode
-
-                    // If j is not at "action"-level, then
-                    // continue checking of nodes do exist...
-                    if (j + 1 < path.length) {
-                        let foundChild = false
-
-                        for (let k = 0; k < children.length; k++) {
-                            if (children[k]['name'] == nodeName) {
-                                childNode = children[k]
-                                foundChild = true
-                                break
-                            }
-                        }
-
-                        if (!foundChild) {
-                            childNode = {
-                                'name': nodeName,
-                                'children': [],
-                            }
-                            children.push(childNode)
-                        }
-
-                        currentNode = childNode
-                    // ... otherwise create it as one is sure it doesn't exist.
-                    } else {
-                        childNode = {
-                            'name': nodeName,
-                            'size': size,
-                        }
-                        children.push(childNode)
-                    }
-                }
-            }
+            // // Turn incoming CSV file into a javascript object
+            // // that will later on be used by our partition component.
+            // // This function expects a CSV file with a header, and 10 columns
+            // let rows = d3.dsvFormat(';').parseRows(props.data)
+            //
+            // // Create root node
+            // let root : any = {
+            //     'name': 'PLF',
+            //     'children': [] as any,
+            // }
+            //
+            // // Iterate through lines (skip the first one as it's a header)
+            // for (let i = 1; i < rows.length; i++) {
+            //     // Get numeric information
+            //     // (dans le cas du PLF, ce qui nous intéresse ce sont
+            //     // les crédits de paiement)
+            //     const size = +rows[i][11]
+            //     if (isNaN(size)) {
+            //         continue
+            //     }
+            //
+            //     // Get node path
+            //     const path = [
+            //         rows[i][0],
+            //         rows[i][2],
+            //         rows[i][4],
+            //         rows[i][6]
+            //     ]
+            //
+            //     // If sous-action exists, add it
+            //     if (rows[i][8] != '') {
+            //         path.push(rows[i][8])
+            //     }
+            //
+            //     // One starts from the root node, and for each
+            //     // element of the current node's path,
+            //     // one makes sure that this node exists.
+            //     let currentNode = root
+            //
+            //     for (let j = 0; j < path.length; j++) {
+            //         let children = currentNode['children']
+            //         let nodeName = path[j]
+            //         let childNode
+            //
+            //         // If j is not at "action"-level, then
+            //         // continue checking of nodes do exist...
+            //         if (j + 1 < path.length) {
+            //             let foundChild = false
+            //
+            //             for (let k = 0; k < children.length; k++) {
+            //                 if (children[k]['name'] == nodeName) {
+            //                     childNode = children[k]
+            //                     foundChild = true
+            //                     break
+            //                 }
+            //             }
+            //
+            //             if (!foundChild) {
+            //                 childNode = {
+            //                     'name': nodeName,
+            //                     'children': [],
+            //                 }
+            //                 children.push(childNode)
+            //             }
+            //
+            //             currentNode = childNode
+            //         // ... otherwise create it as one is sure it doesn't exist.
+            //         } else {
+            //             childNode = {
+            //                 'name': nodeName,
+            //                 'size': size,
+            //             }
+            //             children.push(childNode)
+            //         }
+            //     }
+            // }
 
             return {
-                data: root,
+                data: JSON.parse(props.data),
                 loadedTime: props.loadedTime,
             }
         }
@@ -233,7 +233,9 @@ export default class Partition extends React.Component<IProps, IState> {
 
         let partition : any = (data: any) => {
             const root : any = d3.hierarchy(data)
-                .sum((d : any) => d.size)
+                .each((d: any) => {
+                    d.value = d.data.cp
+                })
                 .sort((a: any, b: any) => b.value - a.value);
 
             // La size donne les dimensions de l'espace de projection.

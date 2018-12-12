@@ -9,7 +9,7 @@ export const fetchPartition = (url: string): IAction => {
         fetch(url).then((response: any) => {
             return response.text()
         }).then((response: any) => {
-            dispatch(fetchPartitionSucess(url, response))
+            dispatch(fetchPartitionSuccess(url, response))
         }).catch((err: any) => {
             console.log(err)
             dispatch(fetchPartitionFailure(err))
@@ -23,7 +23,7 @@ export const loadingPartition = (): IAction => {
     }
 }
 
-export const fetchPartitionSucess = (url: string, response: any): IAction => {
+export const fetchPartitionSuccess = (url: string, response: any): IAction => {
     let fileName = url.split('/')[-1];
 
     return {

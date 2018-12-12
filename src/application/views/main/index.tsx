@@ -87,7 +87,8 @@ export default class MainView extends React.Component<IMainView, IState> {
         }
     }
     public componentDidMount() {
-        this.props.dispatch(fetchPartition('http://api.live.rollin.ovh/information_by_action/plf_2019.csv'))
+        // this.props.dispatch(fetchPartition('http://api.live.rollin.ovh/information_by_action/plf_2019.csv'))
+        this.props.dispatch(fetchPartition('http://api.live.rollin.ovh/information_by_action/plf_2019.json'))
     }
 
     public render () {
