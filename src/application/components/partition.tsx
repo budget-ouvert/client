@@ -162,8 +162,8 @@ export default class Partition extends React.Component<IProps, IState> {
                 .attr("height", (d : any) => rectHeight(d.target));
             text.transition(t)
                 .attr("fill-opacity", (d : any) => +labelVisible(d.target));
-            tspan.transition(t)
-                .attr("fill-opacity", (d : any) => +labelVisible(d.target) * 0.7);
+            // tspan.transition(t)
+            //     .attr("fill-opacity", (d : any) => +labelVisible(d.target) * 0.7);
         }
 
         function onMouseOver(that: any, p: any) {
@@ -290,12 +290,12 @@ export default class Partition extends React.Component<IProps, IState> {
             .text((d : any) => d.data.name)
             .call(wrap, width / 4)
 
-        const tspan = text.append("tspan")
-            .attr("fill-opacity", (d : any) => +labelVisible(d) * 0.7)
-            .text((d : any) => ` ${format(d.value)}`)
+        // const tspan = text.append("tspan")
+        //     .attr("fill-opacity", (d : any) => +labelVisible(d) * 0.7)
+        //     .text((d : any) => ` ${format(d.value)}`)
 
         cell.append("title")
-            .text((d : any) => `${d.ancestors().map((d : any) => d.data.name).reverse().join("/")}\n${format(d.value)}`)
+            .text((d : any) => `${d.ancestors().map((d : any) => d.data.name).reverse().join("/")}\n${format(d.value).replace(/,/g, ' ')} euros`)
     }
 
     public render() {
