@@ -3,7 +3,10 @@ import * as d3 from 'd3'
 import * as _ from 'lodash'
 
 interface IProps {
-    data: any,
+    data: {
+        ae: number,
+        cp: number,
+    },
     loadedTime: number,
     // Codes for Type Mission, Mission, etc
     // (example: 1, AA, ...)
@@ -30,30 +33,17 @@ export default class BarChart extends React.Component<IProps, IState> {
 
     public static getDerivedStateFromProps(props: IProps, state: IState) {
         if (props.data) {
-            const rows = d3.dsvFormat(';').parseRows(props.data)
-
-            rowLoop:
-            for (let i = 1; i < rows.length; i++) {
-                // Skip first item since it's the root's title
-                pathLoop:
-                for (let k = 1; k < props.selectedNodePath.length; k++) {
-                    if (props.selectedNodePath[k] != rows[i][2*(k-1)]) {
-                        continue rowLoop
+            return {
+                data: [
+                    {
+                        name: "Autorisations d'engagement",
+                        value: props.data.ae,
+                    }, {
+                        name: "Crédits de paiement",
+                        value: props.data.cp,
                     }
-                }
-
-                return {
-                    data: [
-                        {
-                            name: "Autorisations d'engagement",
-                            value: Number(rows[i][10]),
-                        }, {
-                            name: "Crédits de paiement",
-                            value: Number(rows[i][11]),
-                        }
-                    ],
-                    loadedTime: props.loadedTime,
-                }
+                ],
+                loadedTime: props.loadedTime,
             }
         }
 

@@ -40,7 +40,10 @@ export interface IMainViewState {
     // Clicked node in the visible partition
     selectedNode: {
         path: string[],
-        size: number,
+        data: {
+            ae: number,
+            cp: number,
+        },
     },
     // Source document type
     // (ex: PLF, LFI, LR)
@@ -87,7 +90,6 @@ export default class MainView extends React.Component<IMainView, IState> {
         }
     }
     public componentDidMount() {
-        // this.props.dispatch(fetchPartition('http://api.live.rollin.ovh/information_by_action/plf_2019.csv'))
         this.props.dispatch(fetchPartition('http://api.live.rollin.ovh/information_by_action/plf_2019.json'))
     }
 
@@ -142,12 +144,12 @@ export default class MainView extends React.Component<IMainView, IState> {
                     <div id='path-breadcrumbs'>
                         <NodeViewer
                             path={selectedNode.path}
-                            size={selectedNode.size}
+                            size={selectedNode.data.cp}
                         />
                     </div>
                     <div id='barchart'>
                         <BarChart
-                            data={data.plf.data}
+                            data={selectedNode.data}
                             loadedTime={data.plf.loadedTime}
                             selectedNodePath={selectedNode.path}
                             targetDivId={'barchart'}
@@ -171,7 +173,10 @@ export default class MainView extends React.Component<IMainView, IState> {
                                         currentNode = currentNode.parent
                                     }
 
-                                    this.props.dispatch(updateSelectedNode(path.reverse(), p.value))
+                                    this.props.dispatch(updateSelectedNode(path.reverse(), {
+                                        ae: p.data.ae,
+                                        cp: p.data.cp,
+                                    }))
                                 }}
                                 targetDivId={'partition'}
                             />

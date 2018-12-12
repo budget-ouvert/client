@@ -15,7 +15,10 @@ const initialState: IMainViewState = {
     hierarchyType: 'Comptabilité générale',
     selectedNode: {
         path: [],
-        size: null,
+        data: {
+            ae: null,
+            cp: null,
+        },
     },
     sourceType: 'PLF',
     year: '2019',
@@ -28,7 +31,7 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
                 ...state,
                 selectedNode: {
                     path: action.payload.path,
-                    size: action.payload.size,
+                    data: action.payload.data,
                 },
             }
 
