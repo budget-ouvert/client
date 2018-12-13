@@ -19,7 +19,7 @@ export default class NodeViewer extends React.Component<Props, State> {
 
         return (
             <div>
-                <p className='spending'>{format(",d")(size).replace(/,/g, ' ')} euros</p>
+                <p className='spending'>Crédits de paiement : {format(",d")(size).replace(/,/g, ' ')} euros</p>
                 <ul className="bp3-breadcrumbs">
                   {path ?
                       path.map((item: string, index: number) => {
