@@ -37,9 +37,11 @@ export default class BarChart extends React.Component<IProps, IState> {
                 data: [
                     {
                         name: "Autorisations d'engagement",
+                        color: "#BFCCD6",
                         value: props.data.ae,
                     }, {
                         name: "Crédits de paiement",
+                        color: "#8A9BA8",
                         value: props.data.cp,
                     }
                 ],
@@ -89,7 +91,7 @@ export default class BarChart extends React.Component<IProps, IState> {
         }
 
         const y = d3.scaleLinear()
-            .domain([0, d3.max(data, (d: any) => d.value) as any]).nice()
+            .domain([0, d3.max(data, (d: any) => d.value ? d.value : 0) as any]).nice()
             .range([this.height - margin.bottom, margin.top])
 
         const yAxis = (g: any) => {
@@ -105,12 +107,13 @@ export default class BarChart extends React.Component<IProps, IState> {
             .style("overflow", "hidden")
             .style("font", "10px sans-serif")
 
+        console.log(data)
         svg.append("g")
-            .attr("fill", "#8A9BA8")
             .selectAll("rect").data(data).enter().append("rect")
+                .attr("fill", (d: any) => d.color)
                 .attr("x", (d: any) => x(d.name))
-                .attr("y", (d: any) => y(d.value))
-                .attr("height", (d: any) => y(0) - y(d.value))
+                .attr("y", (d: any) => y(d.value ? d.value : 0))
+                .attr("height", (d: any) => y(0) - y(d.value ? d.value : 0))
                 .attr("width", x.bandwidth())
 
         svg.append("g")
