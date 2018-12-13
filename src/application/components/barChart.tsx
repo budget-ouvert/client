@@ -107,7 +107,6 @@ export default class BarChart extends React.Component<IProps, IState> {
             .style("overflow", "hidden")
             .style("font", "10px sans-serif")
 
-        console.log(data)
         svg.append("g")
             .selectAll("rect").data(data).enter().append("rect")
                 .attr("fill", (d: any) => d.color)
