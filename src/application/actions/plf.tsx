@@ -2,14 +2,19 @@ import {
     IAction,
 } from '../types'
 
-export const fetchPartition = (url: string): IAction => {
+const BACKEND_URL = 'http://api.live.rollin.ovh'
+
+export const fetchPartition = (year: string, callback: any): IAction => {
     return (dispatch: any, getState: any) => {
         dispatch(loadingPartition())
+
+        const url = `${BACKEND_URL}/information_by_action/plf_${year}.json`
 
         fetch(url).then((response: any) => {
             return response.text()
         }).then((response: any) => {
-            dispatch(fetchPartitionSuccess(url, response))
+            dispatch(fetchPartitionSuccess(year, response))
+            callback()
         }).catch((err: any) => {
             console.log(err)
             dispatch(fetchPartitionFailure(err))
@@ -23,13 +28,11 @@ export const loadingPartition = (): IAction => {
     }
 }
 
-export const fetchPartitionSuccess = (url: string, response: any): IAction => {
-    let fileName = url.split('/')[-1];
-
+export const fetchPartitionSuccess = (year: string, response: any): IAction => {
     return {
         type: 'FETCH_PARTITION_SUCCESS',
         payload: {
-            fileName: fileName,
+            year: year,
             content: response,
         }
     }

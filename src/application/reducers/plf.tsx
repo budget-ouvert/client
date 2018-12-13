@@ -6,14 +6,17 @@ import {
 } from '../types'
 
 interface IPartitionState {
-    data: any,
-    loadedTime: number,
+    plfByYear: {
+        [year: string] : {
+            loadedTime: number,
+            data: any,
+        }
+    },
     loading: boolean,
 }
 
 const initialState: IPartitionState = {
-    data: null,
-    loadedTime: null,
+    plfByYear: {},
     loading: false,
 }
 
@@ -28,8 +31,13 @@ const reducer = (state = initialState, action: ISimpleAction): IPartitionState =
         case 'FETCH_PARTITION_SUCCESS':
             return {
                 ...state,
-                data: action.payload.content,
-                loadedTime: Date.now(),
+                plfByYear: {
+                    ...state.plfByYear,
+                    [action.payload.year]: {
+                        data: action.payload.content,
+                        loadedTime: Date.now(),
+                    },
+                },
                 loading: false,
             }
 

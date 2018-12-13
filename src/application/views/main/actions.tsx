@@ -2,6 +2,10 @@ import {
     IAction,
 } from '../../types'
 
+import {
+    fetchPartition,
+} from '../../actions/plf'
+
 export const updateHierarchyType = (hierarchyType: string): IAction => {
     return {
         type: 'UPDATE_HIERARCHY_TYPE',
@@ -23,6 +27,21 @@ export const updateSourceType = (sourceType: string): IAction => {
     return {
         type: 'UPDATE_SOURCE_TYPE',
         payload: sourceType,
+    }
+}
+
+export const changeYear = (year: string): IAction => {
+    return (dispatch: any, getState: any) => {
+        // If year needs to be downloaded, fetch it;
+        // otherwise, just update year in redux state.
+        if (!(year in getState().data.plf.plfByYear)) {
+            dispatch(fetchPartition(
+                year,
+                () => dispatch(updateYear(year))
+            ))
+        } else {
+            dispatch(updateYear(year))
+        }
     }
 }
 

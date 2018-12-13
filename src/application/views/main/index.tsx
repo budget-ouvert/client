@@ -15,10 +15,10 @@ import {
     fetchPartition,
 } from '../../actions/plf'
 import {
+    changeYear,
     updateHierarchyType,
     updateSelectedNode,
     updateSourceType,
-    updateYear,
 } from './actions'
 
 // Import custom components
@@ -90,7 +90,7 @@ export default class MainView extends React.Component<IMainView, IState> {
         }
     }
     public componentDidMount() {
-        this.props.dispatch(fetchPartition('http://api.live.rollin.ovh/information_by_action/plf_2019.json'))
+        this.props.dispatch(changeYear('2019'))
     }
 
     public render () {
@@ -127,10 +127,10 @@ export default class MainView extends React.Component<IMainView, IState> {
                             }}
                         />
                         <StringSelect
-                            items={['2019']}
+                            items={['2018', '2019']}
                             inputItem={year}
                             onChange={(target: string) => {
-                                dispatch(updateYear(target))
+                                dispatch(changeYear(target))
                             }}
                         />
                     </ControlGroup>
@@ -150,7 +150,7 @@ export default class MainView extends React.Component<IMainView, IState> {
                     <div id='barchart'>
                         <BarChart
                             data={selectedNode.data}
-                            loadedTime={data.plf.loadedTime}
+                            loadedTime={(year in data.plf.plfByYear) ? data.plf.plfByYear[year].loadedTime : null}
                             selectedNodePath={selectedNode.path}
                             targetDivId={'barchart'}
                         />
@@ -158,13 +158,13 @@ export default class MainView extends React.Component<IMainView, IState> {
                 </div>
                 <div id='partition-viewer'>
                     <div id='partition'>
-                        {data.plf.loading ?
+                        {data.plf.loading || !(year in data.plf.plfByYear) ?
                             <div className='centered-spinner'>
                                 <Spinner/>
                             </div> :
                             <Partition
-                                data={data.plf.data}
-                                loadedTime={data.plf.loadedTime}
+                                data={data.plf.plfByYear[year].data}
+                                loadedTime={data.plf.plfByYear[year].loadedTime}
                                 onMouseOverCallback={(p: any) => {
                                     let path : string[] = [p.data.name]
                                     let currentNode = p
