@@ -22,9 +22,10 @@ import {
 } from './actions'
 
 // Import custom components
+import BarChart from '../../components/barChart'
+import BetaHeader from '../../components/betaHeader'
 import NodeViewer from '../../components/nodeViewer'
 import Partition from '../../components/partition'
-import BarChart from '../../components/barChart'
 import StringSelect from '../../components/selects/stringSelect'
 
 // Import custom types
@@ -105,10 +106,7 @@ export default class MainView extends React.Component<IMainView, IState> {
 
         return (
             <div id='main-view-container'>
-                <div id='beta-header'>
-                    <Tag intent={'primary'}>Alpha</Tag>
-                    <p>Ce site est en version alpha : il peut comporter des erreurs.<br/>Contact : alexis [dot] thual [at] gmail [dot] com</p>
-                </div>
+                <BetaHeader />
                 {this.state.shouldRedirect ? <Redirect to='/' /> : null}
                 <div id='header' className={'bp3-dark'}>
                     <div></div>

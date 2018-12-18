@@ -9,6 +9,8 @@ import { Redirect } from 'react-router-dom'
 
 import './style.less'
 
+import BetaHeader from '../../components/betaHeader'
+
 interface IProps {
 
 }
@@ -27,10 +29,7 @@ export default class IntroductionView extends React.Component<IProps, IState> {
 
     public render () {
         return <div id='main-container' className={'bp3-running-text bp3-text-large'}>
-            <div id='beta-header'>
-                <Tag intent={'primary'}>Alpha</Tag>
-                <p>Ce site est en version alpha : il peut comporter des erreurs.<br/>Contact : alexis [dot] thual [at] gmail [dot] com</p>
-            </div>
+            <BetaHeader />
             {this.state.shouldRedirect ? <Redirect to='/visualisation' /> : null}
             <div id='introduction-page'>
                 <h1>Visualisation de la dépense de l'État</h1>

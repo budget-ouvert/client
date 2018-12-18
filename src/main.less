@@ -16,7 +16,7 @@ body {
 
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 
     & > *:not(:last-child) {
         margin-right: 10px;
@@ -24,6 +24,18 @@ body {
 
     p {
         margin-bottom: 0px;
+    }
+}
+
+.flex-box {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+
+    & > *:not(:last-child) {
+        margin-right: 10px;
     }
 }
 
