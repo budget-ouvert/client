@@ -34,7 +34,7 @@ const reducer = (state = initialState, action: ISimpleAction): IPartitionState =
                 plfByYear: {
                     ...state.plfByYear,
                     [action.payload.year]: {
-                        data: action.payload.content,
+                        data: JSON.parse(action.payload.content),
                         loadedTime: Date.now(),
                     },
                 },

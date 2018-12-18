@@ -29,7 +29,7 @@ export default class Partition extends React.Component<IProps, IState> {
     public static getDerivedStateFromProps(props: IProps, state: IState) {
         if (state.loadedTime != props.loadedTime) {
             return {
-                data: JSON.parse(props.data),
+                data: props.data,
                 loadedTime: props.loadedTime,
             }
         }
