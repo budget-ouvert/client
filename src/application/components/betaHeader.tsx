@@ -1,4 +1,8 @@
 import {
+    Button,
+    Divider,
+    Icon,
+    Navbar,
     Tag,
 } from '@blueprintjs/core'
 import * as React from 'react'
@@ -21,8 +25,13 @@ export default class BetaHeader extends React.Component<IProps, IState> {
                     Source des données : <a href="https://data.gouv.fr">https://data.gouv.fr</a>
                 </p>
             </div>
-            <div>
+            <div className='flex-box bp3-dark'>
+                <Icon icon={'inbox'} />
                 <p>alexis [dot] thual [at] gmail [dot] com</p>
+                <Navbar.Divider />
+                <Button icon={'git-repo'} minimal={true} onClick={() => {
+                    window.location.href = 'https://github.com/rainbowViz/'}}
+                >Git Repo</Button>
             </div>
         </div>
     }
