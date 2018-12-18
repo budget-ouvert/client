@@ -125,7 +125,7 @@ export default class MainView extends React.Component<IMainView, IState> {
                             }}
                         />
                         <StringSelect
-                            items={['2018', '2019']}
+                            items={['2017', '2018', '2019']}
                             inputItem={year}
                             onChange={(target: string) => {
                                 dispatch(changeYear(target))
