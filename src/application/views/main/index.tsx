@@ -141,7 +141,16 @@ export default class MainView extends React.Component<IMainView, IState> {
             }
         </div>
 
-        const listTab = <TreeView />
+        const listTab = <div id='tree'>
+            {data.plf.loading || !(year in data.plf.plfByYear) ?
+                <div className='centered-spinner'>
+                    <Spinner/>
+                </div> :
+                <TreeView
+                    data={data.plf.plfByYear[year].data}
+                />
+            }
+        </div>
 
         return (
             <div id='main-view-container'>
@@ -196,10 +205,13 @@ export default class MainView extends React.Component<IMainView, IState> {
                     </div>
                 </div>
                 <div id='information-viewer'>
-                    <Tabs onChange={this.handleTabChange} selectedTabId={this.state.selectedTabId}>
+                    <Tabs
+                        onChange={this.handleTabChange}
+                        selectedTabId={this.state.selectedTabId}
+                    >
                         <Tab
                             id="partition"
-                            title="Visualisation proportionelle à la dépense"
+                            title="Visualisation proportionelle au montant"
                             panel={partitionTab}
                         />
                         <Tab

@@ -8,6 +8,7 @@ body {
     margin: 0;
 }
 
+// Header for beta version
 #beta-header {
     min-height: 30px;
     background-color: @black;
@@ -27,6 +28,7 @@ body {
     }
 }
 
+// Row flex div
 .flex-box {
     display: flex;
     flex-direction: row;
@@ -39,10 +41,57 @@ body {
     }
 }
 
+// Vertically centered objects
 .centered-spinner {
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+// Blueprint Tabs
+.bp3-tabs {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .bp3-tab-panel:not([aria-hidden="true"]) {
+        // height: 100%;
+        flex-basis: 100%;
+        overflow: auto;
+    }
+}
+
+.bp3-tab-list {
+    background-color: @light-gray1;
+    overflow: hidden;
+
+    & > * {
+        text-align: center;
+        flex-grow: 1;
+    }
+
+    .tab-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & > *:first-child {
+            margin-right: 5px;
+        }
+    }
+}
+
+.bp3-tab {
+    padding: 5px 0px;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.bp3-tab-indicator-wrapper .bp3-tab-indicator {
+    background-color: @light-gray3;
+    height: 100%;
 }

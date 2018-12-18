@@ -8,23 +8,96 @@ import {
 } from '@blueprintjs/core'
 import * as React from 'react'
 
-interface IProps {
+interface INodeData {
+    ae: number,
+    cp: number,
+}
 
+interface IProps {
+    data: any,
 }
 
 interface IState {
-    nodes: ITreeNode[],
+    isBroken: boolean,
+    nodes: ITreeNode<INodeData>[],
+    renderData: any,
 }
 
 export default class TreeView extends React.Component<IProps, IState> {
-    public constructor(props: IProps) {
-        super(props)
+    static id: number = 0;
+
+    constructor(props: IProps) {
+        super(props);
         this.state = {
-            nodes: INITIAL_STATE,
+            isBroken: false,
+            nodes: [],
+            renderData: null,
         }
     }
 
-    private forEachNode(nodes: ITreeNode[], callback: (node: ITreeNode) => void) {
+    static getId = (): number => {
+        TreeView.id++
+        return TreeView.id
+    }
+
+    private static breadFirstSearchInputColumn = (node: any) => {
+        if (node.inputColumns && node.inputColumns.length > 0) {
+            return true
+        } else if (node.attributes && node.attributes.length > 0) {
+            return node.attributes.some((attribute: any) => {
+                return TreeView.breadFirstSearchInputColumn(attribute)
+            })
+        } else {
+            return false
+        }
+    }
+
+    private static genObjNodes = (node: any): ITreeNode<INodeData> => {
+        const hasChildren = (node.children && node.children.length > 0)
+
+        return {
+            childNodes: hasChildren ? node.children.map((child: any) => {
+                return TreeView.genObjNodes(child)
+            }).sort((a: any, b: any) => b.nodeData.cp - a.nodeData.cp) : null,
+            hasCaret: hasChildren,
+            icon: hasChildren ? 'folder-open' : 'tag',
+            id: TreeView.getId(),
+            isExpanded: false,
+            isSelected: false,
+            label: <div>{node.name}</div>,
+            nodeData: {
+                ae: node.ae,
+                cp: node.cp,
+            },
+            secondaryLabel: <span>{node.cp}</span>,
+        }
+    }
+
+    static getDerivedStateFromProps(props: IProps, state: IState): IState {
+        if (props.data !== state.renderData) {
+            try {
+                let nodes = [TreeView.genObjNodes(props.data)]
+                console.log(nodes)
+
+                return {
+                    nodes: nodes,
+                    renderData: props.data,
+                    isBroken: false,
+                }
+            } catch(err) {
+                console.log(err)
+                return {
+                    nodes: [] as any,
+                    renderData: props.data,
+                    isBroken: true,
+                }
+            }
+        } else {
+            return state
+        }
+    }
+
+    private forEachNode(nodes: ITreeNode<INodeData>[], callback: (node: ITreeNode<INodeData>) => void) {
         if (nodes == null) {
             return;
         }
@@ -35,7 +108,8 @@ export default class TreeView extends React.Component<IProps, IState> {
         }
     }
 
-    private handleNodeClick = (nodeData: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
+    private handleNodeClick = (nodeData: ITreeNode<INodeData>, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
+        console.log('click')
         const originallySelected = nodeData.isSelected;
         if (!e.shiftKey) {
             this.forEachNode(this.state.nodes, (n: any) => (n.isSelected = false));
@@ -44,84 +118,24 @@ export default class TreeView extends React.Component<IProps, IState> {
         this.setState(this.state);
     }
 
-    private handleNodeCollapse = (nodeData: ITreeNode) => {
-        nodeData.isExpanded = false;
+    private handleNodeCollapse = (node: ITreeNode<INodeData>) => {
+        console.log('collapse')
+        node.isExpanded = false;
         this.setState(this.state);
     }
 
-    private handleNodeExpand = (nodeData: ITreeNode) => {
-        nodeData.isExpanded = true;
+    private handleNodeExpand = (node: ITreeNode<INodeData>) => {
+        node.isExpanded = true;
         this.setState(this.state);
     }
 
     public render = () => {
         return <Tree
+            className={Classes.ELEVATION_0}
             contents={this.state.nodes}
             onNodeClick={this.handleNodeClick}
             onNodeCollapse={this.handleNodeCollapse}
             onNodeExpand={this.handleNodeExpand}
-            className={Classes.ELEVATION_0}
         />
     }
 }
-
-/* tslint:disable:object-literal-sort-keys so childNodes can come last */
-const INITIAL_STATE: ITreeNode[] = [
-    {
-        id: 0,
-        hasCaret: true,
-        icon: "folder-close",
-        label: "Folder 0",
-    },
-    {
-        id: 1,
-        icon: "folder-close",
-        isExpanded: true,
-        label: (
-            <Tooltip content="I'm a folder <3" position={Position.RIGHT}>
-                Folder 1
-            </Tooltip>
-        ),
-        childNodes: [
-            {
-                id: 2,
-                icon: "document",
-                label: "Item 0",
-                secondaryLabel: (
-                    <Tooltip content="An eye!">
-                        <Icon icon="eye-open" />
-                    </Tooltip>
-                ),
-            },
-            {
-                id: 3,
-                icon: "tag",
-                label: "Organic meditation gluten-free, sriracha VHS drinking vinegar beard man.",
-            },
-            {
-                id: 4,
-                hasCaret: true,
-                icon: "folder-close",
-                label: (
-                    <Tooltip content="foo" position={Position.RIGHT}>
-                        Folder 2
-                    </Tooltip>
-                ),
-                childNodes: [
-                    { id: 5, label: "No-Icon Item" },
-                    { id: 6, icon: "tag", label: "Item 1" },
-                    {
-                        id: 7,
-                        hasCaret: true,
-                        icon: "folder-close",
-                        label: "Folder 3",
-                        childNodes: [
-                            { id: 8, icon: "document", label: "Item 0" },
-                            { id: 9, icon: "tag", label: "Item 1" },
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-];

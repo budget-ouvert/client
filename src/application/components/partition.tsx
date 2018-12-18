@@ -39,7 +39,7 @@ export default class Partition extends React.Component<IProps, IState> {
 
     public componentDidMount() {
         this.width = document.getElementById(this.props.targetDivId).offsetWidth
-        this.height = document.getElementById(this.props.targetDivId).offsetHeight - 5
+        this.height = document.getElementById(this.props.targetDivId).offsetHeight
         if (this.state.data) {
             this.drawPartition()
         }
