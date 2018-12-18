@@ -2,6 +2,9 @@ import {
     Button,
     ControlGroup,
     Spinner,
+    Tab,
+    TabId,
+    Tabs,
     Tag,
 } from '@blueprintjs/core'
 import * as React from 'react'
@@ -27,6 +30,7 @@ import BetaHeader from '../../components/betaHeader'
 import NodeViewer from '../../components/nodeViewer'
 import Partition from '../../components/partition'
 import StringSelect from '../../components/selects/stringSelect'
+import TreeView from '../../components/treeView'
 
 // Import custom types
 import {
@@ -57,6 +61,7 @@ export interface IMainViewState {
 export interface IMainView extends IView, IMainViewState {}
 
 export interface IState {
+    selectedTabId: TabId,
     shouldRedirect: boolean,
 }
 
@@ -87,12 +92,18 @@ export default class MainView extends React.Component<IMainView, IState> {
     constructor(props: IMainView) {
         super(props)
         this.state = {
+            selectedTabId: 'partition',
             shouldRedirect: false,
         }
     }
+
     public componentDidMount() {
         this.props.dispatch(changeYear('2019'))
     }
+
+    private handleTabChange = (navbarTabId: TabId) => this.setState({
+        selectedTabId: navbarTabId,
+    })
 
     public render () {
         let {
@@ -103,6 +114,34 @@ export default class MainView extends React.Component<IMainView, IState> {
             sourceType,
             year,
         } = this.props
+
+        const partitionTab = <div id='partition'>
+            {data.plf.loading || !(year in data.plf.plfByYear) ?
+                <div className='centered-spinner'>
+                    <Spinner/>
+                </div> :
+                <Partition
+                    data={data.plf.plfByYear[year].data}
+                    loadedTime={data.plf.plfByYear[year].loadedTime}
+                    onMouseOverCallback={(p: any) => {
+                        let path : string[] = [p.data.name]
+                        let currentNode = p
+                        while (currentNode.parent) {
+                            path.push(currentNode.parent.data.name)
+                            currentNode = currentNode.parent
+                        }
+
+                        this.props.dispatch(updateSelectedNode(path.reverse(), {
+                            ae: p.data.ae,
+                            cp: p.data.cp,
+                        }))
+                    }}
+                    targetDivId={'partition'}
+                />
+            }
+        </div>
+
+        const listTab = <TreeView />
 
         return (
             <div id='main-view-container'>
@@ -156,32 +195,19 @@ export default class MainView extends React.Component<IMainView, IState> {
                         />
                     </div>
                 </div>
-                <div id='partition-viewer'>
-                    <div id='partition'>
-                        {data.plf.loading || !(year in data.plf.plfByYear) ?
-                            <div className='centered-spinner'>
-                                <Spinner/>
-                            </div> :
-                            <Partition
-                                data={data.plf.plfByYear[year].data}
-                                loadedTime={data.plf.plfByYear[year].loadedTime}
-                                onMouseOverCallback={(p: any) => {
-                                    let path : string[] = [p.data.name]
-                                    let currentNode = p
-                                    while (currentNode.parent) {
-                                        path.push(currentNode.parent.data.name)
-                                        currentNode = currentNode.parent
-                                    }
-
-                                    this.props.dispatch(updateSelectedNode(path.reverse(), {
-                                        ae: p.data.ae,
-                                        cp: p.data.cp,
-                                    }))
-                                }}
-                                targetDivId={'partition'}
-                            />
-                        }
-                    </div>
+                <div id='information-viewer'>
+                    <Tabs onChange={this.handleTabChange} selectedTabId={this.state.selectedTabId}>
+                        <Tab
+                            id="partition"
+                            title="Visualisation proportionelle à la dépense"
+                            panel={partitionTab}
+                        />
+                        <Tab
+                            id="tree"
+                            title="Visualisation par liste"
+                            panel={listTab}
+                        />
+                    </Tabs>
                 </div>
             </div>
         )
