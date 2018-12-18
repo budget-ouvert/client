@@ -4,7 +4,7 @@ import {
 
 const BACKEND_URL = (process.env.NODE_ENV === 'development') ?
     'http://127.0.0.1:8080' :
-    'http://api.live.rollin.ovh'
+    'https://api.budget.parlement-ouvert.fr'
 
 export const fetchPartition = (year: string, callback: any): IAction => {
     return (dispatch: any, getState: any) => {
