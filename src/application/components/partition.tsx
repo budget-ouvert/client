@@ -165,7 +165,7 @@ export default class Partition extends React.Component<IProps, IState> {
             // Ici, on multiplie la largeur par
             // 2 = maxdepth / 3
             // car je veux voir 2 colonnes s'afficher.
-            return d3.partition().size([this.height, 6 / 3 * this.width - 80])(root)
+            return d3.partition().size([this.height, 6 / 3 * (this.width - 100)])(root)
         }
 
         let color : any = d3.scaleOrdinal()

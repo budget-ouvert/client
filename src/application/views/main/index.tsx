@@ -136,7 +136,9 @@ export default class MainView extends React.Component<IMainView, IState> {
                         icon={'help'}
                         minimal={true}
                         onClick={() => this.setState({shouldRedirect: true,})}
-                    />
+                    >
+                        Informations
+                    </Button>
                 </div>
                 <div id='node-viewer'>
                     <div id='path-breadcrumbs'>
