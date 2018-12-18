@@ -85,9 +85,9 @@ export default class BarChart extends React.Component<IProps, IState> {
         const xAxis = (g: any) => {
             return g
                 .attr("transform", `translate(0,${this.height - margin.bottom})`)
-                .call(d3.axisBottom(x)
-                    .tickSizeOuter(0))
-                .call((g: any) => g.select(".domain").remove())
+                .call(d3.axisBottom(x).tickSizeOuter(0))
+                .select(".domain")
+                    .style("stroke", "#8A9BA8")
         }
 
         const y = d3.scaleLinear()
@@ -97,7 +97,8 @@ export default class BarChart extends React.Component<IProps, IState> {
         const yAxis = (g: any) => {
             return g.attr("transform", `translate(${margin.left},0)`)
                 .call(d3.axisLeft(y).ticks(3))
-                .call((g: any) => g.select(".domain").remove())
+                .select(".domain")
+                    .style("stroke", "#8A9BA8")
         }
 
         const svg = d3.select(`#${this.props.targetDivId}`)
