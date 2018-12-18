@@ -3,14 +3,14 @@ import {
 } from '@blueprintjs/core'
 import * as React from 'react'
 
-interface Props {
+interface IProps {
     path: string[],
 }
 
-interface State {
+interface IState {
 }
 
-export default class PlfPath extends React.Component<Props, State> {
+export default class PlfPath extends React.Component<IProps, IState> {
     public render = () => {
         const {
             path,

@@ -1,16 +1,16 @@
 import * as React from 'react'
 import {format} from 'd3'
 
-interface Props {
+interface IProps {
     path: string[],
     size: number,
 }
 
-interface State {
+interface IState {
 
 }
 
-export default class NodeViewer extends React.Component<Props, State> {
+export default class NodeViewer extends React.Component<IProps, IState> {
     public render() {
         let {
             path,
