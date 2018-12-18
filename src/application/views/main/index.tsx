@@ -107,7 +107,7 @@ export default class MainView extends React.Component<IMainView, IState> {
             <div id='main-view-container'>
                 <div id='beta-header'>
                     <Tag intent={'primary'}>Alpha</Tag>
-                    <p>Ce site est en version alpha : il peut comporter des erreurs.</p>
+                    <p>Ce site est en version alpha : il peut comporter des erreurs.<br/>Contact : alexis [dot] thual [at] gmail [dot] com</p>
                 </div>
                 {this.state.shouldRedirect ? <Redirect to='/' /> : null}
                 <div id='header' className={'bp3-dark'}>

@@ -29,7 +29,7 @@ export default class IntroductionView extends React.Component<IProps, IState> {
         return <div id='main-container' className={'bp3-running-text bp3-text-large'}>
             <div id='beta-header'>
                 <Tag intent={'primary'}>Alpha</Tag>
-                <p>Ce site est en version alpha : il peut comporter des erreurs.</p>
+                <p>Ce site est en version alpha : il peut comporter des erreurs.<br/>Contact : alexis [dot] thual [at] gmail [dot] com</p>
             </div>
             {this.state.shouldRedirect ? <Redirect to='/visualisation' /> : null}
             <div id='introduction-page'>
