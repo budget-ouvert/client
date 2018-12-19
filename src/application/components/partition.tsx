@@ -106,7 +106,11 @@ export default class Partition extends React.Component<IProps, IState> {
 
             svg.selectAll("g")
                 .filter((node:any) => {
+                    // First check that parent is correct (this fortunately allows to
+                    // distinguish between nodes which have the same name but not the same
+                    // path ; it is not sustainable for complex trees though).
                     const correctParent = (node && node.parent) ? (nodePath.indexOf(node.parent.data.name) == node.depth-1) : true
+
                     return (node && node.data) ? (correctParent && nodePath.indexOf(node.data.name) == node.depth) : false
                 })
                 .select('rect')

@@ -16,6 +16,7 @@ interface INodeData {
 
 interface IProps {
     data: any,
+    onClickCallback: any,
 }
 
 interface IState {
@@ -71,7 +72,7 @@ export default class TreeView extends React.Component<IProps, IState> {
                 ae: node.ae,
                 cp: node.cp,
             },
-            secondaryLabel: <span>{format(node.cp).replace(/,/g, ' ')}</span>,
+            secondaryLabel: <span>{format(node.cp).replace(/,/g, ' ')} euros</span>,
         }
     }
 
@@ -110,18 +111,45 @@ export default class TreeView extends React.Component<IProps, IState> {
         }
     }
 
-    private handleNodeClick = (nodeData: ITreeNode<INodeData>, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
-        console.log('click')
-        const originallySelected = nodeData.isSelected;
+    private getPath = (nodePath: number[]): string[] => {
+        let path: string[] = []
+
+        let currentNode = this.props.data
+        path.push(currentNode.name)
+        nodePath.shift()
+
+        nodePath.forEach((i: number) => {
+            currentNode = currentNode.children.sort((a: any, b: any) => b.cp - a.cp)[i]
+            path.push(currentNode.name)
+        })
+
+        return path
+    }
+
+    private handleNodeClick = (node: ITreeNode<INodeData>, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
+        const originallySelected = node.isSelected;
         if (!e.shiftKey) {
             this.forEachNode(this.state.nodes, (n: any) => (n.isSelected = false));
         }
-        nodeData.isSelected = originallySelected == null ? true : !originallySelected;
-        this.setState(this.state);
+        node.isSelected = true;
+
+        // Set new redux state
+        this.props.onClickCallback({
+            ...node.nodeData,
+            path: this.getPath(_nodePath),
+        })
+
+        // Set new component state
+        this.setState(this.state, () => node.hasCaret ?
+            (node.isExpanded ?
+                this.handleNodeCollapse(node) :
+                this.handleNodeExpand(node)
+            ) :
+            null
+        )
     }
 
     private handleNodeCollapse = (node: ITreeNode<INodeData>) => {
-        console.log('collapse')
         node.isExpanded = false;
         this.setState(this.state);
     }

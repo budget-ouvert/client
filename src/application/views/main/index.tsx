@@ -131,7 +131,7 @@ export default class MainView extends React.Component<IMainView, IState> {
                             currentNode = currentNode.parent
                         }
 
-                        this.props.dispatch(updateSelectedNode(path.reverse(), {
+                        dispatch(updateSelectedNode(path.reverse(), {
                             ae: p.data.ae,
                             cp: p.data.cp,
                         }))
@@ -148,6 +148,13 @@ export default class MainView extends React.Component<IMainView, IState> {
                 </div> :
                 <TreeView
                     data={data.plf.plfByYear[year].data}
+                    onClickCallback={(nodeData: any) => {
+                        console.log(nodeData)
+                        dispatch(updateSelectedNode(nodeData.path, {
+                            ae: nodeData.ae,
+                            cp: nodeData.cp,
+                        }))
+                    }}
                 />
             }
         </div>
