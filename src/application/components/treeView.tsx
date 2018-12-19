@@ -6,6 +6,7 @@ import {
     Tooltip,
     Tree,
 } from '@blueprintjs/core'
+import * as d3 from 'd3'
 import * as React from 'react'
 
 interface INodeData {
@@ -54,6 +55,7 @@ export default class TreeView extends React.Component<IProps, IState> {
 
     private static genObjNodes = (node: any): ITreeNode<INodeData> => {
         const hasChildren = (node.children && node.children.length > 0)
+        let format : any = d3.format(",d")
 
         return {
             childNodes: hasChildren ? node.children.map((child: any) => {
@@ -69,7 +71,7 @@ export default class TreeView extends React.Component<IProps, IState> {
                 ae: node.ae,
                 cp: node.cp,
             },
-            secondaryLabel: <span>{node.cp}</span>,
+            secondaryLabel: <span>{format(node.cp).replace(/,/g, ' ')}</span>,
         }
     }
 

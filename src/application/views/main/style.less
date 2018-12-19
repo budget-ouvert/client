@@ -35,12 +35,8 @@
             color: @dark-gray5;
         }
 
-        #path-breadcrumbs {
-            flex-basis: 50%;
-        }
-
         #barchart {
-            flex-basis: 50%;
+            flex-basis: 66%;
 
             line, path {
                 stroke: @dark-gray5;
@@ -50,12 +46,21 @@
                 fill: @dark-gray5;
             }
         }
+
+        #path-breadcrumbs {
+            flex-basis: 33%;
+            text-align: right;
+
+            .bp3-breadcrumbs {
+                justify-content: flex-end;
+            }
+        }
     }
 
     #information-viewer {
         background-color: @light-gray3;
         flex-basis: 66%;
-        max-height: 66%;
+        overflow: auto;
 
         #partition {
             height: 100%;

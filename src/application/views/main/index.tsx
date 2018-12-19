@@ -189,18 +189,18 @@ export default class MainView extends React.Component<IMainView, IState> {
                     </Button>
                 </div>
                 <div id='node-viewer'>
-                    <div id='path-breadcrumbs'>
-                        <NodeViewer
-                            path={selectedNode.path}
-                            size={selectedNode.data.cp}
-                        />
-                    </div>
                     <div id='barchart'>
                         <BarChart
                             data={selectedNode.data}
                             loadedTime={(year in data.plf.plfByYear) ? data.plf.plfByYear[year].loadedTime : null}
                             selectedNodePath={selectedNode.path}
                             targetDivId={'barchart'}
+                        />
+                    </div>
+                    <div id='path-breadcrumbs'>
+                        <NodeViewer
+                            path={selectedNode.path}
+                            size={selectedNode.data.cp}
                         />
                     </div>
                 </div>
