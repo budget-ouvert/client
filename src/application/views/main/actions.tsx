@@ -27,6 +27,18 @@ export const updateSelectedNode = (path: any, data: any): IAction => {
     }
 }
 
+export const changeSourceType = (sourceType: string): IAction => {
+    return (dispatch: any, getState: any) => {
+        const year = getState().views.mainView.year
+        const toYear = INFO_BY_SOURCE_TYPE[sourceType].years.indexOf(year) > 0 ?
+            year :
+            INFO_BY_SOURCE_TYPE[sourceType].years[0]
+
+        dispatch(updateSourceType(sourceType))
+        dispatch(changeYear(toYear))
+    }
+}
+
 export const updateSourceType = (sourceType: string): IAction => {
     return {
         type: 'UPDATE_SOURCE_TYPE',
