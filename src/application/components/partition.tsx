@@ -17,6 +17,8 @@ interface IState {
 export default class Partition extends React.Component<IProps, IState> {
     static defautOpacity = 0.6
     static hoverOpacity = 0.75
+    static colors = ["#CFF3D2", "#A6DEC5", "#83C7B9", "#65B0B0", "#4E97A9", "#3C7EA2", "#2D659D", "#1F4B99"].reverse()
+
     width: number;
     height: number;
 
@@ -136,7 +138,8 @@ export default class Partition extends React.Component<IProps, IState> {
                     .style("outline-width", "0px")
         }
 
-        function wrap(texts: any, width: number) {
+        function wrap(texts: any) {
+            let width = 200
             // TODO: investigate why function() {} and () => {}
             // don't yield the same value for `this`...
             texts.each(function() {
@@ -230,14 +233,12 @@ export default class Partition extends React.Component<IProps, IState> {
         const rect = cell.append("rect")
             .attr("width", (d : any) => d.y1 - d.y0 - 1)
             .attr("height", (d : any) => rectHeight(d))
-            .attr("fill-opacity", 0.6)
+            .attr("fill-opacity", Partition.defautOpacity)
             .attr("fill", (d : any) => {
-                // Root node's background color
-                if (!d.depth) return "#A7B6C2";
-                return color(d.depth / 10);
+                return Partition.colors[d.depth]
             })
             .style("cursor", "pointer")
-            .style("outline-color", "#182026")
+            .style("outline-color", "#10161A")
             .style("outline-style", "solid")
             .style("outline-width", "0px")
             .style("outline-offset", "-2px")
@@ -250,7 +251,7 @@ export default class Partition extends React.Component<IProps, IState> {
             .attr("y", 13)
             .attr("fill-opacity", (d : any) => +labelVisible(d))
             .text((d : any) => d.data.name)
-            .call(wrap, width / 4)
+            .call(wrap)
 
         cell.append("title")
             .text((d : any) => `${d.ancestors().map((d : any) => d.data.name).reverse().join("/")}\n${format(d.value).replace(/,/g, ' ')} euros`)

@@ -6,6 +6,7 @@
 #main-view-container {
     width: 100vw;
     height: 100vh;
+    overflow: auto;
 
     display: flex;
     flex-direction: column;
@@ -57,9 +58,12 @@
         background-color: @light-gray3;
         flex-basis: 66%;
         overflow: auto;
+        overflow-x: hidden;
 
         #partition {
             height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         #tree {

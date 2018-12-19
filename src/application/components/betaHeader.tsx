@@ -21,7 +21,7 @@ export default class BetaHeader extends React.Component<IProps, IState> {
             <div className='flex-box'>
                 <Tag intent={'primary'}>Alpha</Tag>
                 <p>
-                    Ce site est en version alpha : il peut comporter des erreurs.<br/>
+                    Ce site est en version alpha : les données présentées peuvent être incomplètes et le code présenter des erreurs.<br/>
                     Source des données : <a href="https://data.gouv.fr">https://data.gouv.fr</a>
                 </p>
             </div>
