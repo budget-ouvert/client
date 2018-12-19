@@ -16,7 +16,7 @@ interface IState {
 
 export default class Partition extends React.Component<IProps, IState> {
     static defautOpacity = 0.6
-    static hoverOpacity = 0.8
+    static hoverOpacity = 0.75
     width: number;
     height: number;
 
@@ -91,7 +91,7 @@ export default class Partition extends React.Component<IProps, IState> {
 
         function getPath(node: any): string[] {
             if (node.parent) {
-                return [node.data.name, ...getPath(node.parent)]
+                return [...getPath(node.parent), node.data.name]
             } else {
                 return [node.data.name]
             }
@@ -106,10 +106,12 @@ export default class Partition extends React.Component<IProps, IState> {
 
             svg.selectAll("g")
                 .filter((node:any) => {
-                    return (node && node.data) ? (nodePath.indexOf(node.data.name) >= 0) : false
+                    const correctParent = (node && node.parent) ? (nodePath.indexOf(node.parent.data.name) == node.depth-1) : true
+                    return (node && node.data) ? (correctParent && nodePath.indexOf(node.data.name) == node.depth) : false
                 })
                 .select('rect')
                     .style("fill-opacity", Partition.hoverOpacity)
+                    .style("outline-width", "1px")
 
             that.props.onMouseOverCallback(p)
         }
@@ -123,10 +125,11 @@ export default class Partition extends React.Component<IProps, IState> {
 
             svg.selectAll("g")
                 .filter((node:any) => {
-                    return (node && node.data) ? (nodePath.indexOf(node.data.name) >= 0) : false
+                    return (node && node.data) ? (nodePath.indexOf(node.data.name) == node.depth) : false
                 })
                 .select('rect')
                     .style("fill-opacity", Partition.defautOpacity)
+                    .style("outline-width", "0px")
         }
 
         function wrap(texts: any, width: number) {
@@ -230,6 +233,10 @@ export default class Partition extends React.Component<IProps, IState> {
                 return color(d.depth / 10);
             })
             .style("cursor", "pointer")
+            .style("outline-color", "#182026")
+            .style("outline-style", "solid")
+            .style("outline-width", "0px")
+            .style("outline-offset", "-2px")
             .on("click", _.partial(clicked, this))
 
         const text = cell.append("text")
