@@ -62,7 +62,7 @@ export default class TreeView extends React.Component<IProps, IState> {
         return {
             childNodes: hasChildren ? node.children.map((child: any) => {
                 return TreeView.genObjNodes(child)
-            }).sort((a: any, b: any) => b.nodeData.cp - a.nodeData.cp) : null,
+            }).sort((a: any, b: any) => b.nodeData.size - a.nodeData.size) : null,
             hasCaret: hasChildren,
             icon: hasChildren ? 'folder-open' : 'tag',
             id: TreeView.getId(),
@@ -82,7 +82,6 @@ export default class TreeView extends React.Component<IProps, IState> {
         if (props.data !== state.renderData) {
             try {
                 let nodes = [TreeView.genObjNodes(props.data)]
-                console.log(nodes)
 
                 return {
                     nodes: nodes,
@@ -121,7 +120,7 @@ export default class TreeView extends React.Component<IProps, IState> {
         nodePath.shift()
 
         nodePath.forEach((i: number) => {
-            currentNode = currentNode.children.sort((a: any, b: any) => b.cp - a.cp)[i]
+            currentNode = currentNode.children.sort((a: any, b: any) => b.size - a.size)[i]
             path.push(currentNode.name)
         })
 
