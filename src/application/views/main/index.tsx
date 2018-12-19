@@ -214,6 +214,7 @@ export default class MainView extends React.Component<IMainView, IState> {
                 <div id='information-viewer'>
                     <Tabs
                         onChange={this.handleTabChange}
+                        renderActiveTabPanelOnly={true}
                         selectedTabId={this.state.selectedTabId}
                     >
                         <Tab
