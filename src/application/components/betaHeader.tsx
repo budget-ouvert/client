@@ -30,7 +30,7 @@ export default class BetaHeader extends React.Component<IProps, IState> {
                 <p>alexis [dot] thual [at] gmail [dot] com</p>
                 <Navbar.Divider />
                 <Button icon={'git-repo'} minimal={true} onClick={() => {
-                    window.location.href = 'https://github.com/rainbowViz/'}}
+                    window.location.href = 'https://github.com/budget-ouvert/'}}
                 >Git Repo</Button>
             </div>
         </div>
