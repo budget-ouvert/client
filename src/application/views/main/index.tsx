@@ -16,12 +16,12 @@ import './style.less'
 // Import custom actions
 import {
     fetchPartition,
-} from '../../actions/plf'
+} from '../../actions/partition'
 import {
+    changeSourceType,
     changeYear,
     updateHierarchyType,
     updateSelectedNode,
-    updateSourceType,
 } from './actions'
 
 // Import custom components
@@ -48,6 +48,7 @@ export interface IMainViewState {
         data: {
             ae: number,
             cp: number,
+            size: number,
         },
     },
     // Source document type
@@ -59,6 +60,19 @@ export interface IMainViewState {
 }
 
 export interface IMainView extends IView, IMainViewState {}
+
+export const INFO_BY_SOURCE_TYPE: {[source: string]: any} = {
+    'Recettes': {
+        years: ['2018', '2019'],
+        maxDepth: 4,
+        label: 'Montant',
+    },
+    'PLF': {
+        years: ['2017', '2018', '2019'],
+        maxDepth: 6,
+        label: 'Crédits de paiement',
+    }
+}
 
 export interface IState {
     selectedTabId: TabId,
@@ -99,6 +113,7 @@ export default class MainView extends React.Component<IMainView, IState> {
 
     public componentDidMount() {
         this.props.dispatch(changeYear('2019'))
+        console.log('Un(e) dev ici ? Écris-nous, on a des choses à te montrer : contact@arkhn.org')
     }
 
     private handleTabChange = (navbarTabId: TabId) => this.setState({
@@ -116,13 +131,14 @@ export default class MainView extends React.Component<IMainView, IState> {
         } = this.props
 
         const partitionTab = <div id='partition'>
-            {data.plf.loading || !(year in data.plf.plfByYear) ?
+            {data.partition.loading || !(`${sourceType}-${year}` in data.partition.byKey) ?
                 <div className='centered-spinner'>
                     <Spinner/>
                 </div> :
                 <Partition
-                    data={data.plf.plfByYear[year].data}
-                    loadedTime={data.plf.plfByYear[year].loadedTime}
+                    data={data.partition.byKey[`${sourceType}-${year}`].data}
+                    loadedTime={data.partition.byKey[`${sourceType}-${year}`].loadedTime}
+                    maxDepth={INFO_BY_SOURCE_TYPE[sourceType].maxDepth}
                     onMouseOverCallback={(p: any) => {
                         let path : string[] = [p.data.name]
                         let currentNode = p
@@ -134,6 +150,7 @@ export default class MainView extends React.Component<IMainView, IState> {
                         dispatch(updateSelectedNode(path.reverse(), {
                             ae: p.data.ae,
                             cp: p.data.cp,
+                            size: p.data.size,
                         }))
                     }}
                     targetDivId={'partition'}
@@ -142,17 +159,18 @@ export default class MainView extends React.Component<IMainView, IState> {
         </div>
 
         const listTab = <div id='tree'>
-            {data.plf.loading || !(year in data.plf.plfByYear) ?
+            {data.partition.loading || !(`${sourceType}-${year}` in data.partition.byKey) ?
                 <div className='centered-spinner'>
                     <Spinner/>
                 </div> :
                 <TreeView
-                    data={data.plf.plfByYear[year].data}
+                    data={data.partition.byKey[`${sourceType}-${year}`].data}
                     onClickCallback={(nodeData: any) => {
                         console.log(nodeData)
                         dispatch(updateSelectedNode(nodeData.path, {
                             ae: nodeData.ae,
                             cp: nodeData.cp,
+                            size: nodeData.size,
                         }))
                     }}
                 />
@@ -173,14 +191,18 @@ export default class MainView extends React.Component<IMainView, IState> {
                             onChange={null}
                         />
                         <StringSelect
-                            items={['PLF']}
+                            items={['Recettes', 'PLF']}
                             inputItem={sourceType}
                             onChange={(target: string) => {
-                                dispatch(updateSourceType(target))
+                                dispatch(changeSourceType(target))
                             }}
                         />
                         <StringSelect
-                            items={['2017', '2018', '2019']}
+                            disabled={!sourceType}
+                            items={sourceType ?
+                                INFO_BY_SOURCE_TYPE[sourceType].years :
+                                []
+                            }
                             inputItem={year}
                             onChange={(target: string) => {
                                 dispatch(changeYear(target))
@@ -197,17 +219,22 @@ export default class MainView extends React.Component<IMainView, IState> {
                 </div>
                 <div id='node-viewer'>
                     <div id='barchart'>
-                        <BarChart
-                            data={selectedNode.data}
-                            loadedTime={(year in data.plf.plfByYear) ? data.plf.plfByYear[year].loadedTime : null}
-                            selectedNodePath={selectedNode.path}
-                            targetDivId={'barchart'}
-                        />
+                        {
+                            sourceType != 'Recettes' ?
+                                <BarChart
+                                    data={selectedNode.data}
+                                    loadedTime={(`${sourceType}-${year}` in data.partition.byKey) ? data.partition.byKey[`${sourceType}-${year}`].loadedTime : null}
+                                    selectedNodePath={selectedNode.path}
+                                    targetDivId={'barchart'}
+                                /> :
+                                null
+                        }
                     </div>
                     <div id='path-breadcrumbs'>
                         <NodeViewer
+                            label={INFO_BY_SOURCE_TYPE[sourceType].label}
                             path={selectedNode.path}
-                            size={selectedNode.data.cp}
+                            size={selectedNode.data.size}
                         />
                     </div>
                 </div>

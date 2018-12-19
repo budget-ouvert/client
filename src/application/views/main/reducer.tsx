@@ -18,6 +18,7 @@ const initialState: IMainViewState = {
         data: {
             ae: null,
             cp: null,
+            size: null,
         },
     },
     sourceType: 'PLF',

@@ -5,6 +5,7 @@ import * as _ from 'lodash'
 interface IProps {
     data: any,
     loadedTime: number,
+    maxDepth: number,
     onMouseOverCallback: any,
     targetDivId: string,
 }
@@ -193,7 +194,7 @@ export default class Partition extends React.Component<IProps, IState> {
         let partition : any = (data: any) => {
             const root : any = d3.hierarchy(data)
                 .each((d: any) => {
-                    d.value = d.data.cp
+                    d.value = d.data.size
                 })
                 .sort((a: any, b: any) => b.value - a.value);
 
@@ -201,7 +202,7 @@ export default class Partition extends React.Component<IProps, IState> {
             // Ici, on multiplie la largeur par
             // 2 = maxdepth / 3
             // car je veux voir 2 colonnes s'afficher.
-            return d3.partition().size([this.height, 6 / 3 * (this.width - 100)])(root)
+            return d3.partition().size([this.height, this.props.maxDepth / 3 * (this.width - 100)])(root)
         }
 
         let color : any = d3.scaleOrdinal()

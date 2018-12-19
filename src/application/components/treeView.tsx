@@ -12,6 +12,7 @@ import * as React from 'react'
 interface INodeData {
     ae: number,
     cp: number,
+    size: number,
 }
 
 interface IProps {
@@ -71,8 +72,9 @@ export default class TreeView extends React.Component<IProps, IState> {
             nodeData: {
                 ae: node.ae,
                 cp: node.cp,
+                size: node.size,
             },
-            secondaryLabel: <span>{format(node.cp).replace(/,/g, ' ')} euros</span>,
+            secondaryLabel: <span>{format(node.size).replace(/,/g, ' ')} euros</span>,
         }
     }
 

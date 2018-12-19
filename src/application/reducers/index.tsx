@@ -3,10 +3,10 @@
 
 import {combineReducers} from 'redux'
 
-import plf from './plf'
+import partition from './partition'
 
 const dataReducer = combineReducers({
-    plf,
+    partition,
 })
 
 import mainView from '../views/main/reducer'
