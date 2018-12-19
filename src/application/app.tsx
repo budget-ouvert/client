@@ -12,7 +12,7 @@ import {
     createLogger,
 } from 'redux-logger'
 
-import './../main.less'
+import './main.less'
 import Routes from './routes'
 import middlewares from './middlewares'
 // import mainReducer from './reducers/mainReducer'
