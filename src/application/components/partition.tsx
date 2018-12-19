@@ -138,8 +138,8 @@ export default class Partition extends React.Component<IProps, IState> {
                     .style("outline-width", "0px")
         }
 
-        function wrap(texts: any) {
-            let width = 200
+        function wrap(that: any, texts: any) {
+            let width = that.width / 4
             // TODO: investigate why function() {} and () => {}
             // don't yield the same value for `this`...
             texts.each(function() {
@@ -251,7 +251,7 @@ export default class Partition extends React.Component<IProps, IState> {
             .attr("y", 13)
             .attr("fill-opacity", (d : any) => +labelVisible(d))
             .text((d : any) => d.data.name)
-            .call(wrap)
+            .call(_.partial(wrap, this))
 
         cell.append("title")
             .text((d : any) => `${d.ancestors().map((d : any) => d.data.name).reverse().join("/")}\n${format(d.value).replace(/,/g, ' ')} euros`)
