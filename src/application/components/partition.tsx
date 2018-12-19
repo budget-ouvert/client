@@ -15,6 +15,8 @@ interface IState {
 }
 
 export default class Partition extends React.Component<IProps, IState> {
+    static defautOpacity = 0.6
+    static hoverOpacity = 0.8
     width: number;
     height: number;
 
@@ -85,22 +87,46 @@ export default class Partition extends React.Component<IProps, IState> {
                 .attr("height", (d : any) => rectHeight(d.target));
             text.transition(t)
                 .attr("fill-opacity", (d : any) => +labelVisible(d.target));
-            // tspan.transition(t)
-            //     .attr("fill-opacity", (d : any) => +labelVisible(d.target) * 0.7);
+        }
+
+        function getPath(node: any): string[] {
+            if (node.parent) {
+                return [node.data.name, ...getPath(node.parent)]
+            } else {
+                return [node.data.name]
+            }
         }
 
         function onMouseOver(that: any, p: any) {
+            const nodePath = getPath(p)
+
             d3.select(this)
                 .select('rect')
-                .attr("fill-opacity", 0.8)
+                .attr("fill-opacity", Partition.hoverOpacity)
+
+            svg.selectAll("g")
+                .filter((node:any) => {
+                    return (node && node.data) ? (nodePath.indexOf(node.data.name) >= 0) : false
+                })
+                .select('rect')
+                    .style("fill-opacity", Partition.hoverOpacity)
 
             that.props.onMouseOverCallback(p)
         }
 
-        function onMouseLeave(p: any) {
+        function onMouseLeave(that: any, p: any) {
+            const nodePath = getPath(p)
+
             d3.select(this)
                 .select('rect')
-                .attr("fill-opacity", 0.6)
+                .attr("fill-opacity", Partition.defautOpacity)
+
+            svg.selectAll("g")
+                .filter((node:any) => {
+                    return (node && node.data) ? (nodePath.indexOf(node.data.name) >= 0) : false
+                })
+                .select('rect')
+                    .style("fill-opacity", Partition.defautOpacity)
         }
 
         function wrap(texts: any, width: number) {
@@ -214,10 +240,6 @@ export default class Partition extends React.Component<IProps, IState> {
             .attr("fill-opacity", (d : any) => +labelVisible(d))
             .text((d : any) => d.data.name)
             .call(wrap, width / 4)
-
-        // const tspan = text.append("tspan")
-        //     .attr("fill-opacity", (d : any) => +labelVisible(d) * 0.7)
-        //     .text((d : any) => ` ${format(d.value)}`)
 
         cell.append("title")
             .text((d : any) => `${d.ancestors().map((d : any) => d.data.name).reverse().join("/")}\n${format(d.value).replace(/,/g, ' ')} euros`)
