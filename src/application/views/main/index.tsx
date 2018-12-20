@@ -201,7 +201,7 @@ export default class MainView extends React.Component<IProps, IState> {
                                 <div className='centered-spinner'>
                                     <Spinner/>
                                 </div> :
-                                null) :
+                                <div>here</div>) :
                             <Partition
                                 data={data.partition.byKey[`${source}-${year}`].data}
                                 loadedTime={data.partition.byKey[`${source}-${year}`].loadedTime}
@@ -225,6 +225,7 @@ export default class MainView extends React.Component<IProps, IState> {
                                     ))
                                 }}
                                 targetDivId={'partition'}
+                                selectedCode={selectedNode.code}
                             />
                         }
                     </div>
@@ -249,6 +250,7 @@ export default class MainView extends React.Component<IProps, IState> {
                                         },
                                     ))
                                 }}
+                                selectedCode={selectedNode.code}
                             />
                         }
                     </div>

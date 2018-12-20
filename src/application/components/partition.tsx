@@ -7,6 +7,7 @@ interface IProps {
     loadedTime: number,
     maxDepth: number,
     onMouseOverCallback: any,
+    selectedCode: string,
     targetDivId: string,
 }
 
@@ -23,6 +24,12 @@ export default class Partition extends React.Component<IProps, IState> {
     width: number;
     height: number;
     focus: any;
+    root: any;
+    cell: any;
+    rect: any;
+    text: any;
+    rectHeight: any;
+    labelVisible: any;
 
     public constructor(props: IProps) {
         super(props)
@@ -44,8 +51,8 @@ export default class Partition extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        this.width = document.getElementById(this.props.targetDivId).offsetWidth
-        this.height = document.getElementById(this.props.targetDivId).offsetHeight
+        this.width = document.getElementById(this.props.targetDivId).offsetWidth - 1
+        this.height = document.getElementById(this.props.targetDivId).offsetHeight - 4
         if (this.state.data) {
             this.drawPartition()
         }
@@ -56,6 +63,18 @@ export default class Partition extends React.Component<IProps, IState> {
         // then one should update this component.
         if (nextProps.loadedTime != this.props.loadedTime) {
             return true
+        }
+
+        // Change focus to selected node
+        let p = null
+        this.root.each((d: any) => {
+            if(d.data.code == nextProps.selectedCode) {
+                p = d
+            }
+        })
+
+        if (p) {
+            this.changeFocus(this, p)
         }
 
         return false
@@ -73,26 +92,29 @@ export default class Partition extends React.Component<IProps, IState> {
             .remove();
     }
 
+    public changeFocus = (that: any, p: any) => {
+        that.focus = p
+
+        that.root.each((d : any) => d.target = {
+            x0: (d.x0 - p.x0) / (p.x1 - p.x0) * this.height,
+            x1: (d.x1 - p.x0) / (p.x1 - p.x0) * this.height,
+            y0: d.y0 - p.y0,
+            y1: d.y1 - p.y0
+        })
+
+        const t = that.cell.transition().duration(750)
+            .attr("transform", (d : any) => `translate(${d.target.y0 + (that.focus.depth == 0 ? 0 : 50)},${d.target.x0})`)
+
+        that.rect.transition(t)
+            .attr("height", (d : any) => that.rectHeight(d.target))
+
+        that.text.transition(t)
+            .attr("fill-opacity", (d : any) => +that.labelVisible(d.target))
+    }
+
     public drawPartition() {
-        function clicked(that: any, p : any) {
-            that.focus = p
-
-            root.each((d : any) => d.target = {
-                x0: (d.x0 - p.x0) / (p.x1 - p.x0) * height,
-                x1: (d.x1 - p.x0) / (p.x1 - p.x0) * height,
-                y0: d.y0 - p.y0,
-                y1: d.y1 - p.y0
-            })
-
-            const t = cell.transition().duration(750)
-                .attr("transform", (d : any) => `translate(${d.target.y0 + (that.focus.depth == 0 ? 0 : 50)},${d.target.x0})`)
-
-            rect.transition(t)
-                .attr("height", (d : any) => rectHeight(d.target))
-
-            text.transition(t)
-                .attr("fill-opacity", (d : any) => +labelVisible(d.target))
-
+        function clicked(that: any, p: any) {
+            that.changeFocus(that, p)
             that.props.onMouseOverCallback(p)
         }
 
@@ -151,7 +173,7 @@ export default class Partition extends React.Component<IProps, IState> {
             const m = d3.mouse(this)
 
             const tooltip = d3.select('#tooltip')
-                .attr("transform", `translate(${(p.target ? p.target.y0 + 70 : p.y0 + 20) + m[0]}, ${(p.target ? p.target.x0 : p.x0) + m[1] - 20})`)
+                .attr("transform", `translate(${(p.target ? p.target.y0 + 80 : p.y0 + 30) + m[0]}, ${(p.target ? p.target.x0 : p.x0) + m[1] - 20})`)
 
             tooltip.select('#tooltip-name')
                 .text(p.data.name)
@@ -214,15 +236,15 @@ export default class Partition extends React.Component<IProps, IState> {
             })
         }
 
-        const rectHeight = (d : any) => {
-            return d.x1 - d.x0 - Math.min(1, (d.x1 - d.x0) / 2);
+        this.rectHeight = (d : any) => {
+            return d.x1 - d.x0 - Math.min(1, (d.x1 - d.x0) / 2)
         }
 
-        const labelVisible = (d : any) => {
-            return d.y1 <= width && d.y0 >= 0 && d.x1 - d.x0 > 16;
+        this.labelVisible = (d : any) => {
+            return d.y1 <= this.width && d.y0 >= 0 && d.x1 - d.x0 > 16
         }
 
-        let data = this.state.data;
+        let data = this.state.data
 
         let partition : any = (data: any) => {
             const root : any = d3.hierarchy(data)
@@ -243,11 +265,8 @@ export default class Partition extends React.Component<IProps, IState> {
 
         let format : any = d3.format(",d")
 
-        let width : any = this.width
-        let height : any = this.height
-
-        const root = partition(data)
-        this.focus = root
+        this.root = partition(data)
+        this.focus = this.root
 
         const svg = d3.select(`#${this.props.targetDivId}`)
             .select('#local-container')
@@ -257,9 +276,9 @@ export default class Partition extends React.Component<IProps, IState> {
             .style("font", "10px sans-serif")
             .select('#partition')
 
-        const cell = svg.append("g")
+        this.cell = svg.append("g")
             .selectAll("g")
-            .data(root.descendants())
+            .data(this.root.descendants())
             .enter().append("g")
                 .attr("transform", (d: any) => `translate(${d.y0},${d.x0})`)
                 .on("mouseover", _.partial(onMouseOver, this))
@@ -267,6 +286,7 @@ export default class Partition extends React.Component<IProps, IState> {
                 .on("mousemove", _.partial(onMouseMove, this))
 
         const tooltip = d3.select('#tooltip')
+            .attr('opacity', '0.9')
 
         tooltip.select('text')
             .attr('fill', '#F5F8FA')
@@ -277,9 +297,9 @@ export default class Partition extends React.Component<IProps, IState> {
             .attr('font-size', '13')
             .attr('font-style', 'italic')
 
-        const rect = cell.append("rect")
+        this.rect = this.cell.append("rect")
             .attr("width", (d : any) => d.y1 - d.y0 - 1)
-            .attr("height", (d : any) => rectHeight(d))
+            .attr("height", (d : any) => this.rectHeight(d))
             .attr("fill-opacity", Partition.defautOpacity)
             .attr("fill", (d : any) => {
                 return Partition.colors[d.depth]
@@ -291,12 +311,12 @@ export default class Partition extends React.Component<IProps, IState> {
             .style("outline-offset", "-2px")
             .on("click", _.partial(clicked, this))
 
-        const text = cell.append("text")
+        this.text = this.cell.append("text")
             .style("user-select", "none")
             .attr("pointer-events", "none")
             .attr("x", 4)
             .attr("y", 13)
-            .attr("fill-opacity", (d : any) => +labelVisible(d))
+            .attr("fill-opacity", (d : any) => +this.labelVisible(d))
             .text((d : any) => d.data.name)
             .call(_.partial(wrap, this))
     }

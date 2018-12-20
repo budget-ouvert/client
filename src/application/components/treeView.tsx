@@ -20,6 +20,7 @@ interface INodeData {
 interface IProps {
     data: any,
     onClickCallback: any,
+    selectedCode: string,
 }
 
 interface IState {
@@ -57,19 +58,19 @@ export default class TreeView extends React.Component<IProps, IState> {
         }
     }
 
-    private static genObjNodes = (node: any): ITreeNode<INodeData> => {
+    private static genObjNodes = (node: any, selectedCode: string): ITreeNode<INodeData> => {
         const hasChildren = (node.children && node.children.length > 0)
         let format : any = d3.format(",d")
 
         return {
             childNodes: hasChildren ? node.children.map((child: any) => {
-                return TreeView.genObjNodes(child)
+                return TreeView.genObjNodes(child, selectedCode)
             }).sort((a: any, b: any) => b.nodeData.size - a.nodeData.size) : null,
             hasCaret: hasChildren,
             icon: hasChildren ? 'folder-open' : 'tag',
             id: TreeView.getId(),
-            isExpanded: false,
-            isSelected: false,
+            isExpanded: hasChildren && ((selectedCode ? selectedCode.startsWith(node.code) : false) || ['PLF', 'REC'].indexOf(node.code) >= 0),
+            isSelected: node.code == selectedCode,
             label: <Text ellipsize={true}>{node.name}</Text>,
             nodeData: {
                 code: node.code,
@@ -82,25 +83,21 @@ export default class TreeView extends React.Component<IProps, IState> {
     }
 
     static getDerivedStateFromProps(props: IProps, state: IState): IState {
-        if (props.data !== state.renderData) {
-            try {
-                let nodes = [TreeView.genObjNodes(props.data)]
+        try {
+            let nodes = [TreeView.genObjNodes(props.data, props.selectedCode)]
 
-                return {
-                    nodes: nodes,
-                    renderData: props.data,
-                    isBroken: false,
-                }
-            } catch(err) {
-                console.log(err)
-                return {
-                    nodes: [] as any,
-                    renderData: props.data,
-                    isBroken: true,
-                }
+            return {
+                nodes: nodes,
+                renderData: props.data,
+                isBroken: false,
             }
-        } else {
-            return state
+        } catch(err) {
+            console.log(err)
+            return {
+                nodes: [] as any,
+                renderData: props.data,
+                isBroken: true,
+            }
         }
     }
 
@@ -154,13 +151,13 @@ export default class TreeView extends React.Component<IProps, IState> {
     }
 
     private handleNodeCollapse = (node: ITreeNode<INodeData>) => {
-        node.isExpanded = false;
-        this.setState(this.state);
+        node.isExpanded = false
+        this.setState(this.state)
     }
 
     private handleNodeExpand = (node: ITreeNode<INodeData>) => {
-        node.isExpanded = true;
-        this.setState(this.state);
+        node.isExpanded = true
+        this.setState(this.state)
     }
 
     public render = () => {

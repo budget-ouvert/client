@@ -47,12 +47,30 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
             return {
                 ...state,
                 source: action.payload,
+                selectedNode: {
+                    code: null,
+                    path: [],
+                    data: {
+                        ae: null,
+                        cp: null,
+                        size: null,
+                    },
+                },
             }
 
         case 'UPDATE_YEAR':
             return {
                 ...state,
                 year: action.payload,
+                selectedNode: {
+                    code: null,
+                    path: [],
+                    data: {
+                        ae: null,
+                        cp: null,
+                        size: null,
+                    },
+                },
             }
 
         default:
