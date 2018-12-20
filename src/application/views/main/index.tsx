@@ -8,6 +8,7 @@ import {
     Tag,
 } from '@blueprintjs/core'
 import * as React from 'react'
+import * as qs from 'query-string'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -18,10 +19,12 @@ import {
     fetchPartition,
 } from '../../actions/partition'
 import {
-    changesource,
+    changeSource,
     changeYear,
     updateHierarchyType,
     updateSelectedNode,
+    updateSource,
+    updateYear,
 } from './actions'
 
 // Import custom components
@@ -59,7 +62,7 @@ export interface IMainViewState {
     year: string,
 }
 
-export interface IMainView extends IView, IMainViewState {}
+export interface IProps extends IView, IMainViewState {}
 
 export const INFO_BY_SOURCE_TYPE: {[source: string]: any} = {
     'Recettes': {
@@ -93,7 +96,7 @@ const reduxify = (mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 // Describe how redux state should be mapped to props
-const mapReduxStateToReactProps = (state : IReduxStore): IMainView => {
+const mapReduxStateToReactProps = (state : IReduxStore): IProps => {
     return {
         ...state.views.mainView,
         data: state.data,
@@ -102,17 +105,27 @@ const mapReduxStateToReactProps = (state : IReduxStore): IMainView => {
 }
 
 @reduxify(mapReduxStateToReactProps)
-export default class MainView extends React.Component<IMainView, IState> {
-    constructor(props: IMainView) {
+export default class MainView extends React.Component<IProps, IState> {
+    constructor(props: IProps) {
         super(props)
+
+        const args = qs.parse(props.location.search)
+        console.log(args)
+
+        if (args.source && args.year) {
+            console.log('dispatch')
+            this.props.dispatch(updateYear(args.year as string))
+            this.props.dispatch(changeSource(args.source as string))
+        }
+
         this.state = {
-            selectedTabId: 'partition',
+            selectedTabId: args.tabId ? args.tabId as TabId : 'partition',
             shouldRedirect: false,
         }
     }
 
     public componentDidMount() {
-        this.props.dispatch(changeYear('2019'))
+        // this.props.dispatch(changeYear('2019'))
         console.log('Un(e) dev ici ? Écris-nous, on a des choses à te montrer : contact@arkhn.org')
     }
 
@@ -121,7 +134,6 @@ export default class MainView extends React.Component<IMainView, IState> {
     })
 
     public render () {
-        console.log(this.props)
         let {
             data,
             dispatch,
