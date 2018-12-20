@@ -27,33 +27,33 @@ export const updateSelectedNode = (path: any, data: any): IAction => {
     }
 }
 
-export const changeSourceType = (sourceType: string): IAction => {
+export const changesource = (source: string): IAction => {
     return (dispatch: any, getState: any) => {
         const year = getState().views.mainView.year
-        const toYear = INFO_BY_SOURCE_TYPE[sourceType].years.indexOf(year) > 0 ?
+        const toYear = INFO_BY_SOURCE_TYPE[source].years.indexOf(year) > 0 ?
             year :
-            INFO_BY_SOURCE_TYPE[sourceType].years[0]
+            INFO_BY_SOURCE_TYPE[source].years[0]
 
-        dispatch(updateSourceType(sourceType))
+        dispatch(updatesource(source))
         dispatch(changeYear(toYear))
     }
 }
 
-export const updateSourceType = (sourceType: string): IAction => {
+export const updatesource = (source: string): IAction => {
     return {
         type: 'UPDATE_SOURCE_TYPE',
-        payload: sourceType,
+        payload: source,
     }
 }
 
 export const changeYear = (year: string): IAction => {
     return (dispatch: any, getState: any) => {
-        const sourceType = getState().views.mainView.sourceType
+        const source = getState().views.mainView.source
         // If year needs to be downloaded, fetch it;
         // otherwise, just update year in redux state.
-        if (!(`${sourceType}-${year}` in getState().data.partition.byKey)) {
+        if (!(`${source}-${year}` in getState().data.partition.byKey)) {
             dispatch(fetchPartition(
-                sourceType,
+                source,
                 year,
                 () => dispatch(updateYear(year))
             ))

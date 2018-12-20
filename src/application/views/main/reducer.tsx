@@ -21,7 +21,7 @@ const initialState: IMainViewState = {
             size: null,
         },
     },
-    sourceType: 'PLF',
+    source: 'PLF',
     year: '2019',
 }
 
@@ -45,7 +45,7 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
         case 'UPDATE_SOURCE_TYPE':
             return {
                 ...state,
-                sourceType: action.payload,
+                source: action.payload,
             }
 
         case 'UPDATE_YEAR':

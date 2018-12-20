@@ -11,16 +11,16 @@ const SOURCE_TYPE_URL: {[key: string]: string} = {
     'PLF': 'plf_by_action'
 }
 
-export const fetchPartition = (sourceType: string, year: string, callback: any): IAction => {
+export const fetchPartition = (source: string, year: string, callback: any): IAction => {
     return (dispatch: any, getState: any) => {
         dispatch(loadingPartition())
 
-        const url = `${BACKEND_URL}/${SOURCE_TYPE_URL[sourceType]}/${year}.json`
+        const url = `${BACKEND_URL}/${SOURCE_TYPE_URL[source]}/${year}.json`
 
         fetch(url).then((response: any) => {
             return response.text()
         }).then((response: any) => {
-            dispatch(fetchPartitionSuccess(`${sourceType}-${year}`, response))
+            dispatch(fetchPartitionSuccess(`${source}-${year}`, response))
             callback()
         }).catch((err: any) => {
             console.log(err)

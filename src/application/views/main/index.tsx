@@ -18,7 +18,7 @@ import {
     fetchPartition,
 } from '../../actions/partition'
 import {
-    changeSourceType,
+    changesource,
     changeYear,
     updateHierarchyType,
     updateSelectedNode,
@@ -53,7 +53,7 @@ export interface IMainViewState {
     },
     // Source document type
     // (ex: PLF, LFI, LR)
-    sourceType: string,
+    source: string,
     // Selected year
     // (ex: 2018)
     year: string,
@@ -121,24 +121,25 @@ export default class MainView extends React.Component<IMainView, IState> {
     })
 
     public render () {
+        console.log(this.props)
         let {
             data,
             dispatch,
             hierarchyType,
             selectedNode,
-            sourceType,
+            source,
             year,
         } = this.props
 
         const partitionTab = <div id='partition'>
-            {data.partition.loading || !(`${sourceType}-${year}` in data.partition.byKey) ?
+            {data.partition.loading || !(`${source}-${year}` in data.partition.byKey) ?
                 <div className='centered-spinner'>
                     <Spinner/>
                 </div> :
                 <Partition
-                    data={data.partition.byKey[`${sourceType}-${year}`].data}
-                    loadedTime={data.partition.byKey[`${sourceType}-${year}`].loadedTime}
-                    maxDepth={INFO_BY_SOURCE_TYPE[sourceType].maxDepth}
+                    data={data.partition.byKey[`${source}-${year}`].data}
+                    loadedTime={data.partition.byKey[`${source}-${year}`].loadedTime}
+                    maxDepth={INFO_BY_SOURCE_TYPE[source].maxDepth}
                     onMouseOverCallback={(p: any) => {
                         let path : string[] = [p.data.name]
                         let currentNode = p
@@ -159,12 +160,12 @@ export default class MainView extends React.Component<IMainView, IState> {
         </div>
 
         const listTab = <div id='tree'>
-            {data.partition.loading || !(`${sourceType}-${year}` in data.partition.byKey) ?
+            {data.partition.loading || !(`${source}-${year}` in data.partition.byKey) ?
                 <div className='centered-spinner'>
                     <Spinner/>
                 </div> :
                 <TreeView
-                    data={data.partition.byKey[`${sourceType}-${year}`].data}
+                    data={data.partition.byKey[`${source}-${year}`].data}
                     onClickCallback={(nodeData: any) => {
                         console.log(nodeData)
                         dispatch(updateSelectedNode(nodeData.path, {
@@ -192,15 +193,15 @@ export default class MainView extends React.Component<IMainView, IState> {
                         />
                         <StringSelect
                             items={['Recettes', 'PLF']}
-                            inputItem={sourceType}
+                            inputItem={source}
                             onChange={(target: string) => {
-                                dispatch(changeSourceType(target))
+                                dispatch(changesource(target))
                             }}
                         />
                         <StringSelect
-                            disabled={!sourceType}
-                            items={sourceType ?
-                                INFO_BY_SOURCE_TYPE[sourceType].years :
+                            disabled={!source}
+                            items={source ?
+                                INFO_BY_SOURCE_TYPE[source].years :
                                 []
                             }
                             inputItem={year}
@@ -220,10 +221,10 @@ export default class MainView extends React.Component<IMainView, IState> {
                 <div id='node-viewer'>
                     <div id='barchart'>
                         {
-                            sourceType != 'Recettes' ?
+                            source != 'Recettes' ?
                                 <BarChart
                                     data={selectedNode.data}
-                                    loadedTime={(`${sourceType}-${year}` in data.partition.byKey) ? data.partition.byKey[`${sourceType}-${year}`].loadedTime : null}
+                                    loadedTime={(`${source}-${year}` in data.partition.byKey) ? data.partition.byKey[`${source}-${year}`].loadedTime : null}
                                     selectedNodePath={selectedNode.path}
                                     targetDivId={'barchart'}
                                 /> :
@@ -232,7 +233,7 @@ export default class MainView extends React.Component<IMainView, IState> {
                     </div>
                     <div id='path-breadcrumbs'>
                         <NodeViewer
-                            label={INFO_BY_SOURCE_TYPE[sourceType].label}
+                            label={INFO_BY_SOURCE_TYPE[source].label}
                             path={selectedNode.path}
                             size={selectedNode.data.size}
                         />
