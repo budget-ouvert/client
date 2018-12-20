@@ -17,10 +17,11 @@ export const updateHierarchyType = (hierarchyType: string): IAction => {
     }
 }
 
-export const updateSelectedNode = (path: any, data: any): IAction => {
+export const updateSelectedNode = (code: string, path: string[], data: any): IAction => {
     return {
         type: 'UPDATE_SELECTED_NODE',
         payload: {
+            code,
             path,
             data,
         }

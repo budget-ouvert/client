@@ -13,6 +13,7 @@ import {
 const initialState: IMainViewState = {
     hierarchyType: 'Comptabilité générale',
     selectedNode: {
+        code: null,
         path: [],
         data: {
             ae: null,
@@ -30,6 +31,7 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
             return {
                 ...state,
                 selectedNode: {
+                    code: action.payload.code,
                     path: action.payload.path,
                     data: action.payload.data,
                 },

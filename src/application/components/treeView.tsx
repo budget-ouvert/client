@@ -10,6 +10,7 @@ import * as d3 from 'd3'
 import * as React from 'react'
 
 interface INodeData {
+    code: string,
     ae: number,
     cp: number,
     size: number,
@@ -70,6 +71,7 @@ export default class TreeView extends React.Component<IProps, IState> {
             isSelected: false,
             label: <div>{node.name}</div>,
             nodeData: {
+                code: node.code,
                 ae: node.ae,
                 cp: node.cp,
                 size: node.size,

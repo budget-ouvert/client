@@ -47,6 +47,7 @@ export interface IMainViewState {
     hierarchyType: string,
     // Clicked node in the visible partition
     selectedNode: {
+        code: string,
         path: string[],
         data: {
             ae: number,
@@ -109,11 +110,11 @@ export default class MainView extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props)
 
+        console.log('La console t\'intéresse ? Écris-nous, on a des choses à te montrer : contact@arkhn.org')
+
         const args = qs.parse(props.location.search)
-        console.log(args)
 
         if (args.source && args.year) {
-            console.log('dispatch')
             this.props.dispatch(updateYear(args.year as string))
             this.props.dispatch(changeSource(args.source as string))
         }
@@ -122,11 +123,6 @@ export default class MainView extends React.Component<IProps, IState> {
             selectedTabId: args.tabId ? args.tabId as TabId : 'partition',
             shouldRedirect: false,
         }
-    }
-
-    public componentDidMount() {
-        // this.props.dispatch(changeYear('2019'))
-        console.log('Un(e) dev ici ? Écris-nous, on a des choses à te montrer : contact@arkhn.org')
     }
 
     private handleTabChange = (navbarTabId: TabId) => this.setState({
@@ -144,10 +140,12 @@ export default class MainView extends React.Component<IProps, IState> {
         } = this.props
 
         const partitionTab = <div id='partition'>
-            {data.partition.loading || !(`${source}-${year}` in data.partition.byKey) ?
-                <div className='centered-spinner'>
-                    <Spinner/>
-                </div> :
+            {!(`${source}-${year}` in data.partition.byKey) ?
+                (data.partition.loading ?
+                    <div className='centered-spinner'>
+                        <Spinner/>
+                    </div> :
+                    null) :
                 <Partition
                     data={data.partition.byKey[`${source}-${year}`].data}
                     loadedTime={data.partition.byKey[`${source}-${year}`].loadedTime}
@@ -160,11 +158,15 @@ export default class MainView extends React.Component<IProps, IState> {
                             currentNode = currentNode.parent
                         }
 
-                        dispatch(updateSelectedNode(path.reverse(), {
-                            ae: p.data.ae,
-                            cp: p.data.cp,
-                            size: p.data.size,
-                        }))
+                        dispatch(updateSelectedNode(
+                            p.data.code,
+                            path.reverse(),
+                            {
+                                ae: p.data.ae,
+                                cp: p.data.cp,
+                                size: p.data.size,
+                            },
+                        ))
                     }}
                     targetDivId={'partition'}
                 />
@@ -172,19 +174,25 @@ export default class MainView extends React.Component<IProps, IState> {
         </div>
 
         const listTab = <div id='tree'>
-            {data.partition.loading || !(`${source}-${year}` in data.partition.byKey) ?
-                <div className='centered-spinner'>
-                    <Spinner/>
-                </div> :
+            {!(`${source}-${year}` in data.partition.byKey) ?
+                (data.partition.loading ?
+                    <div className='centered-spinner'>
+                        <Spinner/>
+                    </div> :
+                    null) :
                 <TreeView
                     data={data.partition.byKey[`${source}-${year}`].data}
                     onClickCallback={(nodeData: any) => {
                         console.log(nodeData)
-                        dispatch(updateSelectedNode(nodeData.path, {
-                            ae: nodeData.ae,
-                            cp: nodeData.cp,
-                            size: nodeData.size,
-                        }))
+                        dispatch(updateSelectedNode(
+                            nodeData.code,
+                            nodeData.path,
+                            {
+                                ae: nodeData.ae,
+                                cp: nodeData.cp,
+                                size: nodeData.size,
+                            },
+                        ))
                     }}
                 />
             }
