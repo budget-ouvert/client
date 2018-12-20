@@ -23,8 +23,6 @@
 
     #node-viewer {
         background-color: @light-gray4;
-        padding: @window-padding;
-
         flex-basis: 33%;
 
         display: flex;
@@ -37,7 +35,7 @@
         }
 
         #barchart {
-            flex-basis: 66%;
+            flex-basis: 67%;
 
             line, path {
                 stroke: @dark-gray5;
@@ -49,26 +47,43 @@
         }
 
         #path-breadcrumbs {
+            background-color: @light-gray3;
             flex-basis: 33%;
-            padding: 0 @window-padding;
+            padding: @window-padding;
         }
     }
 
     #information-viewer {
         background-color: @light-gray3;
-        flex-basis: 66%;
+        flex-basis: 67%;
         overflow: auto;
         overflow-x: hidden;
+
+        display: flex;
+        flex-direction: row;
 
         #partition {
             height: 100%;
             overflow-x: hidden;
             overflow-y: auto;
+            flex-basis: 67%;
         }
 
         #tree {
+            background-color: @light-gray1;
             height: 100%;
             overflow: auto;
+            flex-basis: 33%;
         }
+    }
+}
+
+.bp3-tree {
+    .bp3-tree-node-content:hover {
+        background-color: @gray4;
+    }
+
+    .bp3-tree-node-selected > .bp3-tree-node-content:hover {
+        background-color: @blue2;
     }
 }

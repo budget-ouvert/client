@@ -3,6 +3,7 @@ import {
     Icon,
     ITreeNode,
     Position,
+    Text,
     Tooltip,
     Tree,
 } from '@blueprintjs/core'
@@ -69,14 +70,14 @@ export default class TreeView extends React.Component<IProps, IState> {
             id: TreeView.getId(),
             isExpanded: false,
             isSelected: false,
-            label: <div>{node.name}</div>,
+            label: <Text ellipsize={true}>{node.name}</Text>,
             nodeData: {
                 code: node.code,
                 ae: node.ae,
                 cp: node.cp,
                 size: node.size,
             },
-            secondaryLabel: <span>{format(node.size).replace(/,/g, ' ')} euros</span>,
+            secondaryLabel: <Text ellipsize={true}>{format(node.size).replace(/,/g, ' ')} euros</Text>,
         }
     }
 

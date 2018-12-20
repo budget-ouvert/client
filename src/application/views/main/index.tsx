@@ -79,7 +79,6 @@ export const INFO_BY_SOURCE_TYPE: {[source: string]: any} = {
 }
 
 export interface IState {
-    selectedTabId: TabId,
     shouldRedirect: boolean,
 }
 
@@ -120,14 +119,9 @@ export default class MainView extends React.Component<IProps, IState> {
         }
 
         this.state = {
-            selectedTabId: args.tabId ? args.tabId as TabId : 'partition',
             shouldRedirect: false,
         }
     }
-
-    private handleTabChange = (navbarTabId: TabId) => this.setState({
-        selectedTabId: navbarTabId,
-    })
 
     public render () {
         let {
@@ -138,65 +132,6 @@ export default class MainView extends React.Component<IProps, IState> {
             source,
             year,
         } = this.props
-
-        const partitionTab = <div id='partition'>
-            {!(`${source}-${year}` in data.partition.byKey) ?
-                (data.partition.loading ?
-                    <div className='centered-spinner'>
-                        <Spinner/>
-                    </div> :
-                    null) :
-                <Partition
-                    data={data.partition.byKey[`${source}-${year}`].data}
-                    loadedTime={data.partition.byKey[`${source}-${year}`].loadedTime}
-                    maxDepth={INFO_BY_SOURCE_TYPE[source].maxDepth}
-                    onMouseOverCallback={(p: any) => {
-                        let path : string[] = [p.data.name]
-                        let currentNode = p
-                        while (currentNode.parent) {
-                            path.push(currentNode.parent.data.name)
-                            currentNode = currentNode.parent
-                        }
-
-                        dispatch(updateSelectedNode(
-                            p.data.code,
-                            path.reverse(),
-                            {
-                                ae: p.data.ae,
-                                cp: p.data.cp,
-                                size: p.data.size,
-                            },
-                        ))
-                    }}
-                    targetDivId={'partition'}
-                />
-            }
-        </div>
-
-        const listTab = <div id='tree'>
-            {!(`${source}-${year}` in data.partition.byKey) ?
-                (data.partition.loading ?
-                    <div className='centered-spinner'>
-                        <Spinner/>
-                    </div> :
-                    null) :
-                <TreeView
-                    data={data.partition.byKey[`${source}-${year}`].data}
-                    onClickCallback={(nodeData: any) => {
-                        console.log(nodeData)
-                        dispatch(updateSelectedNode(
-                            nodeData.code,
-                            nodeData.path,
-                            {
-                                ae: nodeData.ae,
-                                cp: nodeData.cp,
-                                size: nodeData.size,
-                            },
-                        ))
-                    }}
-                />
-            }
-        </div>
 
         return (
             <div id='main-view-container'>
@@ -260,22 +195,63 @@ export default class MainView extends React.Component<IProps, IState> {
                     </div>
                 </div>
                 <div id='information-viewer'>
-                    <Tabs
-                        onChange={this.handleTabChange}
-                        renderActiveTabPanelOnly={true}
-                        selectedTabId={this.state.selectedTabId}
-                    >
-                        <Tab
-                            id="partition"
-                            title="Visualisation proportionelle au montant"
-                            panel={partitionTab}
-                        />
-                        <Tab
-                            id="tree"
-                            title="Visualisation par liste"
-                            panel={listTab}
-                        />
-                    </Tabs>
+                    <div id='partition'>
+                        {!(`${source}-${year}` in data.partition.byKey) ?
+                            (data.partition.loading ?
+                                <div className='centered-spinner'>
+                                    <Spinner/>
+                                </div> :
+                                null) :
+                            <Partition
+                                data={data.partition.byKey[`${source}-${year}`].data}
+                                loadedTime={data.partition.byKey[`${source}-${year}`].loadedTime}
+                                maxDepth={INFO_BY_SOURCE_TYPE[source].maxDepth}
+                                onMouseOverCallback={(p: any) => {
+                                    let path : string[] = [p.data.name]
+                                    let currentNode = p
+                                    while (currentNode.parent) {
+                                        path.push(currentNode.parent.data.name)
+                                        currentNode = currentNode.parent
+                                    }
+
+                                    dispatch(updateSelectedNode(
+                                        p.data.code,
+                                        path.reverse(),
+                                        {
+                                            ae: p.data.ae,
+                                            cp: p.data.cp,
+                                            size: p.data.size,
+                                        },
+                                    ))
+                                }}
+                                targetDivId={'partition'}
+                            />
+                        }
+                    </div>
+                    <div id='tree'>
+                        {!(`${source}-${year}` in data.partition.byKey) ?
+                            (data.partition.loading ?
+                                <div className='centered-spinner'>
+                                    <Spinner/>
+                                </div> :
+                                null) :
+                            <TreeView
+                                data={data.partition.byKey[`${source}-${year}`].data}
+                                onClickCallback={(nodeData: any) => {
+                                    console.log(nodeData)
+                                    dispatch(updateSelectedNode(
+                                        nodeData.code,
+                                        nodeData.path,
+                                        {
+                                            ae: nodeData.ae,
+                                            cp: nodeData.cp,
+                                            size: nodeData.size,
+                                        },
+                                    ))
+                                }}
+                            />
+                        }
+                    </div>
                 </div>
             </div>
         )

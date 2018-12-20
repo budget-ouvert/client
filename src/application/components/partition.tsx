@@ -22,6 +22,7 @@ export default class Partition extends React.Component<IProps, IState> {
 
     width: number;
     height: number;
+    focus: any;
 
     public constructor(props: IProps) {
         super(props)
@@ -74,7 +75,7 @@ export default class Partition extends React.Component<IProps, IState> {
 
     public drawPartition() {
         function clicked(that: any, p : any) {
-            focus = p;
+            that.focus = p
 
             root.each((d : any) => d.target = {
                 x0: (d.x0 - p.x0) / (p.x1 - p.x0) * height,
@@ -84,12 +85,15 @@ export default class Partition extends React.Component<IProps, IState> {
             })
 
             const t = cell.transition().duration(750)
-                .attr("transform", (d : any) => `translate(${d.target.y0 + (focus.depth == 0 ? 0 : 50)},${d.target.x0})`);
+                .attr("transform", (d : any) => `translate(${d.target.y0 + (that.focus.depth == 0 ? 0 : 50)},${d.target.x0})`)
 
             rect.transition(t)
-                .attr("height", (d : any) => rectHeight(d.target));
+                .attr("height", (d : any) => rectHeight(d.target))
+
             text.transition(t)
-                .attr("fill-opacity", (d : any) => +labelVisible(d.target));
+                .attr("fill-opacity", (d : any) => +labelVisible(d.target))
+
+            that.props.onMouseOverCallback(p)
         }
 
         function getPath(node: any): string[] {
@@ -122,8 +126,6 @@ export default class Partition extends React.Component<IProps, IState> {
 
             d3.select('#tooltip')
                 .attr('opacity', 1)
-
-            that.props.onMouseOverCallback(p)
         }
 
         function onMouseLeave(that: any, p: any) {
@@ -149,7 +151,7 @@ export default class Partition extends React.Component<IProps, IState> {
             const m = d3.mouse(this)
 
             const tooltip = d3.select('#tooltip')
-                .attr("transform", `translate(${p.y0 + m[0]+20}, ${p.x0 + m[1]-20})`)
+                .attr("transform", `translate(${(p.target ? p.target.y0 + 70 : p.y0 + 20) + m[0]}, ${(p.target ? p.target.x0 : p.x0) + m[1] - 20})`)
 
             tooltip.select('#tooltip-name')
                 .text(p.data.name)
@@ -245,7 +247,7 @@ export default class Partition extends React.Component<IProps, IState> {
         let height : any = this.height
 
         const root = partition(data)
-        let focus = root;
+        this.focus = root
 
         const svg = d3.select(`#${this.props.targetDivId}`)
             .select('#local-container')
