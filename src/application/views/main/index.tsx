@@ -207,7 +207,7 @@ export default class MainView extends React.Component<IProps, IState> {
                             items={['Recettes', 'PLF']}
                             inputItem={source}
                             onChange={(target: string) => {
-                                dispatch(changesource(target))
+                                dispatch(changeSource(target))
                             }}
                         />
                         <StringSelect

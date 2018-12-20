@@ -1,6 +1,5 @@
-import {combineReducers} from 'redux'
-
 import * as d3 from 'd3'
+import {combineReducers} from 'redux'
 
 // Import custom types
 import {
@@ -42,7 +41,7 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
                 hierarchyType: action.payload,
             }
 
-        case 'UPDATE_SOURCE_TYPE':
+        case 'UPDATE_SOURCE':
             return {
                 ...state,
                 source: action.payload,

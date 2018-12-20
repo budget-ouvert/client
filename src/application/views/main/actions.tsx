@@ -27,21 +27,21 @@ export const updateSelectedNode = (path: any, data: any): IAction => {
     }
 }
 
-export const changesource = (source: string): IAction => {
+export const changeSource = (source: string): IAction => {
     return (dispatch: any, getState: any) => {
         const year = getState().views.mainView.year
         const toYear = INFO_BY_SOURCE_TYPE[source].years.indexOf(year) > 0 ?
             year :
             INFO_BY_SOURCE_TYPE[source].years[0]
 
-        dispatch(updatesource(source))
+        dispatch(updateSource(source))
         dispatch(changeYear(toYear))
     }
 }
 
-export const updatesource = (source: string): IAction => {
+export const updateSource = (source: string): IAction => {
     return {
-        type: 'UPDATE_SOURCE_TYPE',
+        type: 'UPDATE_SOURCE',
         payload: source,
     }
 }
