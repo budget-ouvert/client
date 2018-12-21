@@ -53,7 +53,7 @@ export default class BarChart extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        this.width = document.getElementById(this.props.targetDivId).clientWidth
+        this.width = document.getElementById(this.props.targetDivId).clientWidth - 20
         this.height = document.getElementById(this.props.targetDivId).clientHeight
         if (this.state.data) {
             this.draw()
@@ -125,14 +125,12 @@ export default class BarChart extends React.Component<IProps, IState> {
 
     public render() {
         return (
-            <div>
-                <svg
-                    ref='container'
-                    id={'local-container'}
-                >
+            <svg
+                ref='container'
+                id={'local-container'}
+            >
 
-                </svg>
-            </div>
+            </svg>
         )
     }
 }
