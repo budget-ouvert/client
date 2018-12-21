@@ -21,10 +21,10 @@ import {
 import {
     changeSource,
     changeYear,
-    findSelectedNode,
     updateHierarchyType,
     updateSelectedNode,
     updateSource,
+    updateToConsistentState,
     updateYear,
 } from './actions'
 
@@ -42,20 +42,22 @@ import {
     IView,
 } from '../../types'
 
+export interface ISelectedNode {
+    code: string,
+    path: string[],
+    data: {
+        ae: number,
+        cp: number,
+        size: number,
+    },
+}
+
 export interface IMainViewState {
     // Hierarchy type
     // (ex: comptabilité générale, compatabilité budgétaire)
     hierarchyType: string,
     // Clicked node in the visible partition
-    selectedNode: {
-        code: string,
-        path: string[],
-        data: {
-            ae: number,
-            cp: number,
-            size: number,
-        },
-    },
+    selectedNode: ISelectedNode,
     // Source document type
     // (ex: PLF, LFI, LR)
     source: string,
@@ -119,11 +121,41 @@ export default class MainView extends React.Component<IProps, IState> {
                 args.source as string,
                 args.year as string,
                 () => {
-                    this.props.dispatch(updateSource(args.source as string))
-                    this.props.dispatch(updateYear(args.year as string))
-                    if (args.code) {
-                        this.props.dispatch(findSelectedNode(args.source as string, args.year as string, args.code as string))
-                    }
+                    this.props.dispatch(updateToConsistentState(
+                        args.source as string,
+                        args.year as string,
+                        {
+                            code: args.code as string,
+                            path: [],
+                            data: {
+                                ae: null,
+                                cp: null,
+                                size: null,
+                            },
+                        },
+                        this.props.history,
+                    ))
+                }
+            ))
+        } else {
+            this.props.dispatch(fetchPartition(
+                'PLF',
+                '2019',
+                () => {
+                    this.props.dispatch(updateToConsistentState(
+                        'PLF',
+                        '2019',
+                        {
+                            code: '',
+                            path: [],
+                            data: {
+                                ae: null,
+                                cp: null,
+                                size: null,
+                            },
+                        },
+                        this.props.history,
+                    ))
                 }
             ))
         }
@@ -138,6 +170,7 @@ export default class MainView extends React.Component<IProps, IState> {
             data,
             dispatch,
             hierarchyType,
+            history,
             selectedNode,
             source,
             year,
@@ -160,7 +193,7 @@ export default class MainView extends React.Component<IProps, IState> {
                             items={['Recettes', 'PLF']}
                             inputItem={source}
                             onChange={(target: string) => {
-                                dispatch(changeSource(target))
+                                dispatch(changeSource(target, history))
                             }}
                         />
                         <StringSelect
@@ -171,7 +204,7 @@ export default class MainView extends React.Component<IProps, IState> {
                             }
                             inputItem={year}
                             onChange={(target: string) => {
-                                dispatch(changeYear(target))
+                                dispatch(changeYear(target, history))
                             }}
                         />
                     </ControlGroup>
@@ -225,15 +258,20 @@ export default class MainView extends React.Component<IProps, IState> {
                                         currentNode = currentNode.parent
                                     }
 
-                                    dispatch(updateSelectedNode(
-                                        p.data.code,
-                                        path.reverse(),
+                                    dispatch(updateToConsistentState(
+                                        source,
+                                        year,
                                         {
-                                            ae: p.data.ae,
-                                            cp: p.data.cp,
-                                            size: p.data.size,
+                                            code: p.data.code,
+                                            path: path.reverse(),
+                                            data: {
+                                                ae: p.data.ae,
+                                                cp: p.data.cp,
+                                                size: p.data.size,
+                                            },
                                         },
-                                    ))
+                                        history,
+                                     ))
                                 }}
                                 targetDivId={'partition'}
                                 selectedCode={selectedNode.code}
@@ -250,14 +288,19 @@ export default class MainView extends React.Component<IProps, IState> {
                             <TreeView
                                 data={data.partition.byKey[`${source}-${year}`].data}
                                 onClickCallback={(nodeData: any) => {
-                                    dispatch(updateSelectedNode(
-                                        nodeData.code,
-                                        nodeData.path,
+                                    dispatch(updateToConsistentState(
+                                        source,
+                                        year,
                                         {
-                                            ae: nodeData.ae,
-                                            cp: nodeData.cp,
-                                            size: nodeData.size,
+                                            code: nodeData.code,
+                                            path: nodeData.path,
+                                            data: {
+                                                ae: nodeData.ae,
+                                                cp: nodeData.cp,
+                                                size: nodeData.size,
+                                            },
                                         },
+                                        history,
                                     ))
                                 }}
                                 selectedCode={selectedNode.code}
