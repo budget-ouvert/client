@@ -23,6 +23,9 @@ export interface IReduxStore {
 export interface IView {
     dispatch?: any,
     data: any,
+    history: any,
+    location: any,
+    match: any,
 }
 
 // Verification view

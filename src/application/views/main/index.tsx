@@ -8,6 +8,7 @@ import {
     Tag,
 } from '@blueprintjs/core'
 import * as React from 'react'
+import * as qs from 'query-string'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -18,10 +19,13 @@ import {
     fetchPartition,
 } from '../../actions/partition'
 import {
-    changeSourceType,
+    changeSource,
     changeYear,
     updateHierarchyType,
     updateSelectedNode,
+    updateSource,
+    updateToConsistentState,
+    updateYear,
 } from './actions'
 
 // Import custom components
@@ -38,28 +42,31 @@ import {
     IView,
 } from '../../types'
 
+export interface ISelectedNode {
+    code: string,
+    path: string[],
+    data: {
+        ae: number,
+        cp: number,
+        size: number,
+    },
+}
+
 export interface IMainViewState {
     // Hierarchy type
     // (ex: comptabilité générale, compatabilité budgétaire)
     hierarchyType: string,
     // Clicked node in the visible partition
-    selectedNode: {
-        path: string[],
-        data: {
-            ae: number,
-            cp: number,
-            size: number,
-        },
-    },
+    selectedNode: ISelectedNode,
     // Source document type
     // (ex: PLF, LFI, LR)
-    sourceType: string,
+    source: string,
     // Selected year
     // (ex: 2018)
     year: string,
 }
 
-export interface IMainView extends IView, IMainViewState {}
+export interface IProps extends IView, IMainViewState {}
 
 export const INFO_BY_SOURCE_TYPE: {[source: string]: any} = {
     'Recettes': {
@@ -75,7 +82,6 @@ export const INFO_BY_SOURCE_TYPE: {[source: string]: any} = {
 }
 
 export interface IState {
-    selectedTabId: TabId,
     shouldRedirect: boolean,
 }
 
@@ -93,7 +99,7 @@ const reduxify = (mapReduxStateToReactProps: any, mapDispatchToProps?: any, merg
 }
 
 // Describe how redux state should be mapped to props
-const mapReduxStateToReactProps = (state : IReduxStore): IMainView => {
+const mapReduxStateToReactProps = (state : IReduxStore): IProps => {
     return {
         ...state.views.mainView,
         data: state.data,
@@ -102,80 +108,73 @@ const mapReduxStateToReactProps = (state : IReduxStore): IMainView => {
 }
 
 @reduxify(mapReduxStateToReactProps)
-export default class MainView extends React.Component<IMainView, IState> {
-    constructor(props: IMainView) {
+export default class MainView extends React.Component<IProps, IState> {
+    constructor(props: IProps) {
         super(props)
+
+        console.log('La console t\'intéresse ? Écris-nous, on a des choses à te montrer : contact@arkhn.org')
+
+        const args = qs.parse(props.location.search)
+
+        if (args.source && args.year) {
+            this.props.dispatch(fetchPartition(
+                args.source as string,
+                args.year as string,
+                () => {
+                    this.props.dispatch(updateToConsistentState(
+                        args.source as string,
+                        args.year as string,
+                        {
+                            code: args.code as string,
+                            path: [],
+                            data: {
+                                ae: null,
+                                cp: null,
+                                size: null,
+                            },
+                        },
+                        this.props.history,
+                    ))
+                }
+            ))
+        } else {
+            this.props.dispatch(fetchPartition(
+                'PLF',
+                '2019',
+                () => {
+                    this.props.dispatch(updateToConsistentState(
+                        'PLF',
+                        '2019',
+                        {
+                            code: '',
+                            path: [],
+                            data: {
+                                ae: null,
+                                cp: null,
+                                size: null,
+                            },
+                        },
+                        this.props.history,
+                    ))
+                }
+            ))
+        }
+
         this.state = {
-            selectedTabId: 'partition',
             shouldRedirect: false,
         }
     }
-
-    public componentDidMount() {
-        this.props.dispatch(changeYear('2019'))
-        console.log('Un(e) dev ici ? Écris-nous, on a des choses à te montrer : contact@arkhn.org')
-    }
-
-    private handleTabChange = (navbarTabId: TabId) => this.setState({
-        selectedTabId: navbarTabId,
-    })
 
     public render () {
         let {
             data,
             dispatch,
             hierarchyType,
+            history,
             selectedNode,
-            sourceType,
+            source,
             year,
         } = this.props
-
-        const partitionTab = <div id='partition'>
-            {data.partition.loading || !(`${sourceType}-${year}` in data.partition.byKey) ?
-                <div className='centered-spinner'>
-                    <Spinner/>
-                </div> :
-                <Partition
-                    data={data.partition.byKey[`${sourceType}-${year}`].data}
-                    loadedTime={data.partition.byKey[`${sourceType}-${year}`].loadedTime}
-                    maxDepth={INFO_BY_SOURCE_TYPE[sourceType].maxDepth}
-                    onMouseOverCallback={(p: any) => {
-                        let path : string[] = [p.data.name]
-                        let currentNode = p
-                        while (currentNode.parent) {
-                            path.push(currentNode.parent.data.name)
-                            currentNode = currentNode.parent
-                        }
-
-                        dispatch(updateSelectedNode(path.reverse(), {
-                            ae: p.data.ae,
-                            cp: p.data.cp,
-                            size: p.data.size,
-                        }))
-                    }}
-                    targetDivId={'partition'}
-                />
-            }
-        </div>
-
-        const listTab = <div id='tree'>
-            {data.partition.loading || !(`${sourceType}-${year}` in data.partition.byKey) ?
-                <div className='centered-spinner'>
-                    <Spinner/>
-                </div> :
-                <TreeView
-                    data={data.partition.byKey[`${sourceType}-${year}`].data}
-                    onClickCallback={(nodeData: any) => {
-                        console.log(nodeData)
-                        dispatch(updateSelectedNode(nodeData.path, {
-                            ae: nodeData.ae,
-                            cp: nodeData.cp,
-                            size: nodeData.size,
-                        }))
-                    }}
-                />
-            }
-        </div>
 
         return (
             <div id='main-view-container'>
@@ -192,20 +191,20 @@ export default class MainView extends React.Component<IMainView, IState> {
                         />
                         <StringSelect
                             items={['Recettes', 'PLF']}
-                            inputItem={sourceType}
+                            inputItem={source}
                             onChange={(target: string) => {
-                                dispatch(changeSourceType(target))
+                                dispatch(changeSource(target, history))
                             }}
                         />
                         <StringSelect
-                            disabled={!sourceType}
-                            items={sourceType ?
-                                INFO_BY_SOURCE_TYPE[sourceType].years :
+                            disabled={!source}
+                            items={source ?
+                                INFO_BY_SOURCE_TYPE[source].years :
                                 []
                             }
                             inputItem={year}
                             onChange={(target: string) => {
-                                dispatch(changeYear(target))
+                                dispatch(changeYear(target, history))
                             }}
                         />
                     </ControlGroup>
@@ -220,10 +219,10 @@ export default class MainView extends React.Component<IMainView, IState> {
                 <div id='node-viewer'>
                     <div id='barchart'>
                         {
-                            sourceType != 'Recettes' ?
+                            source != 'Recettes' ?
                                 <BarChart
                                     data={selectedNode.data}
-                                    loadedTime={(`${sourceType}-${year}` in data.partition.byKey) ? data.partition.byKey[`${sourceType}-${year}`].loadedTime : null}
+                                    loadedTime={(`${source}-${year}` in data.partition.byKey) ? data.partition.byKey[`${source}-${year}`].loadedTime : null}
                                     selectedNodePath={selectedNode.path}
                                     targetDivId={'barchart'}
                                 /> :
@@ -232,29 +231,82 @@ export default class MainView extends React.Component<IMainView, IState> {
                     </div>
                     <div id='path-breadcrumbs'>
                         <NodeViewer
-                            label={INFO_BY_SOURCE_TYPE[sourceType].label}
+                            label={INFO_BY_SOURCE_TYPE[source].label}
                             path={selectedNode.path}
                             size={selectedNode.data.size}
                         />
                     </div>
                 </div>
                 <div id='information-viewer'>
-                    <Tabs
-                        onChange={this.handleTabChange}
-                        renderActiveTabPanelOnly={true}
-                        selectedTabId={this.state.selectedTabId}
-                    >
-                        <Tab
-                            id="partition"
-                            title="Visualisation proportionelle au montant"
-                            panel={partitionTab}
-                        />
-                        <Tab
-                            id="tree"
-                            title="Visualisation par liste"
-                            panel={listTab}
-                        />
-                    </Tabs>
+                    <div id='partition'>
+                        {!(`${source}-${year}` in data.partition.byKey) ?
+                            (data.partition.loading ?
+                                <div className='centered-spinner'>
+                                    <Spinner/>
+                                </div> :
+                                null
+                            ) :
+                            <Partition
+                                data={data.partition.byKey[`${source}-${year}`].data}
+                                loadedTime={data.partition.byKey[`${source}-${year}`].loadedTime}
+                                maxDepth={INFO_BY_SOURCE_TYPE[source].maxDepth}
+                                onMouseOverCallback={(p: any) => {
+                                    let path : string[] = [p.data.name]
+                                    let currentNode = p
+                                    while (currentNode.parent) {
+                                        path.push(currentNode.parent.data.name)
+                                        currentNode = currentNode.parent
+                                    }
+
+                                    dispatch(updateToConsistentState(
+                                        source,
+                                        year,
+                                        {
+                                            code: p.data.code,
+                                            path: path.reverse(),
+                                            data: {
+                                                ae: p.data.ae,
+                                                cp: p.data.cp,
+                                                size: p.data.size,
+                                            },
+                                        },
+                                        history,
+                                     ))
+                                }}
+                                targetDivId={'partition'}
+                                selectedCode={selectedNode.code}
+                            />
+                        }
+                    </div>
+                    <div id='tree'>
+                        {!(`${source}-${year}` in data.partition.byKey) ?
+                            (data.partition.loading ?
+                                <div className='centered-spinner'>
+                                    <Spinner/>
+                                </div> :
+                                null) :
+                            <TreeView
+                                data={data.partition.byKey[`${source}-${year}`].data}
+                                onClickCallback={(nodeData: any) => {
+                                    dispatch(updateToConsistentState(
+                                        source,
+                                        year,
+                                        {
+                                            code: nodeData.code,
+                                            path: nodeData.path,
+                                            data: {
+                                                ae: nodeData.ae,
+                                                cp: nodeData.cp,
+                                                size: nodeData.size,
+                                            },
+                                        },
+                                        history,
+                                    ))
+                                }}
+                                selectedCode={selectedNode.code}
+                            />
+                        }
+                    </div>
                 </div>
             </div>
         )

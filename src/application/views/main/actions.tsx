@@ -8,6 +8,7 @@ import {
 
 import {
     INFO_BY_SOURCE_TYPE,
+    ISelectedNode,
 } from './index'
 
 export const updateHierarchyType = (hierarchyType: string): IAction => {
@@ -17,55 +18,199 @@ export const updateHierarchyType = (hierarchyType: string): IAction => {
     }
 }
 
-export const updateSelectedNode = (path: any, data: any): IAction => {
+export const updateYear = (year: string): IAction => {
+    return {
+        type: 'UPDATE_YEAR',
+        payload: year,
+    }
+}
+
+export const updateSource = (source: string): IAction => {
+    return {
+        type: 'UPDATE_SOURCE',
+        payload: source,
+    }
+}
+
+export const updateSelectedNode = (code: string, path: string[], data: any): IAction => {
     return {
         type: 'UPDATE_SELECTED_NODE',
         payload: {
+            code,
             path,
             data,
         }
     }
 }
 
-export const changeSourceType = (sourceType: string): IAction => {
+export const changeSource = (source: string, history: any): IAction => {
     return (dispatch: any, getState: any) => {
         const year = getState().views.mainView.year
-        const toYear = INFO_BY_SOURCE_TYPE[sourceType].years.indexOf(year) > 0 ?
-            year :
-            INFO_BY_SOURCE_TYPE[sourceType].years[0]
+        const code = getState().views.mainView.selectedNode.code
 
-        dispatch(updateSourceType(sourceType))
-        dispatch(changeYear(toYear))
-    }
-}
-
-export const updateSourceType = (sourceType: string): IAction => {
-    return {
-        type: 'UPDATE_SOURCE_TYPE',
-        payload: sourceType,
-    }
-}
-
-export const changeYear = (year: string): IAction => {
-    return (dispatch: any, getState: any) => {
-        const sourceType = getState().views.mainView.sourceType
-        // If year needs to be downloaded, fetch it;
-        // otherwise, just update year in redux state.
-        if (!(`${sourceType}-${year}` in getState().data.partition.byKey)) {
+        // If partition needs to be downloaded, fetch it;
+        // otherwise, just update redux state.
+        if (!(`${source}-${year}` in getState().data.partition.byKey)) {
             dispatch(fetchPartition(
-                sourceType,
+                source,
                 year,
-                () => dispatch(updateYear(year))
+                () => dispatch(updateToConsistentState(
+                    source,
+                    year,
+                    {
+                        code,
+                        path: [],
+                        data: {
+                            ae: null,
+                            cp: null,
+                            size: null,
+                        }
+                    },
+                    history,
+                ))
             ))
         } else {
-            dispatch(updateYear(year))
+            dispatch(updateToConsistentState(
+                source,
+                year,
+                {
+                    code,
+                    path: [],
+                    data: {
+                        ae: null,
+                        cp: null,
+                        size: null,
+                    }
+                },
+                history,
+            ))
         }
     }
 }
 
-export const updateYear = (year: string): IAction => {
-    return {
-        type: 'UPDATE_YEAR',
-        payload: year,
+export const changeYear = (year: string, history: any): IAction => {
+    return (dispatch: any, getState: any) => {
+        const source = getState().views.mainView.source
+        const code = getState().views.mainView.selectedNode.code
+
+        // If partition needs to be downloaded, fetch it;
+        // otherwise, just update redux state.
+        if (!(`${source}-${year}` in getState().data.partition.byKey)) {
+            dispatch(fetchPartition(
+                source,
+                year,
+                () => dispatch(updateToConsistentState(
+                    source,
+                    year,
+                    {
+                        code,
+                        path: [],
+                        data: {
+                            ae: null,
+                            cp: null,
+                            size: null,
+                        }
+                    },
+                    history,
+                ))
+            ))
+        } else {
+            dispatch(updateToConsistentState(
+                source,
+                year,
+                {
+                    code,
+                    path: [],
+                    data: {
+                        ae: null,
+                        cp: null,
+                        size: null,
+                    }
+                },
+                history,
+            ))
+        }
+    }
+}
+
+export const updateToConsistentState = (source: string, year: string, selectedNode: ISelectedNode, history: any): IAction => {
+    return (dispatch: any, getState: any) => {
+        const currentSource = getState().views.mainView.source
+        if (currentSource != source) {
+            dispatch(updateSource(source))
+        }
+
+        // Check year
+        const currentYear = getState().views.mainView.year
+        const toYear = INFO_BY_SOURCE_TYPE[source].years.indexOf(year) >= 0 ?
+            year :
+            INFO_BY_SOURCE_TYPE[source].years[INFO_BY_SOURCE_TYPE[source].years.length-1]
+        if (currentYear != toYear) {
+            dispatch(updateYear(toYear))
+        }
+
+        // Check code
+        let toCode = ''
+
+        if (currentSource != source || currentYear != year) {
+            const root = getState().data.partition.byKey[`${source}-${toYear}`].data
+            let queue = [root]
+            let path: string[] = [root.name]
+
+            while (queue.length > 0) {
+                const node = queue.shift()
+
+                if (node.code == selectedNode.code) {
+                    path.push(node.name)
+                    toCode = node.code
+
+                    dispatch(updateSelectedNode(
+                        node.code,
+                        path,
+                        {
+                            ae: node.ae,
+                            cp: node.cp,
+                            size: node.size,
+                        }
+                    ))
+                    break
+                } else if (selectedNode.code.startsWith(node.code)) {
+                    path.push(node.name)
+                }
+
+                if (node.children) {
+                    queue = [...queue, ...node.children]
+                }
+            }
+
+            if (toCode == '') {
+                // If no node was found
+                dispatch(updateSelectedNode(
+                    '',
+                    [],
+                    {
+                        ae: null,
+                        cp: null,
+                        size: null,
+                    }
+                ))
+            }
+        } else {
+            toCode = selectedNode.code
+            dispatch(updateSelectedNode(
+                selectedNode.code,
+                selectedNode.path,
+                {
+                    ae: selectedNode.data.ae,
+                    cp: selectedNode.data.cp,
+                    size: selectedNode.data.size,
+                }
+            ))
+        }
+
+        // Update react-router history
+        history.push({
+            search: `?source=${source}&year=${year}&code=${toCode}`,
+        })
     }
 }

@@ -1,6 +1,5 @@
-import {combineReducers} from 'redux'
-
 import * as d3 from 'd3'
+import {combineReducers} from 'redux'
 
 // Import custom types
 import {
@@ -14,6 +13,7 @@ import {
 const initialState: IMainViewState = {
     hierarchyType: 'Comptabilité générale',
     selectedNode: {
+        code: null,
         path: [],
         data: {
             ae: null,
@@ -21,7 +21,7 @@ const initialState: IMainViewState = {
             size: null,
         },
     },
-    sourceType: 'PLF',
+    source: 'PLF',
     year: '2019',
 }
 
@@ -31,6 +31,7 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
             return {
                 ...state,
                 selectedNode: {
+                    code: action.payload.code,
                     path: action.payload.path,
                     data: action.payload.data,
                 },
@@ -42,16 +43,34 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
                 hierarchyType: action.payload,
             }
 
-        case 'UPDATE_SOURCE_TYPE':
+        case 'UPDATE_SOURCE':
             return {
                 ...state,
-                sourceType: action.payload,
+                source: action.payload,
+                selectedNode: {
+                    code: null,
+                    path: [],
+                    data: {
+                        ae: null,
+                        cp: null,
+                        size: null,
+                    },
+                },
             }
 
         case 'UPDATE_YEAR':
             return {
                 ...state,
                 year: action.payload,
+                selectedNode: {
+                    code: null,
+                    path: [],
+                    data: {
+                        ae: null,
+                        cp: null,
+                        size: null,
+                    },
+                },
             }
 
         default:
