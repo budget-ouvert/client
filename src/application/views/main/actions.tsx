@@ -150,7 +150,8 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
         }
 
         // Check code
-        let toCode = selectedNode.code
+        let toCode = ''
+
         if (currentSource != source || currentYear != year) {
             const root = getState().data.partition.byKey[`${source}-${toYear}`].data
             let queue = [root]
@@ -161,6 +162,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
 
                 if (node.code == selectedNode.code) {
                     path.push(node.name)
+                    toCode = node.code
 
                     dispatch(updateSelectedNode(
                         node.code,
@@ -181,18 +183,20 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                 }
             }
 
-            toCode = ''
-            // If no node was found
-            dispatch(updateSelectedNode(
-                '',
-                [],
-                {
-                    ae: null,
-                    cp: null,
-                    size: null,
-                }
-            ))
+            if (toCode == '') {
+                // If no node was found
+                dispatch(updateSelectedNode(
+                    '',
+                    [],
+                    {
+                        ae: null,
+                        cp: null,
+                        size: null,
+                    }
+                ))
+            }
         } else {
+            toCode = selectedNode.code
             dispatch(updateSelectedNode(
                 selectedNode.code,
                 selectedNode.path,
@@ -204,6 +208,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
             ))
         }
 
+        // Update react-router history
         history.push({
             search: `?source=${source}&year=${year}&code=${toCode}`,
         })
