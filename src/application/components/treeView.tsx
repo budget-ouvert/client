@@ -158,6 +158,7 @@ export default class TreeView extends React.Component<IProps, IState> {
             TreeView.forEachNode(this.state.nodes, (n: ITreeNode<INodeData>) => (n.isSelected = false))
         }
         node.isSelected = true;
+        node.isExpanded = !node.isExpanded
 
         // Set new redux state
         this.props.onClickCallback({
@@ -166,13 +167,7 @@ export default class TreeView extends React.Component<IProps, IState> {
         })
 
         // Set new component state
-        this.setState(this.state, () => node.hasCaret ?
-            (node.isExpanded ?
-                this.handleNodeCollapse(node) :
-                this.handleNodeExpand(node)
-            ) :
-            null
-        )
+        this.setState(this.state)
     }
 
     private handleNodeCollapse = (node: ITreeNode<INodeData>) => {
