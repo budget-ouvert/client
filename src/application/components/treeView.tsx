@@ -85,7 +85,7 @@ export default class TreeView extends React.Component<IProps, IState> {
     }
 
     static getDerivedStateFromProps(props: IProps, state: IState): IState {
-        if(props.data != state.renderData || props.selectedCode != state.selectedCode) {
+        if (props.data != state.renderData) {
             try {
                 let nodes = [TreeView.genObjNodes(props.data, props.selectedCode)]
 
@@ -104,19 +104,36 @@ export default class TreeView extends React.Component<IProps, IState> {
                     selectedCode: props.selectedCode
                 }
             }
+        }  else if (props.selectedCode != state.selectedCode) {
+            // When selectedCode changes, we don't want to rewrite the entire
+            // tree; instead, we want to modify some nodes and not
+            // re-render the entire DOM.
+            const selectedCode = props.selectedCode
+            TreeView.forEachNode(state.nodes, (node: ITreeNode<INodeData>) => {
+                let hasChildren = (node.childNodes && node.childNodes.length > 0)
+                node.isSelected = (node.nodeData.code == selectedCode)
+                node.isExpanded = (hasChildren && ((selectedCode ? selectedCode.startsWith(node.nodeData.code) : false) || ['PLF', 'REC'].indexOf(node.nodeData.code) >= 0))
+            })
+
+            return {
+                nodes: state.nodes,
+                selectedCode: props.selectedCode,
+                isBroken: false,
+                renderData: state.renderData,
+            }
         }
 
         return state
     }
 
-    private forEachNode(nodes: ITreeNode<INodeData>[], callback: (node: ITreeNode<INodeData>) => void) {
+    private static forEachNode(nodes: ITreeNode<INodeData>[], callback: (node: ITreeNode<INodeData>) => void) {
         if (nodes == null) {
-            return;
+            return
         }
 
         for (const node of nodes) {
-            callback(node);
-            this.forEachNode(node.childNodes, callback);
+            callback(node)
+            TreeView.forEachNode(node.childNodes, callback)
         }
     }
 
@@ -138,7 +155,7 @@ export default class TreeView extends React.Component<IProps, IState> {
     private handleNodeClick = (node: ITreeNode<INodeData>, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
         const originallySelected = node.isSelected;
         if (!e.shiftKey) {
-            this.forEachNode(this.state.nodes, (n: any) => (n.isSelected = false));
+            TreeView.forEachNode(this.state.nodes, (n: ITreeNode<INodeData>) => (n.isSelected = false))
         }
         node.isSelected = true;
 
