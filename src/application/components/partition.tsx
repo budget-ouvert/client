@@ -87,9 +87,10 @@ export default class Partition extends React.Component<IProps, IState> {
 
     public clearPartition() {
         const svg : any = d3.select(`#${this.props.targetDivId}`)
-            .select(`#local-container`)
+            .select('#local-container')
+            .select('#partition')
             .select('g')
-            .remove();
+            .remove()
     }
 
     public changeFocus = (that: any, p: any) => {
@@ -147,7 +148,7 @@ export default class Partition extends React.Component<IProps, IState> {
                     .style("outline-width", "1px")
 
             d3.select('#tooltip')
-                .attr('opacity', 1)
+                .attr('opacity', 0.9)
         }
 
         function onMouseLeave(that: any, p: any) {
@@ -286,7 +287,7 @@ export default class Partition extends React.Component<IProps, IState> {
                 .on("mousemove", _.partial(onMouseMove, this))
 
         const tooltip = d3.select('#tooltip')
-            .attr('opacity', '0.9')
+            .attr('opacity', 0)
 
         tooltip.select('text')
             .attr('fill', '#F5F8FA')
