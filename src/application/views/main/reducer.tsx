@@ -21,8 +21,8 @@ const initialState: IMainViewState = {
             size: null,
         },
     },
-    source: 'PLF',
-    year: '2019',
+    source: null,
+    year: null,
 }
 
 const reducer = (state = initialState, action: ISimpleAction): IMainViewState => {

@@ -231,7 +231,7 @@ export default class MainView extends React.Component<IProps, IState> {
                     </div>
                     <div id='path-breadcrumbs'>
                         <NodeViewer
-                            label={INFO_BY_SOURCE_TYPE[source].label}
+                            label={source ? INFO_BY_SOURCE_TYPE[source].label : 'Montant'}
                             path={selectedNode.path}
                             size={selectedNode.data.size}
                         />
