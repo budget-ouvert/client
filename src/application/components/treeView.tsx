@@ -27,6 +27,7 @@ interface IState {
     isBroken: boolean,
     nodes: ITreeNode<INodeData>[],
     renderData: any,
+    selectedCode: string,
 }
 
 export default class TreeView extends React.Component<IProps, IState> {
@@ -38,6 +39,7 @@ export default class TreeView extends React.Component<IProps, IState> {
             isBroken: false,
             nodes: [],
             renderData: null,
+            selectedCode: null,
         }
     }
 
@@ -83,22 +85,28 @@ export default class TreeView extends React.Component<IProps, IState> {
     }
 
     static getDerivedStateFromProps(props: IProps, state: IState): IState {
-        try {
-            let nodes = [TreeView.genObjNodes(props.data, props.selectedCode)]
+        if(props.data != state.renderData || props.selectedCode != state.selectedCode) {
+            try {
+                let nodes = [TreeView.genObjNodes(props.data, props.selectedCode)]
 
-            return {
-                nodes: nodes,
-                renderData: props.data,
-                isBroken: false,
-            }
-        } catch(err) {
-            console.log(err)
-            return {
-                nodes: [] as any,
-                renderData: props.data,
-                isBroken: true,
+                return {
+                    nodes: nodes,
+                    renderData: props.data,
+                    isBroken: false,
+                    selectedCode: props.selectedCode,
+                }
+            } catch(err) {
+                console.log(err)
+                return {
+                    nodes: [] as any,
+                    renderData: props.data,
+                    isBroken: true,
+                    selectedCode: props.selectedCode
+                }
             }
         }
+
+        return state
     }
 
     private forEachNode(nodes: ITreeNode<INodeData>[], callback: (node: ITreeNode<INodeData>) => void) {

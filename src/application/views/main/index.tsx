@@ -21,6 +21,7 @@ import {
 import {
     changeSource,
     changeYear,
+    findSelectedNode,
     updateHierarchyType,
     updateSelectedNode,
     updateSource,
@@ -114,8 +115,17 @@ export default class MainView extends React.Component<IProps, IState> {
         const args = qs.parse(props.location.search)
 
         if (args.source && args.year) {
-            this.props.dispatch(updateYear(args.year as string))
-            this.props.dispatch(changeSource(args.source as string))
+            this.props.dispatch(fetchPartition(
+                args.source as string,
+                args.year as string,
+                () => {
+                    this.props.dispatch(updateSource(args.source as string))
+                    this.props.dispatch(updateYear(args.year as string))
+                    if (args.code) {
+                        this.props.dispatch(findSelectedNode(args.source as string, args.year as string, args.code as string))
+                    }
+                }
+            ))
         }
 
         this.state = {
@@ -201,7 +211,8 @@ export default class MainView extends React.Component<IProps, IState> {
                                 <div className='centered-spinner'>
                                     <Spinner/>
                                 </div> :
-                                <div>here</div>) :
+                                null
+                            ) :
                             <Partition
                                 data={data.partition.byKey[`${source}-${year}`].data}
                                 loadedTime={data.partition.byKey[`${source}-${year}`].loadedTime}
@@ -239,7 +250,6 @@ export default class MainView extends React.Component<IProps, IState> {
                             <TreeView
                                 data={data.partition.byKey[`${source}-${year}`].data}
                                 onClickCallback={(nodeData: any) => {
-                                    console.log(nodeData)
                                     dispatch(updateSelectedNode(
                                         nodeData.code,
                                         nodeData.path,

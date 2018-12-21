@@ -70,3 +70,37 @@ export const updateYear = (year: string): IAction => {
         payload: year,
     }
 }
+
+export const findSelectedNode = (source: string, year: string, code: string): IAction => {
+    return (dispatch: any, getState: any) => {
+        const root = getState().data.partition.byKey[`${source}-${year}`].data
+        let queue = [root]
+        let path: string[] = [root.name]
+
+        while (queue.length > 0) {
+            const node = queue.shift()
+
+            if (node.code == code) {
+                path.push(node.name)
+                console.log(path)
+
+                dispatch(updateSelectedNode(
+                    code,
+                    path,
+                    {
+                        ae: node.ae,
+                        cp: node.cp,
+                        size: node.size,
+                    }
+                ))
+                return
+            } else if (code.startsWith(node.code)) {
+                path.push(node.name)
+            }
+
+            if (node.children) {
+                queue = [...queue, ...node.children]
+            }
+        }
+    }
+}
