@@ -78,7 +78,7 @@ export const INFO_BY_SOURCE_TYPE: {[source: string]: any} = {
         label: 'Montant',
     },
     'PLF': {
-        years: ['2017', '2018', '2019'],
+        years: ['2016', '2017', '2018', '2019'],
         maxDepth: 6,
         label: 'Crédits de paiement',
     }
@@ -226,11 +226,13 @@ export default class MainView extends React.Component<IProps, IState> {
                                 <div className='centered-spinner'>
                                     <Spinner/>
                                 </div> :
-                                <BarChart
-                                    data={data.nodeHistory.data}
-                                    loadedTime={data.nodeHistory.loadedTime}
-                                    targetDivId={'barchart'}
-                                />
+                                <div className='barchart'>
+                                    <BarChart
+                                        data={data.nodeHistory.data}
+                                        loadedTime={data.nodeHistory.loadedTime}
+                                        targetDivId={'barchart'}
+                                    />
+                                </div>
                         }
                     </div>
                     <div id='path-breadcrumbs'>
