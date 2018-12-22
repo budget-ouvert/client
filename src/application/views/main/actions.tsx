@@ -7,6 +7,10 @@ import {
 } from '../../actions/partition'
 
 import {
+    fetchHistory,
+} from '../../actions/nodeHistory'
+
+import {
     INFO_BY_SOURCE_TYPE,
     ISelectedNode,
 } from './index'
@@ -51,12 +55,21 @@ export const changeSource = (source: string, history: any): IAction => {
         // If partition needs to be downloaded, fetch it;
         // otherwise, just update redux state.
         if (!(`${source}-${year}` in getState().data.partition.byKey)) {
+            // Check year
+            const currentYear = getState().views.mainView.year
+            const toYear = INFO_BY_SOURCE_TYPE[source].years.indexOf(year) >= 0 ?
+                year :
+                INFO_BY_SOURCE_TYPE[source].years[INFO_BY_SOURCE_TYPE[source].years.length-1]
+            if (currentYear != toYear) {
+                dispatch(updateYear(toYear))
+            }
+
             dispatch(fetchPartition(
                 source,
-                year,
+                toYear,
                 () => dispatch(updateToConsistentState(
                     source,
-                    year,
+                    toYear,
                     {
                         code,
                         path: [],
@@ -165,7 +178,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                     toCode = node.code
 
                     dispatch(updateSelectedNode(
-                        node.code,
+                        toCode,
                         path,
                         {
                             ae: node.ae,
@@ -173,6 +186,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                             size: node.size,
                         }
                     ))
+                    dispatch(fetchHistory(toYear, toCode))
                     break
                 } else if (selectedNode.code.startsWith(node.code)) {
                     path.push(node.name)
@@ -184,21 +198,23 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
             }
 
             if (toCode == '') {
+                toCode = root.code
                 // If no node was found
                 dispatch(updateSelectedNode(
-                    '',
-                    [],
+                    toCode,
+                    [root.name],
                     {
-                        ae: null,
-                        cp: null,
-                        size: null,
+                        ae: root.ae,
+                        cp: root.cp,
+                        size: root.size,
                     }
                 ))
+                dispatch(fetchHistory(toYear, toCode))
             }
         } else {
             toCode = selectedNode.code
             dispatch(updateSelectedNode(
-                selectedNode.code,
+                toCode,
                 selectedNode.path,
                 {
                     ae: selectedNode.data.ae,
@@ -206,6 +222,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                     size: selectedNode.data.size,
                 }
             ))
+            dispatch(fetchHistory(toYear, toCode))
         }
 
         // Update react-router history

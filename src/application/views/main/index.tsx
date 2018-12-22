@@ -19,9 +19,6 @@ import {
     fetchPartition,
 } from '../../actions/partition'
 import {
-    fetchHistory,
-} from '../../actions/nodeHistory'
-import {
     changeSource,
     changeYear,
     updateHierarchyType,
@@ -263,7 +260,6 @@ export default class MainView extends React.Component<IProps, IState> {
                                                 currentNode = currentNode.parent
                                             }
 
-                                            dispatch(fetchHistory(year, p.data.code))
                                             dispatch(updateToConsistentState(
                                                 source,
                                                 year,
@@ -296,7 +292,6 @@ export default class MainView extends React.Component<IProps, IState> {
                                     <TreeView
                                         data={data.partition.byKey[`${source}-${year}`].data}
                                         onClickCallback={(nodeData: any) => {
-                                            dispatch(fetchHistory(year, nodeData.code))
                                             dispatch(updateToConsistentState(
                                                 source,
                                                 year,
