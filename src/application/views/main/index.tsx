@@ -19,6 +19,9 @@ import {
     fetchPartition,
 } from '../../actions/partition'
 import {
+    fetchHistory,
+} from '../../actions/nodeHistory'
+import {
     changeSource,
     changeYear,
     updateHierarchyType,
@@ -219,14 +222,15 @@ export default class MainView extends React.Component<IProps, IState> {
                 <div id='node-viewer'>
                     <div id='barchart'>
                         {
-                            source != 'Recettes' ?
+                            data.nodeHistory.loading ?
+                                <div className='centered-spinner'>
+                                    <Spinner/>
+                                </div> :
                                 <BarChart
-                                    data={selectedNode.data}
-                                    loadedTime={(`${source}-${year}` in data.partition.byKey) ? data.partition.byKey[`${source}-${year}`].loadedTime : null}
-                                    selectedNodePath={selectedNode.path}
+                                    data={data.nodeHistory.data}
+                                    loadedTime={data.nodeHistory.loadedTime}
                                     targetDivId={'barchart'}
-                                /> :
-                                null
+                                />
                         }
                     </div>
                     <div id='path-breadcrumbs'>
@@ -257,6 +261,7 @@ export default class MainView extends React.Component<IProps, IState> {
                                                 currentNode = currentNode.parent
                                             }
 
+                                            dispatch(fetchHistory(year, p.data.code))
                                             dispatch(updateToConsistentState(
                                                 source,
                                                 year,
@@ -289,6 +294,7 @@ export default class MainView extends React.Component<IProps, IState> {
                                     <TreeView
                                         data={data.partition.byKey[`${source}-${year}`].data}
                                         onClickCallback={(nodeData: any) => {
+                                            dispatch(fetchHistory(year, nodeData.code))
                                             dispatch(updateToConsistentState(
                                                 source,
                                                 year,

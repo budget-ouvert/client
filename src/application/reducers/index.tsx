@@ -3,9 +3,11 @@
 
 import {combineReducers} from 'redux'
 
+import nodeHistory from './nodeHistory'
 import partition from './partition'
 
 const dataReducer = combineReducers({
+    nodeHistory,
     partition,
 })
 

@@ -2,15 +2,13 @@ import * as React from 'react'
 import * as d3 from 'd3'
 import * as _ from 'lodash'
 
+import {
+    INodeHistory,
+} from '../reducers/nodeHistory'
+
 interface IProps {
-    data: {
-        ae: number,
-        cp: number,
-    },
+    data: INodeHistory,
     loadedTime: number,
-    // Codes for Type Mission, Mission, etc
-    // (example: 1, AA, ...)
-    selectedNodePath: string[],
     targetDivId: string,
 }
 
@@ -33,18 +31,23 @@ export default class BarChart extends React.Component<IProps, IState> {
 
     public static getDerivedStateFromProps(props: IProps, state: IState) {
         if (props.data) {
+            let data: any = []
+            for (let year in props.data) {
+                data.push({
+                    name: `AE ${year}`,
+                    color: "#BFCCD6",
+                    value: props.data[year].ae ? props.data[year].ae : 0,
+                })
+
+                data.push({
+                    name: `CP ${year}`,
+                    color: "#BFCCD6",
+                    value: props.data[year].cp ? props.data[year].cp : 0,
+                })
+            }
+
             return {
-                data: [
-                    {
-                        name: "Autorisations d'engagement",
-                        color: "#BFCCD6",
-                        value: props.data.ae,
-                    }, {
-                        name: "Crédits de paiement",
-                        color: "#8A9BA8",
-                        value: props.data.cp,
-                    }
-                ],
+                data: data,
                 loadedTime: props.loadedTime,
             }
         }
