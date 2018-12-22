@@ -239,72 +239,75 @@ export default class MainView extends React.Component<IProps, IState> {
                 </div>
                 <div id='information-viewer'>
                     <div id='partition'>
-                        {!(`${source}-${year}` in data.partition.byKey) ?
-                            (data.partition.loading ?
-                                <div className='centered-spinner'>
-                                    <Spinner/>
-                                </div> :
-                                null
-                            ) :
-                            <Partition
-                                data={data.partition.byKey[`${source}-${year}`].data}
-                                loadedTime={data.partition.byKey[`${source}-${year}`].loadedTime}
-                                maxDepth={INFO_BY_SOURCE_TYPE[source].maxDepth}
-                                onMouseOverCallback={(p: any) => {
-                                    let path : string[] = [p.data.name]
-                                    let currentNode = p
-                                    while (currentNode.parent) {
-                                        path.push(currentNode.parent.data.name)
-                                        currentNode = currentNode.parent
-                                    }
+                        {data.partition.loading ?
+                            <div className='centered-spinner'>
+                                <Spinner/>
+                            </div> :
+                            (
+                                `${source}-${year}` in data.partition.byKey ?
+                                    <Partition
+                                        data={data.partition.byKey[`${source}-${year}`].data}
+                                        loadedTime={data.partition.byKey[`${source}-${year}`].loadedTime}
+                                        maxDepth={INFO_BY_SOURCE_TYPE[source].maxDepth}
+                                        onMouseOverCallback={(p: any) => {
+                                            let path : string[] = [p.data.name]
+                                            let currentNode = p
+                                            while (currentNode.parent) {
+                                                path.push(currentNode.parent.data.name)
+                                                currentNode = currentNode.parent
+                                            }
 
-                                    dispatch(updateToConsistentState(
-                                        source,
-                                        year,
-                                        {
-                                            code: p.data.code,
-                                            path: path.reverse(),
-                                            data: {
-                                                ae: p.data.ae,
-                                                cp: p.data.cp,
-                                                size: p.data.size,
-                                            },
-                                        },
-                                        history,
-                                     ))
-                                }}
-                                targetDivId={'partition'}
-                                selectedCode={selectedNode.code}
-                            />
+                                            dispatch(updateToConsistentState(
+                                                source,
+                                                year,
+                                                {
+                                                    code: p.data.code,
+                                                    path: path.reverse(),
+                                                    data: {
+                                                        ae: p.data.ae,
+                                                        cp: p.data.cp,
+                                                        size: p.data.size,
+                                                    },
+                                                },
+                                                history,
+                                             ))
+                                        }}
+                                        targetDivId={'partition'}
+                                        selectedCode={selectedNode.code}
+                                    /> :
+                                    null
+                            )
                         }
                     </div>
                     <div id='tree'>
-                        {!(`${source}-${year}` in data.partition.byKey) ?
-                            (data.partition.loading ?
-                                <div className='centered-spinner'>
-                                    <Spinner/>
-                                </div> :
-                                null) :
-                            <TreeView
-                                data={data.partition.byKey[`${source}-${year}`].data}
-                                onClickCallback={(nodeData: any) => {
-                                    dispatch(updateToConsistentState(
-                                        source,
-                                        year,
-                                        {
-                                            code: nodeData.code,
-                                            path: nodeData.path,
-                                            data: {
-                                                ae: nodeData.ae,
-                                                cp: nodeData.cp,
-                                                size: nodeData.size,
-                                            },
-                                        },
-                                        history,
-                                    ))
-                                }}
-                                selectedCode={selectedNode.code}
-                            />
+                        {data.partition.loading ?
+                            <div className='centered-spinner'>
+                                <Spinner/>
+                            </div> :
+                            (
+                                `${source}-${year}` in data.partition.byKey ?
+                                    <TreeView
+                                        data={data.partition.byKey[`${source}-${year}`].data}
+                                        onClickCallback={(nodeData: any) => {
+                                            dispatch(updateToConsistentState(
+                                                source,
+                                                year,
+                                                {
+                                                    code: nodeData.code,
+                                                    path: nodeData.path,
+                                                    data: {
+                                                        ae: nodeData.ae,
+                                                        cp: nodeData.cp,
+                                                        size: nodeData.size,
+                                                    },
+                                                },
+                                                history,
+                                            ))
+                                        }}
+                                        selectedCode={selectedNode.code}
+                                    /> :
+                                    null
+                            )
                         }
                     </div>
                 </div>
