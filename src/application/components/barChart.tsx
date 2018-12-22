@@ -35,13 +35,13 @@ export default class BarChart extends React.Component<IProps, IState> {
             for (let year in props.data) {
                 data.push({
                     name: `AE ${year}`,
-                    color: "#BFCCD6",
+                    color: props.data[year].selected ? "#137CBD" : "#BFCCD6",
                     value: props.data[year].ae ? props.data[year].ae : 0,
                 })
 
                 data.push({
                     name: `CP ${year}`,
-                    color: "#A7B6C2",
+                    color: props.data[year].selected ? '#106BA3' : "#A7B6C2",
                     value: props.data[year].cp ? props.data[year].cp : 0,
                 })
             }
