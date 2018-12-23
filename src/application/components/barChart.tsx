@@ -34,15 +34,10 @@ export default class BarChart extends React.Component<IProps, IState> {
             let data: any = []
             for (let year in props.data) {
                 data.push({
-                    name: `AE ${year}`,
-                    color: props.data[year].selected ? "#137CBD" : "#BFCCD6",
-                    value: props.data[year].ae ? props.data[year].ae : 0,
-                })
-
-                data.push({
-                    name: `CP ${year}`,
-                    color: props.data[year].selected ? '#106BA3' : "#A7B6C2",
-                    value: props.data[year].cp ? props.data[year].cp : 0,
+                    year,
+                    ae: props.data[year].ae,
+                    cp: props.data[year].cp,
+                    selected: props.data[year].selected,
                 })
             }
 
@@ -76,34 +71,6 @@ export default class BarChart extends React.Component<IProps, IState> {
     }
 
     public draw() {
-        const margin = ({top: 20, right: 0, bottom: 30, left: 100})
-
-        const data = this.state.data
-
-        const x = d3.scaleBand()
-            .domain(data.map((d: any) => d.name))
-            .range([margin.left, this.width - margin.right])
-            .padding(0.5)
-
-        const xAxis = (g: any) => {
-            return g
-                .attr("transform", `translate(0,${this.height - margin.bottom})`)
-                .call(d3.axisBottom(x).tickSizeOuter(0))
-                .select(".domain")
-                    .style("stroke", "#8A9BA8")
-        }
-
-        const y = d3.scaleLinear()
-            .domain([0, d3.max(data, (d: any) => d.value ? d.value : 0) as any]).nice()
-            .range([this.height - margin.bottom, margin.top])
-
-        const yAxis = (g: any) => {
-            return g.attr("transform", `translate(${margin.left},0)`)
-                .call(d3.axisLeft(y).ticks(3))
-                .select(".domain")
-                    .style("stroke", "#8A9BA8")
-        }
-
         const svg = d3.select(`#${this.props.targetDivId}`)
             .select(`#local-container`)
             .style("width", `${this.width}px`)
@@ -111,19 +78,109 @@ export default class BarChart extends React.Component<IProps, IState> {
             .style("overflow", "hidden")
             .style("font", "10px sans-serif")
 
-        svg.append("g")
-            .selectAll("rect").data(data).enter().append("rect")
-                .attr("fill", (d: any) => d.color)
-                .attr("x", (d: any) => x(d.name))
-                .attr("y", (d: any) => y(d.value ? d.value : 0))
-                .attr("height", (d: any) => y(0) - y(d.value ? d.value : 0))
-                .attr("width", x.bandwidth())
+        const margin = {top: 20, right: 20, bottom: 30, left: 50}
+        const width = this.width - margin.left - margin.right
+        const height = this.height - margin.top - margin.bottom
+        const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`)
 
-        svg.append("g")
-            .call(xAxis)
+        const x0 = d3.scaleBand()
+            .rangeRound([0, width])
+            .paddingInner(0.2)
+            .paddingOuter(0.1)
 
-        svg.append("g")
-            .call(yAxis)
+        const x1 = d3.scaleBand()
+            .padding(0.3)
+
+        const y = d3.scaleLinear()
+            .rangeRound([height, 0])
+
+        const z = d3.scaleOrdinal()
+            .range(["#BFCCD6", "#8A9BA8", "#5C7080"])
+
+        const data = this.state.data
+
+        const keys = ['ae', 'cp']
+        const labels: {[key: string]: string} = {
+            'ae': 'Autorisations d\'engagement',
+            'cp': 'Crédits de paiement'
+        }
+
+        x0.domain(data.map((d: any) => d.year))
+        x1.domain(keys).rangeRound([0, x0.bandwidth()])
+        y.domain([0, d3.max(data, (d: any) => d3.max(keys, (key: any) => d[key] as number))])
+            .nice()
+
+        if (data.length == 0) {
+            return
+        }
+
+        const isSelected = (year: string) => {
+            let r = false
+            data.forEach((d: any) => {
+                if (d.selected && d.year == year) {
+                    r = true
+                }
+            })
+            return r
+        }
+
+        g.append("g")
+            .selectAll("g")
+            .data(data)
+            .enter().append("g")
+                .attr("transform", (d: any) => `translate(${x0(d.year)},0)`)
+            .selectAll("rect")
+            .data((d: any) => keys.map((key: any) => {
+                return {key: key, value: d[key]}
+            }))
+            .enter().append("rect")
+                .attr("x", (d: any) => x1(d.key))
+                .attr("y", (d: any) => {
+                    return y(d.value)
+                })
+                .attr("width", x1.bandwidth())
+                .attr("height", (d: any) => height - y(d.value))
+                .attr("fill", (d: any): string => z(d.key) as string)
+
+        g.append("g")
+            .attr("class", "axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x0))
+            .selectAll('text')
+            .attr('class', (y: string) => isSelected(y) ? 'selected' : '')
+
+        g.append("g")
+            .attr("class", "axis")
+            .call(d3.axisLeft(y).ticks(null, "s"))
+            .append("text")
+                .attr("x", 2)
+                .attr("y", y(y.ticks().pop()) + 0.5)
+                .attr("dy", "0.32em")
+                .attr("fill", "#000")
+                .attr("font-weight", "bold")
+                .attr("text-anchor", "start")
+                .text("Montant")
+
+        const legend = g.append("g")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 10)
+            .attr("text-anchor", "end")
+            .selectAll("g")
+            .data(keys.slice().reverse())
+            .enter().append("g")
+                .attr("transform", (d: any, i: number) => `translate(0,${i * 20})`)
+
+        legend.append("rect")
+            .attr("x", width - 19)
+            .attr("width", 19)
+            .attr("height", 19)
+            .attr("fill", (k: any): string => z(k) as string)
+
+        legend.append("text")
+            .attr("x", width - 24)
+            .attr("y", 9.5)
+            .attr("dy", "0.32em")
+            .text((k: any) => labels[k])
     }
 
     public render() {

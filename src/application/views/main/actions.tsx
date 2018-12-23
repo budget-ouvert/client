@@ -174,7 +174,9 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                 const node = queue.shift()
 
                 if (node.code == selectedNode.code) {
-                    path.push(node.name)
+                    if (!(['PLF', 'REC'].indexOf(node.code) >= 0)) {
+                        path.push(node.name)
+                    }
                     toCode = node.code
 
                     dispatch(updateSelectedNode(
@@ -202,7 +204,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                 // If no node was found
                 dispatch(updateSelectedNode(
                     toCode,
-                    [root.name],
+                    [],
                     {
                         ae: root.ae,
                         cp: root.cp,

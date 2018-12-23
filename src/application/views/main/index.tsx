@@ -223,13 +223,16 @@ export default class MainView extends React.Component<IProps, IState> {
                                 <div className='centered-spinner'>
                                     <Spinner/>
                                 </div> :
-                                <div className='barchart'>
-                                    <BarChart
-                                        data={data.nodeHistory.data}
-                                        loadedTime={data.nodeHistory.loadedTime}
-                                        targetDivId={'barchart'}
-                                    />
-                                </div>
+                                (source == 'PLF' ?
+                                    <div className='barchart'>
+                                        <BarChart
+                                            data={data.nodeHistory.data}
+                                            loadedTime={data.nodeHistory.loadedTime}
+                                            targetDivId={'barchart'}
+                                        />
+                                    </div> :
+                                    null
+                                )
                         }
                     </div>
                     <div id='path-breadcrumbs'>
