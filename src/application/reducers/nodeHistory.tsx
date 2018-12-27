@@ -7,9 +7,8 @@ import {
 
 export interface INodeHistory {
     [year: string]: {
-        ae?: number,
-        cp?: number,
         codes: string[],
+        data: any,
         distance: number,
         libelles: string[],
         selected?: boolean,
@@ -23,7 +22,7 @@ interface INodeHistoryState {
 }
 
 const initialState: INodeHistoryState = {
-    data: {},
+    data: null,
     loadedTime: null,
     loading: false,
 }

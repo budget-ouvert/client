@@ -188,7 +188,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                             size: node.size,
                         }
                     ))
-                    dispatch(fetchHistory(toYear, toCode))
+                    dispatch(fetchHistory(source, toYear, toCode))
                     break
                 } else if (selectedNode.code.startsWith(node.code)) {
                     path.push(node.name)
@@ -211,7 +211,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                         size: root.size,
                     }
                 ))
-                dispatch(fetchHistory(toYear, toCode))
+                dispatch(fetchHistory(source, toYear, toCode))
             }
         } else {
             toCode = selectedNode.code
@@ -224,7 +224,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                     size: selectedNode.data.size,
                 }
             ))
-            dispatch(fetchHistory(toYear, toCode))
+            dispatch(fetchHistory(source, toYear, toCode))
         }
 
         // Update react-router history

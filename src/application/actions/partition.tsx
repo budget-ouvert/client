@@ -3,19 +3,14 @@ import {
 } from '../types'
 
 const BACKEND_URL = (process.env.NODE_ENV === 'development') ?
-    'http://127.0.0.1:8080' :
+    'http://127.0.0.1:5000' :
     'https://api.budget.parlement-ouvert.fr'
-
-const SOURCE_URL: {[key: string]: string} = {
-    'Recettes': 'recettes',
-    'PLF': 'plf_by_action'
-}
 
 export const fetchPartition = (source: string, year: string, callback: any): IAction => {
     return (dispatch: any, getState: any) => {
         dispatch(loadingPartition())
 
-        const url = `${BACKEND_URL}/${SOURCE_URL[source]}/${year}.json`
+        const url = `${BACKEND_URL}/hierarchy/${source}/${year}`
 
         fetch(url).then((response: any) => {
             return response.text()

@@ -8,6 +8,7 @@ import {
 
 interface IProps {
     data: INodeHistory,
+    labels: {[key: string]: string},
     loadedTime: number,
     targetDivId: string,
 }
@@ -32,13 +33,23 @@ export default class BarChart extends React.Component<IProps, IState> {
     public static getDerivedStateFromProps(props: IProps, state: IState) {
         if (props.data) {
             let data: any = []
-            for (let year in props.data) {
-                data.push({
-                    year,
-                    ae: props.data[year].ae,
-                    cp: props.data[year].cp,
-                    selected: props.data[year].selected,
-                })
+
+            if (props.data != null) {
+                for (let year in props.data) {
+                    let grouped_year: any = {
+                        data: {},
+                        year,
+                        selected: props.data[year].selected,
+                    }
+
+                    for (let key in props.labels) {
+                        grouped_year.data[key] = props.data[year].data[key] ?
+                            props.data[year].data[key] :
+                            0
+                    }
+
+                    data.push(grouped_year)
+                }
             }
 
             return {
@@ -86,7 +97,7 @@ export default class BarChart extends React.Component<IProps, IState> {
         const x0 = d3.scaleBand()
             .rangeRound([0, width])
             .paddingInner(0.2)
-            .paddingOuter(0.1)
+            .paddingOuter(0.5)
 
         const x1 = d3.scaleBand()
             .padding(0.3)
@@ -99,15 +110,14 @@ export default class BarChart extends React.Component<IProps, IState> {
 
         const data = this.state.data
 
-        const keys = ['ae', 'cp']
-        const labels: {[key: string]: string} = {
-            'ae': 'Autorisations d\'engagement',
-            'cp': 'Crédits de paiement'
-        }
+        const keys: string[] = this.props.labels ?
+            Object.keys(this.props.labels) :
+            []
+        const labels = this.props.labels
 
         x0.domain(data.map((d: any) => d.year))
         x1.domain(keys).rangeRound([0, x0.bandwidth()])
-        y.domain([0, d3.max(data, (d: any) => d3.max(keys, (key: any) => d[key] as number))])
+        y.domain([0, d3.max(data, (d: any) => d3.max(keys, (key: any) => d.data[key] as number))])
             .nice()
 
         if (data.length == 0) {
@@ -131,7 +141,7 @@ export default class BarChart extends React.Component<IProps, IState> {
                 .attr("transform", (d: any) => `translate(${x0(d.year)},0)`)
             .selectAll("rect")
             .data((d: any) => keys.map((key: any) => {
-                return {key: key, value: d[key]}
+                return {key: key, value: d.data[key]}
             }))
             .enter().append("rect")
                 .attr("x", (d: any) => x1(d.key))
@@ -159,7 +169,7 @@ export default class BarChart extends React.Component<IProps, IState> {
                 .attr("fill", "#000")
                 .attr("font-weight", "bold")
                 .attr("text-anchor", "start")
-                .text("Montant")
+                .text("Euros")
 
         const legend = g.append("g")
             .attr("font-family", "sans-serif")

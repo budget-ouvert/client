@@ -195,7 +195,7 @@ export default class Partition extends React.Component<IProps, IState> {
                 .style("fill", "#293742")
 
             tooltip
-                .attr("transform", `translate(${(p.target ? p.target.y0 - 50 : p.y0 - 30) + m[0] - bbox.width }, ${(p.target ? p.target.x0 : p.x0) + m[1] - 20})`)
+                .attr("transform", `translate(${(p.target ? p.target.y0 - 30 : p.y0 - 30) + m[0] - bbox.width}, ${(p.target ? p.target.x0 : p.x0) + m[1] - 20})`)
         }
 
         function wrap(that: any, texts: any) {

@@ -6,11 +6,11 @@ const BACKEND_URL = (process.env.NODE_ENV === 'development') ?
     'http://127.0.0.1:5000' :
     'https://api.budget.parlement-ouvert.fr'
 
-export const fetchHistory = (year: string, code: string): IAction => {
+export const fetchHistory = (source: string, year: string, code: string): IAction => {
     return (dispatch: any, getState: any) => {
         dispatch(loadingHistory())
 
-        const url = `${BACKEND_URL}/node_history/${year}/${code}`
+        const url = `${BACKEND_URL}/node_history/${source}/${year}/${code}`
 
         fetch(url).then((response: any) => {
             return response.json()

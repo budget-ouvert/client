@@ -146,7 +146,7 @@ export default class MainView extends React.Component<IProps, IState> {
                         'PLF',
                         '2019',
                         {
-                            code: '',
+                            code: 'PLF',
                             path: [],
                             data: {
                                 ae: null,
@@ -175,6 +175,27 @@ export default class MainView extends React.Component<IProps, IState> {
             source,
             year,
         } = this.props
+
+        let barChartLabels: any = null
+
+        switch(source) {
+            case 'PLF':
+                barChartLabels = {
+                    'ae': "Autorisations d'engagements",
+                    'cp': "Crédits de paiement"
+                }
+                break
+
+            case 'Recettes':
+                barChartLabels = {
+                    'size': "Montant"
+                }
+                break
+
+            default:
+                barChartLabels = null
+                break
+        }
 
         return (
             <div id='main-view-container'>
@@ -223,16 +244,14 @@ export default class MainView extends React.Component<IProps, IState> {
                                 <div className='centered-spinner'>
                                     <Spinner/>
                                 </div> :
-                                (source == 'PLF' ?
-                                    <div className='barchart'>
-                                        <BarChart
-                                            data={data.nodeHistory.data}
-                                            loadedTime={data.nodeHistory.loadedTime}
-                                            targetDivId={'barchart'}
-                                        />
-                                    </div> :
-                                    null
-                                )
+                                <div className='barchart'>
+                                    <BarChart
+                                        data={data.nodeHistory.data}
+                                        labels={barChartLabels}
+                                        loadedTime={data.nodeHistory.loadedTime}
+                                        targetDivId={'barchart'}
+                                    />
+                                </div>
                         }
                     </div>
                     <div id='path-breadcrumbs'>
