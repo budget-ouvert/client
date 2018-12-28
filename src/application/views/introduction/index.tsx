@@ -34,7 +34,7 @@ export default class IntroductionView extends React.Component<IProps, IState> {
             <div id='introduction-page'>
                 <h1>Visualisation de la dépense de l'État</h1>
                 <p>
-                    Ce site à pour but de donner à voir de manière intuitive la dépense annuelle de l'État français. Il s'adresse aux personnes novices comme expertes, et permet de consulter les dépenses hierarchisées par Type de Mission, Mission, Programme et Action.
+                    Ce site à pour but de donner à voir de manière intuitive la dépense annuelle de l'État français. Il s'adresse aux personnes novices comme expertes, et permet de consulter les dépenses hiérarchisées par Type de Mission, Mission, Programme et Action.
                 </p>
                 <p>
                     Cette page contient plusieurs définitions et explications utiles à la compréhension des résultats présentés par la suite.
@@ -104,13 +104,13 @@ export default class IntroductionView extends React.Component<IProps, IState> {
                         La chronologie du budget est la suivante :
                     </p>
                     <ul>
-                        <li>Le Projet de Loi de Finance <code>PLF</code> est publié en octobre par le Ministère de l'Économie et des Finances avec les données prévisionnelles de la dépense de l'État.</li>
-                        <li>Le <code>PLF</code> est examiné deux fois par l'Assemblée Nationale et le Sénat, qui votent la Loi de Finance Initiale <code>LFI</code> en janvier.</li>
+                        <li>Le Projet de Loi de Finances <code>PLF</code> est publié en octobre par le Ministère de l'Économie et des Finances avec les données prévisionnelles de la dépense de l'État.</li>
+                        <li>Le <code>PLF</code> est examiné deux fois par l'Assemblée Nationale et le Sénat, qui votent la Loi de Finances Initiale <code>LFI</code> en janvier.</li>
                         <li>Le Projet de Loi de Réglement <code>PLR</code> est publié en juillet par le Ministère de l'Économie et des Finances avec les données de l'éxecution de la <code>LFI</code>.</li>
                         <li>Le <code>PLR</code> est examiné par le parlement qui vote la Loi de Règlement <code>LR</code> en décembre.</li>
                     </ul>
                     <p>
-                        Au cours de l'année, la <code>LFI</code> peut être amendée au travers d'un ou plusieurs Projets de Loi Rectificatifs votés par le parlement.
+                        Au cours de l'année, la <code>LFI</code> peut être amendée au travers d'un ou plusieurs Projets de Loi de Finances Rectificatifs votés par le parlement.
                     </p>
                 </Callout>
                 <Callout
@@ -121,7 +121,7 @@ export default class IntroductionView extends React.Component<IProps, IState> {
                     </p>
                     <ul>
                         <li>Les Crédits de Paiement <code>CP</code> indiquent la dépense maximale qui peut effectivement être réalisée pendant l'année en cours. En général, l'intégralité des <code>CP</code> de l'année sont consommés.</li>
-                        <li>Les Autorisations d'Engagement <code>AE</code> constituent la limite supérieure des <code>CP</code> pouvant être engagée, et peuvent s'étaler sur plusieurs années. En général, les <code>AE</code> d'une année donnée sont consommés sur plusieurs années.</li>
+                        <li>Les Autorisations d'Engagement <code>AE</code> constituent la limite supérieure des dépenses pouvant être engagées.</li>
                     </ul>
                 </Callout>
             </div>
