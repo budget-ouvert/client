@@ -147,7 +147,7 @@ export default class BarChart extends React.Component<IProps, IState> {
                 .attr('y2', y)
                 .attr('stroke', '#A7B6C2')
                 .attr('stroke-width', '1px')
-                .attr('stroke-dasharray', '4,6')
+                .attr('stroke-dasharray', '3,5')
                 .attr('shape-rendering', 'crispEdges')
 
         // Legend

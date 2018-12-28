@@ -182,7 +182,7 @@ export default class Partition extends React.Component<IProps, IState> {
             tooltip.select('#tooltip-number')
                 .text((`${d3.format(",d")(p.data.size).replace(/,/g, ' ')} euros`))
 
-            const node = d3.select('#tooltip').select('text').node() as any
+            const node = d3.select('#tooltip').select('g').node() as any
             const bbox = node.getBBox()
             const padding = 8
 
@@ -289,18 +289,21 @@ export default class Partition extends React.Component<IProps, IState> {
                 .on("mouseleave", _.partial(onMouseLeave, this))
                 .on("mousemove", _.partial(onMouseMove, this))
 
+        // Tooltip
         const tooltip = d3.select('#tooltip')
             .attr('opacity', 0)
 
-        tooltip.select('text')
+        tooltip.select('#tooltip-name')
             .attr('fill', '#F5F8FA')
-            .attr('font-size', '16')
+            .attr('font-size', '16px')
             .attr('pointer-events', 'none')
 
         tooltip.select('#tooltip-number')
-            .attr('font-size', '13')
+            .attr('fill', '#F5F8FA')
+            .attr('font-size', '13px')
             .attr('font-style', 'italic')
 
+        // Partition rectangles
         this.rect = this.cell.append("rect")
             .attr("width", (d : any) => d.y1 - d.y0 - 1)
             .attr("height", (d : any) => this.rectHeight(d))
@@ -336,10 +339,11 @@ export default class Partition extends React.Component<IProps, IState> {
                     <g id='partition'></g>
                     <g id='tooltip'>
                         <rect></rect>
-                        <text>
-                            <tspan id='tooltip-name' x="0" dy="1.2em"></tspan>
-                            <tspan id='tooltip-number' x="0" dy="1.2em"></tspan>
-                        </text>
+                        <g>
+                            {/* <text id='tooltip-name' x="0" dy="1.2em"></text> */}
+                            <text id='tooltip-name' x="0"></text>
+                            <text id='tooltip-number' x="0" y="1.2em"></text>
+                        </g>
                     </g>
                 </svg>
             </div>
