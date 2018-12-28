@@ -135,9 +135,10 @@ export default class BarChart extends React.Component<IProps, IState> {
             return r
         }
 
+        // Guide lines
         g.append('g')
             .selectAll('line')
-            .data(y.ticks(5).slice(1, 6))
+            .data(y.ticks(5).slice(1, y.ticks(5).length))
             .enter()
                 .append('line')
                 .attr('x1', '0')
@@ -146,8 +147,33 @@ export default class BarChart extends React.Component<IProps, IState> {
                 .attr('y2', y)
                 .attr('stroke', '#A7B6C2')
                 .attr('stroke-width', '1px')
-                .attr('stroke-dasharray', '6,6')
+                .attr('stroke-dasharray', '4,6')
+                .attr('shape-rendering', 'crispEdges')
 
+        // Legend
+        const legend = g.append("g")
+            .attr("font-family", "sans-serif")
+            .attr("font-size", 10)
+            .attr("text-anchor", "end")
+            .selectAll("g")
+            .data(keys.slice().reverse())
+            .enter().append("g")
+                .attr("transform", (d: any, i: number) => `translate(0,${i * 20})`)
+
+        legend.append("rect")
+            .attr("x", width - 14)
+            .attr("width", 14)
+            .attr("height", 14)
+            .attr("fill", (k: any): string => z(k) as string)
+
+        legend.append("text")
+            .attr("x", width - 24)
+            .attr("y", 9.5)
+            .attr("dy", "0.32em")
+            .attr('font-size', '14px')
+            .text((k: any) => labels[k])
+
+        // Bars
         const bars = g.append("g")
             .selectAll("g")
             .data(data)
@@ -173,6 +199,7 @@ export default class BarChart extends React.Component<IProps, IState> {
             .attr('font-size', '14px')
             .attr('font-weight', (d: any) => isSelected(d.year) ? '800' : '400')
 
+        // Axis
         g.append("g")
             .attr("class", "axis")
             .attr("transform", `translate(0,${height})`)
@@ -194,28 +221,6 @@ export default class BarChart extends React.Component<IProps, IState> {
                 .attr('font-size', '14px')
                 .attr("text-anchor", "start")
                 .text("Euros")
-
-        const legend = g.append("g")
-            .attr("font-family", "sans-serif")
-            .attr("font-size", 10)
-            .attr("text-anchor", "end")
-            .selectAll("g")
-            .data(keys.slice().reverse())
-            .enter().append("g")
-                .attr("transform", (d: any, i: number) => `translate(0,${i * 20})`)
-
-        legend.append("rect")
-            .attr("x", width - 19)
-            .attr("width", 19)
-            .attr("height", 19)
-            .attr("fill", (k: any): string => z(k) as string)
-
-        legend.append("text")
-            .attr("x", width - 24)
-            .attr("y", 9.5)
-            .attr("dy", "0.32em")
-            .attr('font-size', '14px')
-            .text((k: any) => labels[k])
     }
 
     public render() {
