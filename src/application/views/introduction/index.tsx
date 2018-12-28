@@ -110,7 +110,7 @@ export default class IntroductionView extends React.Component<IProps, IState> {
                         <li>Le <code>PLR</code> est examiné par le parlement qui vote la Loi de Règlement <code>LR</code> en décembre.</li>
                     </ul>
                     <p>
-                        Au cours de l'année, la <code>LFI</code> peut être amendée au travers d'un ou plusieurs Projets de Loi de Finances Rectificatifs votés par le parlement.
+                        Au cours de l'année, la <code>LFI</code> peut être amendée au travers d'un ou plusieurs Projets de Loi de Finances Rectificative votés par le parlement.
                     </p>
                 </Callout>
                 <Callout

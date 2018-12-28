@@ -231,10 +231,10 @@ export default class Partition extends React.Component<IProps, IState> {
                         line = [word]
                         tspan = text
                             .append('tspan')
-                            .attr('x', x)
-                            .attr('y', y)
-                            .attr('dy', ++lineNumber * lineHeight + dy + 'em')
-                            .text(word)
+                                .attr('x', x)
+                                .attr('y', y)
+                                .attr('dy', ++lineNumber * lineHeight + dy + 'em')
+                                .text(word)
                     }
                 }
             })
@@ -321,6 +321,7 @@ export default class Partition extends React.Component<IProps, IState> {
             .attr("x", 4)
             .attr("y", 13)
             .attr("fill-opacity", (d : any) => +this.labelVisible(d))
+            .attr('font-size', '12px')
             .text((d : any) => d.data.name)
             .call(_.partial(wrap, this))
     }
