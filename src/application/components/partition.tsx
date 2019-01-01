@@ -182,7 +182,7 @@ export default class Partition extends React.Component<IProps, IState> {
             tooltip.select('#tooltip-number')
                 .text((`${d3.format(",d")(p.data.size).replace(/,/g, ' ')} euros`))
 
-            const node = d3.select('#tooltip').select('g').node() as any
+            const node = d3.select('#tooltip').select('text').node() as any
             const bbox = node.getBBox()
             const padding = 8
 
@@ -339,11 +339,10 @@ export default class Partition extends React.Component<IProps, IState> {
                     <g id='partition'></g>
                     <g id='tooltip'>
                         <rect></rect>
-                        <g>
-                            {/* <text id='tooltip-name' x="0" dy="1.2em"></text> */}
-                            <text id='tooltip-name' x="0"></text>
-                            <text id='tooltip-number' x="0" y="1.2em"></text>
-                        </g>
+                        <text>
+                            <tspan id='tooltip-name' x="0"></tspan>
+                            <tspan id='tooltip-number' x="0" dy="1.2em"></tspan>
+                        </text>
                     </g>
                 </svg>
             </div>

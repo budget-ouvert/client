@@ -34,7 +34,7 @@ export default class IntroductionView extends React.Component<IProps, IState> {
             <div id='introduction-page'>
                 <h1>Visualisation de la dépense de l'État</h1>
                 <p>
-                    Ce site à pour but de donner à voir de manière intuitive la dépense annuelle de l'État français. Il s'adresse aux personnes novices comme expertes, et permet de consulter les dépenses hiérarchisées par Type de Mission, Mission, Programme et Action.
+                    Ce site donne à voir de manière intuitive la dépense annuelle de l'État français. Il s'adresse aux personnes novices comme expertes, et permet de consulter les dépenses hiérarchisées par Type de Mission, Mission, Programme et Action.
                 </p>
                 <p>
                     Cette page contient plusieurs définitions et explications utiles à la compréhension des résultats présentés par la suite.
