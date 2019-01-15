@@ -20,6 +20,7 @@ const initialState: IMainViewState = {
             cp: null,
             size: null,
         },
+        sizes: [],
     },
     source: null,
     year: null,
@@ -34,6 +35,7 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
                     code: action.payload.code,
                     path: action.payload.path,
                     data: action.payload.data,
+                    sizes: action.payload.sizes,
                 },
             }
 
@@ -55,6 +57,7 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
                         cp: null,
                         size: null,
                     },
+                    sizes: [],
                 },
             }
 
@@ -70,6 +73,7 @@ const reducer = (state = initialState, action: ISimpleAction): IMainViewState =>
                         cp: null,
                         size: null,
                     },
+                    sizes: [],
                 },
             }
 

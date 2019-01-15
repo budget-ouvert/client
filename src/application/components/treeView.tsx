@@ -142,14 +142,28 @@ export default class TreeView extends React.Component<IProps, IState> {
 
         let currentNode = this.props.data
         path.push(currentNode.name)
-        nodePath.shift()
 
-        nodePath.forEach((i: number) => {
+        nodePath.slice(1, nodePath.length).forEach((i: number) => {
             currentNode = currentNode.children.sort((a: any, b: any) => b.size - a.size)[i]
             path.push(currentNode.name)
         })
 
         return path
+    }
+
+    private getSizes = (nodePath: number[]): number[] => {
+        let sizes: number[] = []
+
+        let currentNode = this.props.data
+        sizes.push(currentNode.size)
+
+        nodePath.slice(1, nodePath.length).forEach((i: number) => {
+            console.log(currentNode.name)
+            currentNode = currentNode.children.sort((a: any, b: any) => b.size - a.size)[i]
+            sizes.push(currentNode.size)
+        })
+
+        return sizes
     }
 
     private handleNodeClick = (node: ITreeNode<INodeData>, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => {
@@ -164,6 +178,7 @@ export default class TreeView extends React.Component<IProps, IState> {
         this.props.onClickCallback({
             ...node.nodeData,
             path: this.getPath(_nodePath),
+            sizes: this.getSizes(_nodePath),
         })
 
         // Set new component state

@@ -36,13 +36,14 @@ export const updateSource = (source: string): IAction => {
     }
 }
 
-export const updateSelectedNode = (code: string, path: string[], data: any): IAction => {
+export const updateSelectedNode = (code: string, path: string[], data: any, sizes: number[]): IAction => {
     return {
         type: 'UPDATE_SELECTED_NODE',
         payload: {
             code,
             path,
             data,
+            sizes,
         }
     }
 }
@@ -77,7 +78,8 @@ export const changeSource = (source: string, history: any): IAction => {
                             ae: null,
                             cp: null,
                             size: null,
-                        }
+                        },
+                        sizes: [],
                     },
                     history,
                 ))
@@ -93,7 +95,8 @@ export const changeSource = (source: string, history: any): IAction => {
                         ae: null,
                         cp: null,
                         size: null,
-                    }
+                    },
+                    sizes: [],
                 },
                 history,
             ))
@@ -122,7 +125,8 @@ export const changeYear = (year: string, history: any): IAction => {
                             ae: null,
                             cp: null,
                             size: null,
-                        }
+                        },
+                        sizes: [],
                     },
                     history,
                 ))
@@ -138,7 +142,8 @@ export const changeYear = (year: string, history: any): IAction => {
                         ae: null,
                         cp: null,
                         size: null,
-                    }
+                    },
+                    sizes: [],
                 },
                 history,
             ))
@@ -169,6 +174,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
             const root = getState().data.partition.byKey[`${source}-${toYear}`].data
             let queue = [root]
             let path: string[] = [root.name]
+            let sizes: number[] = [root.size]
 
             while (queue.length > 0) {
                 const node = queue.shift()
@@ -176,6 +182,7 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                 if (node.code == selectedNode.code) {
                     if (!(['PLF', 'REC'].indexOf(node.code) >= 0)) {
                         path.push(node.name)
+                        sizes.push(node.size)
                     }
                     toCode = node.code
 
@@ -186,12 +193,14 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                             ae: node.ae,
                             cp: node.cp,
                             size: node.size,
-                        }
+                        },
+                        sizes,
                     ))
                     dispatch(fetchHistory(source, toYear, toCode))
                     break
                 } else if (selectedNode.code.startsWith(node.code)) {
                     path.push(node.name)
+                    sizes.push(node.size)
                 }
 
                 if (node.children) {
@@ -209,7 +218,8 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                         ae: root.ae,
                         cp: root.cp,
                         size: root.size,
-                    }
+                    },
+                    sizes,
                 ))
                 dispatch(fetchHistory(source, toYear, toCode))
             }
@@ -222,7 +232,8 @@ export const updateToConsistentState = (source: string, year: string, selectedNo
                     ae: selectedNode.data.ae,
                     cp: selectedNode.data.cp,
                     size: selectedNode.data.size,
-                }
+                },
+                selectedNode.sizes,
             ))
             dispatch(fetchHistory(source, toYear, toCode))
         }

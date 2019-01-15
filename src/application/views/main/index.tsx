@@ -50,6 +50,7 @@ export interface ISelectedNode {
         cp: number,
         size: number,
     },
+    sizes: number[],
 }
 
 export interface IMainViewState {
@@ -132,6 +133,7 @@ export default class MainView extends React.Component<IProps, IState> {
                                 cp: null,
                                 size: null,
                             },
+                            sizes: [],
                         },
                         this.props.history,
                     ))
@@ -153,6 +155,7 @@ export default class MainView extends React.Component<IProps, IState> {
                                 cp: null,
                                 size: null,
                             },
+                            sizes: [],
                         },
                         this.props.history,
                     ))
@@ -258,7 +261,7 @@ export default class MainView extends React.Component<IProps, IState> {
                         <NodeViewer
                             label={source ? INFO_BY_SOURCE_TYPE[source].label : 'Montant'}
                             path={selectedNode.path}
-                            size={selectedNode.data.size}
+                            sizes={selectedNode.sizes}
                         />
                     </div>
                 </div>
@@ -276,11 +279,14 @@ export default class MainView extends React.Component<IProps, IState> {
                                         maxDepth={INFO_BY_SOURCE_TYPE[source].maxDepth}
                                         onMouseOverCallback={(p: any) => {
                                             let path : string[] = [p.data.name]
+                                            let sizes: number[] = [p.data.size]
                                             let currentNode = p
                                             while (currentNode.parent) {
                                                 path.push(currentNode.parent.data.name)
+                                                sizes.push(currentNode.parent.data.size)
                                                 currentNode = currentNode.parent
                                             }
+
 
                                             dispatch(updateToConsistentState(
                                                 source,
@@ -293,6 +299,7 @@ export default class MainView extends React.Component<IProps, IState> {
                                                         cp: p.data.cp,
                                                         size: p.data.size,
                                                     },
+                                                    sizes: sizes.reverse(),
                                                 },
                                                 history,
                                              ))
@@ -325,6 +332,7 @@ export default class MainView extends React.Component<IProps, IState> {
                                                         cp: nodeData.cp,
                                                         size: nodeData.size,
                                                     },
+                                                    sizes: nodeData.sizes
                                                 },
                                                 history,
                                             ))
